@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Workflow Detective Privacy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: one readable column. Plain policy text, the two lists (records / never records) side by side on wide screens. */
+:root{--bg:#F3F5F8;--surface:#FFFFFF;--line:#D8DEE6;--ink:#16202C;--muted:#586376;--brand:#1C5A86;--brand-ink:#FFFFFF;--mark:#FFE27A;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;--body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0E131A;--surface:#161C25;--line:#2A3341;--ink:#E6EAF0;--muted:#98A2B4;--brand:#6CB2E2;--brand-ink:#08131D;--mark:#E5C247;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E131A;--surface:#161C25;--line:#2A3341;--ink:#E6EAF0;--muted:#98A2B4;--brand:#6CB2E2;--brand-ink:#08131D;--mark:#E5C247;color-scheme:dark}
+*{box-sizing:border-box} html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+a{color:var(--brand)}
+.wrap{max-width:760px;margin:0 auto;padding:28px 16px 72px}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:600;font-size:15px;color:var(--muted)}
+.brand svg{width:24px;height:24px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,38px);line-height:1.1;letter-spacing:-.015em;margin:14px 0 6px}
+h2{font-family:var(--display);font-weight:600;font-size:20px;margin:28px 0 6px}
+.muted{color:var(--muted)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:10px}
+@media (max-width:600px){.two{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.card h3{margin:0;font-size:16px}
+ul{padding-left:20px;margin:8px 0 0} li{margin:3px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--brand)"/><circle cx="13.5" cy="13.5" r="7" fill="none" stroke="var(--brand-ink)" stroke-width="2.6"/><path d="M18.8 18.8l6 6" stroke="var(--brand-ink)" stroke-width="3" stroke-linecap="round"/><path d="M10 13.5h7" stroke="var(--mark)" stroke-width="2.4" stroke-linecap="round"/></svg>Workflow Detective</div>
+  <h1>Privacy policy</h1>
+  <p class="muted">Covers the Workflow Detective browser extension, Windows app and Mac app. Last updated October 2026.</p>
+
+  <h2>What Workflow Detective does</h2>
+  <p>Workflow Detective is used in workplace pilots to find repetitive computer work that could be automated. During a study that the participant agrees to, it notices the shape of their work (which app is in use, that something was copied, which form fields are filled in) and turns repeated patterns into a plain-English list for the participant to review.</p>
+
+  <div class="two">
+    <div class="card"><h3>What it records</h3><ul>
+      <li>Which app or website is in use, and for how long</li>
+      <li>Page and window titles, with numbers, email addresses and phone numbers removed (can be turned off)</li>
+      <li>That something was copied or pasted, and its kind (a number, a date). Not what it was.</li>
+      <li>Names of form fields filled in, like “Customer” (can be turned off). Not what was typed.</li>
+      <li>That a file was downloaded, uploaded or saved, and its type (like .csv). Not the file or its name.</li>
+      <li>Labels of buttons clicked, like “Save and send”</li>
+    </ul></div>
+    <div class="card"><h3>What it never records</h3><ul>
+      <li>What anyone types, or the contents of emails, chats, documents or spreadsheet cells</li>
+      <li>Keystrokes, screenshots or screen recordings</li>
+      <li>Passwords, card numbers, bank details or other sensitive fields</li>
+      <li>Private/incognito windows, password managers, banking and health sites, or anything the participant blocks</li>
+      <li>Anything outside the study’s watch days and work hours</li>
+    </ul></div>
+  </div>
+
+  <h2>Where the data is kept</h2>
+  <p>Everything stays on the participant’s own computer. Workflow Detective has no servers and sends nothing over the internet. Nobody, including the participant’s employer and the pilot team, can see the data while it’s on the computer.</p>
+  <p>The participant can view everything recorded at any time and delete any line, any app or site, or everything.</p>
+
+  <h2>Sharing</h2>
+  <p>At the end of the study the participant may choose to save a results file and send it to the pilot team. It contains the findings and the participant’s ratings, and includes the activity log only if they tick that box. The data is never sold, never used for advertising, and never used to evaluate the participant’s performance.</p>
+
+  <h2>Deletion</h2>
+  <p>Data on the computer is deleted automatically 14 days after the study ends, or immediately when the participant clicks <b>Stop and delete everything</b>. The pilot team deletes results files 30 days after the pilot unless the company asks to keep them for an automation project.</p>
+
+  <h2>Your choices</h2>
+  <p>Taking part is voluntary. Participants can pause, block apps and sites, delete data, or stop at any time with no consequences.</p>
+
+  <h2>Contact</h2>
+  <p id="contact">Tejas Senthil, <a href="mailto:tns976@eid.utexas.edu">tns976@eid.utexas.edu</a></p>
+</div>
+<script>
+fetch("config.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (c) {
+  if (!c || !c.contactEmail) return;
+  var el = document.getElementById("contact"); el.textContent = (c.contactName || "") + ", ";
+  var a = document.createElement("a"); a.href = "mailto:" + c.contactEmail; a.textContent = c.contactEmail; el.appendChild(a);
+}).catch(function () {});
+</script>
+</body>
+</html>

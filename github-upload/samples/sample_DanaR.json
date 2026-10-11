@@ -1,0 +1,595 @@
+{
+ "schema": "workflow-detective/bundle@1",
+ "sample": true,
+ "exportedAt": "2026-10-23T16:00:00.000Z",
+ "extensionVersion": "0.1.0",
+ "detectorVersion": "0.1.0",
+ "participant": "Dana R.",
+ "company": "NORTHLINE (sample)",
+ "study": {
+  "startDate": "2026-10-12",
+  "weeks": 2,
+  "scheduleMode": "rotate",
+  "hours": [
+   8,
+   18
+  ],
+  "watchDaysTotal": 6,
+  "watchDaysDone": 6
+ },
+ "summary": {
+  "events": 1839,
+  "days": [
+   "2026-10-12",
+   "2026-10-14",
+   "2026-10-16",
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-22"
+  ],
+  "observedDays": 6,
+  "activeMinutes": 2335,
+  "activeMinutesPerDay": 389,
+  "timeByApp": [
+   {
+    "app": "Slack",
+    "minutes": 943
+   },
+   {
+    "app": "Gmail",
+    "minutes": 348
+   },
+   {
+    "app": "Google Docs",
+    "minutes": 305
+   },
+   {
+    "app": "Google Calendar",
+    "minutes": 275
+   },
+   {
+    "app": "news.example.com",
+    "minutes": 264
+   },
+   {
+    "app": "Google Sheets",
+    "minutes": 73
+   },
+   {
+    "app": "QuickBooks",
+    "minutes": 69
+   },
+   {
+    "app": "HubSpot",
+    "minutes": 28
+   },
+   {
+    "app": "Salesforce",
+    "minutes": 24
+   },
+   {
+    "app": "Stripe",
+    "minutes": 6
+   }
+  ],
+  "findings": 4,
+  "automatableWeeklyMinutes": 102
+ },
+ "findings": [
+  {
+   "type": "entry",
+   "key": "entry|QuickBooks|/app/invoice",
+   "apps": [
+    "HubSpot",
+    "QuickBooks"
+   ],
+   "title": "Typing details from HubSpot into QuickBooks (“Invoice”)",
+   "detail": "About 6 fields each time: Customer, Invoice date, Product/service, Qty, Rate, and Terms. You usually look at HubSpot right before.",
+   "context": {
+    "page": "/app/invoice",
+    "title": "Invoice",
+    "source": "HubSpot",
+    "fields": [
+     "Customer",
+     "Invoice date",
+     "Product/service",
+     "Qty",
+     "Rate",
+     "Terms"
+    ]
+   },
+   "occurrences": [
+    {
+     "t0": 1791823954894,
+     "t1": 1791824044595,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1791833565371,
+     "t1": 1791833647262,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1791836454088,
+     "t1": 1791836552977,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1791995010899,
+     "t1": 1791995072762,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1791995559702,
+     "t1": 1791995660710,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792011076816,
+     "t1": 1792011144627,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792011607376,
+     "t1": 1792011678447,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792169254724,
+     "t1": 1792169321623,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792169825017,
+     "t1": 1792169925113,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792176007551,
+     "t1": 1792176073598,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792181924091,
+     "t1": 1792182004662,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792512654693,
+     "t1": 1792512762160,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792518793281,
+     "t1": 1792518868203,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792520553469,
+     "t1": 1792520613713,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792525943471,
+     "t1": 1792526023677,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792527474752,
+     "t1": 1792527558766,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792599731061,
+     "t1": 1792599833992,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792602358483,
+     "t1": 1792602445813,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792606046663,
+     "t1": 1792606129561,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792609570971,
+     "t1": 1792609639169,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792615882685,
+     "t1": 1792615948016,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792691942820,
+     "t1": 1792692015085,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792693729988,
+     "t1": 1792693832564,
+     "note": "6 fields · after HubSpot"
+    },
+    {
+     "t0": 1792699861937,
+     "t1": 1792699933823,
+     "note": "6 fields · after HubSpot"
+    }
+   ],
+   "minutesEach": 1.6,
+   "automation": {
+    "method": "AI fills in the form for you",
+    "how": "AI reads what you were looking at in HubSpot, fills in customer, invoice date, product/service, and qty in QuickBooks, and leaves it for you to check and save.",
+    "ai": true,
+    "why": "Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."
+   },
+   "count": 24,
+   "days": 6,
+   "perDay": 4,
+   "weeklyMinutes": 32,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 85,
+   "rank": 27.02674166666667,
+   "when": null
+  },
+  {
+   "type": "transfer",
+   "key": "transfer|Gmail|Google Sheets",
+   "apps": [
+    "Gmail",
+    "Google Sheets"
+   ],
+   "title": "Copying information from Gmail into Google Sheets",
+   "detail": "Usually 3 pieces of information at a time (mostly numbers and amounts, short text, and dates).",
+   "context": {
+    "from": "Payment received from Acme Co · Invoice #",
+    "to": "AR tracker #",
+    "fieldsEach": 3
+   },
+   "occurrences": [
+    {
+     "t0": 1791818791847,
+     "t1": 1791818840444,
+     "note": "3 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1791821503505,
+     "t1": 1791821555150,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1791828363836,
+     "t1": 1791828418724,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1791828886859,
+     "t1": 1791828939916,
+     "note": "3 pastes · from “Payment received from Brightline · Invoice #”"
+    },
+    {
+     "t0": 1791831799532,
+     "t1": 1791831846043,
+     "note": "3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1791833142467,
+     "t1": 1791833189807,
+     "note": "3 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1791838575360,
+     "t1": 1791838627620,
+     "note": "3 pastes · from “Payment received from Brightline · Invoice #”"
+    },
+    {
+     "t0": 1791987132810,
+     "t1": 1791987187878,
+     "note": "3 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792001227779,
+     "t1": 1792001282973,
+     "note": "3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792005435859,
+     "t1": 1792005486586,
+     "note": "3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792014560200,
+     "t1": 1792014605515,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792014955766,
+     "t1": 1792015004022,
+     "note": "3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792162940076,
+     "t1": 1792162992782,
+     "note": "3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792174463137,
+     "t1": 1792174515865,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792179953298,
+     "t1": 1792180001138,
+     "note": "3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792185647471,
+     "t1": 1792185702189,
+     "note": "3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792505018418,
+     "t1": 1792505069744,
+     "note": "3 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792518913771,
+     "t1": 1792519074036,
+     "note": "6 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792525142030,
+     "t1": 1792525189737,
+     "note": "3 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792532566713,
+     "t1": 1792532616000,
+     "note": "3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792533143303,
+     "t1": 1792533191339,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792592729527,
+     "t1": 1792592786197,
+     "note": "3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792597059191,
+     "t1": 1792597107756,
+     "note": "3 pastes · from “Payment received from Brightline · Invoice #”"
+    },
+    {
+     "t0": 1792598056679,
+     "t1": 1792598107757,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792608920473,
+     "t1": 1792608969004,
+     "note": "3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792613724035,
+     "t1": 1792613770747,
+     "note": "3 pastes · from “Payment received from Harbor Foods · Invoice #”"
+    },
+    {
+     "t0": 1792614995193,
+     "t1": 1792615043766,
+     "note": "3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792679341589,
+     "t1": 1792679386216,
+     "note": "3 pastes · from “Payment received from Brightline · Invoice #”"
+    },
+    {
+     "t0": 1792688555739,
+     "t1": 1792688608692,
+     "note": "3 pastes · from “Payment received from Harbor Foods · Invoice #”"
+    },
+    {
+     "t0": 1792692345125,
+     "t1": 1792692394333,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792696046246,
+     "t1": 1792696093712,
+     "note": "3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792696890636,
+     "t1": 1792696935199,
+     "note": "3 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792703830952,
+     "t1": 1792703873305,
+     "note": "3 pastes · from “Payment received from Harbor Foods · Invoice #”"
+    }
+   ],
+   "minutesEach": 1.1,
+   "automation": {
+    "method": "AI reads it, then an automation fills it in",
+    "how": "Each time a new email like this shows up in Gmail, AI picks out the details and an automation adds them to Google Sheets.",
+    "ai": true,
+    "why": "Reading a message and picking out the right details used to need a person. AI can now do this reliably, and you review anything it isn’t sure about."
+   },
+   "steps": [
+    "Open Gmail",
+    "Copy from Gmail",
+    "Open Google Sheets",
+    "Paste into Google Sheets",
+    "Repeat for each piece of information"
+   ],
+   "count": 33,
+   "days": 6,
+   "perDay": 5.5,
+   "weeklyMinutes": 29,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 91,
+   "rank": 26.780086666666666,
+   "when": null
+  },
+  {
+   "type": "lookup",
+   "key": "lookup|Google Sheets|Salesforce",
+   "apps": [
+    "Google Sheets",
+    "Salesforce"
+   ],
+   "title": "Switching back and forth between Google Sheets and Salesforce",
+   "detail": "About 10 switches each time, a few seconds per look. This usually means checking or matching information by eye.",
+   "occurrences": [
+    {
+     "t0": 1791833971750,
+     "t1": 1791834256832,
+     "note": "8 switches"
+    },
+    {
+     "t0": 1792014600829,
+     "t1": 1792014934809,
+     "note": "10 switches"
+    },
+    {
+     "t0": 1792182040187,
+     "t1": 1792182352843,
+     "note": "8 switches"
+    },
+    {
+     "t0": 1792526236615,
+     "t1": 1792526661410,
+     "note": "13 switches"
+    },
+    {
+     "t0": 1792528819811,
+     "t1": 1792529228558,
+     "note": "12 switches"
+    },
+    {
+     "t0": 1792616953197,
+     "t1": 1792617278014,
+     "note": "10 switches"
+    },
+    {
+     "t0": 1792698233089,
+     "t1": 1792698521668,
+     "note": "7 switches"
+    },
+    {
+     "t0": 1792700823369,
+     "t1": 1792701151067,
+     "note": "10 switches"
+    }
+   ],
+   "minutesEach": 5.4,
+   "automation": {
+    "method": "Match it automatically",
+    "how": "If you’re checking that Google Sheets and Salesforce agree, an automation can compare them and only show you the rows that don’t match. If you’re looking things up, the data can be pulled into one place.",
+    "ai": false
+   },
+   "count": 8,
+   "days": 6,
+   "perDay": 1.33,
+   "weeklyMinutes": 36,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 61,
+   "rank": 22.113008333333333,
+   "when": null
+  },
+  {
+   "type": "shuttle",
+   "key": "shuttle|Stripe|Google Sheets|csv",
+   "apps": [
+    "Stripe",
+    "Google Sheets"
+   ],
+   "title": "Downloading .csv files from Stripe and uploading them to Google Sheets",
+   "detail": "The same download-then-upload, 6 times.",
+   "context": {
+    "from": "Stripe",
+    "to": "Google Sheets",
+    "ext": "csv"
+   },
+   "occurrences": [
+    {
+     "t0": 1791813695281,
+     "t1": 1791813726375,
+     "note": ".csv · “Payments”"
+    },
+    {
+     "t0": 1791986205654,
+     "t1": 1791986227598,
+     "note": ".csv · “Payments”"
+    },
+    {
+     "t0": 1792159033967,
+     "t1": 1792159063461,
+     "note": ".csv · “Payments”"
+    },
+    {
+     "t0": 1792504439009,
+     "t1": 1792504468197,
+     "note": ".csv · “Payments”"
+    },
+    {
+     "t0": 1792591538212,
+     "t1": 1792591570125,
+     "note": ".csv · “Payments”"
+    },
+    {
+     "t0": 1792677599341,
+     "t1": 1792677629992,
+     "note": ".csv · “Payments”"
+    }
+   ],
+   "minutesEach": 1,
+   "automation": {
+    "method": "Sync the file automatically",
+    "how": "An automation pulls the file from Stripe and puts it in Google Sheets on a schedule or as soon as it’s ready. No downloading. It happens around 8:58 am, so it can run on a schedule before you start.",
+    "ai": false
+   },
+   "count": 6,
+   "days": 6,
+   "perDay": 1,
+   "weeklyMinutes": 5,
+   "regular": {
+    "around": "8:58 am"
+   },
+   "confidence": "medium",
+   "automatability": 87,
+   "rank": 4.35525625,
+   "when": "Usually around 8:58 am every day we watched."
+  }
+ ],
+ "feedback": {
+  "entry|QuickBooks|/app/invoice": {
+   "rating": "new",
+   "at": 1792771200000
+  },
+  "transfer|Gmail|Google Sheets": {
+   "rating": "accurate",
+   "at": 1792771200000
+  },
+  "lookup|Google Sheets|Salesforce": {
+   "rating": "accurate",
+   "at": 1792771200000
+  },
+  "shuttle|Stripe|Google Sheets|csv": {
+   "rating": "accurate",
+   "at": 1792771200000
+  }
+ }
+}

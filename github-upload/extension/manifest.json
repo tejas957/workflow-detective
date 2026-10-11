@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "Workflow Detective (Pilot)",
+  "short_name": "Workflow Detective",
+  "version": "0.2.0",
+  "description": "Finds the repetitive work in your week so it can be automated. Records actions, never what you type.",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "tabs",
+    "idle",
+    "downloads",
+    "alarms",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "action": {
+    "default_title": "Workflow Detective",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/16.png",
+      "32": "icons/32.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png"
+    }
+  },
+  "options_page": "onboarding.html",
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "incognito": "not_allowed"
+}

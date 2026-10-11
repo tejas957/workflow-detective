@@ -1,0 +1,615 @@
+{
+ "schema": "workflow-detective/bundle@1",
+ "exportedAt": "2026-10-11T18:19:38.014Z",
+ "source": "browser",
+ "extensionVersion": "0.2.0",
+ "detectorVersion": "0.1.0",
+ "participant": "Test Person",
+ "company": "NORTHLINE",
+ "study": {
+  "startDate": "2026-10-11",
+  "weeks": 1,
+  "scheduleMode": "fixed",
+  "days": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   0
+  ],
+  "hours": [
+   0,
+   24
+  ],
+  "watchDaysTotal": 7,
+  "watchDaysDone": 0,
+  "captureTitles": true,
+  "captureFieldLabels": true
+ },
+ "summary": {
+  "events": 42,
+  "days": [
+   "2026-10-09",
+   "2026-10-10"
+  ],
+  "observedDays": 2,
+  "activeMinutes": 0,
+  "activeMinutesPerDay": 0,
+  "timeByApp": [
+   {
+    "app": "localhost",
+    "minutes": 0
+   },
+   {
+    "app": "127.0.0.1",
+    "minutes": 0
+   }
+  ],
+  "findings": 1,
+  "automatableWeeklyMinutes": 9
+ },
+ "findings": [
+  {
+   "type": "entry",
+   "key": "entry|localhost|/tracker.html",
+   "apps": [
+    "127.0.0.1",
+    "localhost"
+   ],
+   "title": "Copying details from 127.0.0.1 into localhost (“AR tracker # · Tracker”)",
+   "detail": "About 2 fields each time: Amount and Client. You usually look at 127.0.0.1 right before. It also includes copying and pasting from 127.0.0.1 into localhost.",
+   "context": {
+    "page": "/tracker.html",
+    "title": "AR tracker # · Tracker",
+    "source": "127.0.0.1",
+    "fields": [
+     "Amount",
+     "Client"
+    ]
+   },
+   "occurrences": [
+    {
+     "t0": 1791569950160,
+     "t1": 1791569951181,
+     "note": "3 fields · after 127.0.0.1 · 1 paste · from “Payment received from Acme Co · Invoice # · Mailbox”"
+    },
+    {
+     "t0": 1791570854813,
+     "t1": 1791570855684,
+     "note": "2 fields · after 127.0.0.1 · 1 paste · from “Payment received from Acme Co · Invoice # · Mailbox”"
+    },
+    {
+     "t0": 1791571759307,
+     "t1": 1791571760165,
+     "note": "2 fields · after 127.0.0.1 · 1 paste · from “Payment received from Acme Co · Invoice # · Mailbox”"
+    },
+    {
+     "t0": 1791659063784,
+     "t1": 1791659064650,
+     "note": "2 fields · after 127.0.0.1 · 1 paste · from “Payment received from Acme Co · Invoice # · Mailbox”"
+    },
+    {
+     "t0": 1791659968274,
+     "t1": 1791659976619,
+     "note": "3 fields · after 127.0.0.1 · 1 paste · from “Payment received from Acme Co · Invoice # · Mailbox”"
+    }
+   ],
+   "minutesEach": 0.8,
+   "automation": {
+    "method": "Send the data over automatically",
+    "how": "The details you copy by eye from 127.0.0.1 can flow into localhost automatically, so the form is already filled in when you open it.",
+    "ai": false
+   },
+   "merged": [
+    "transfer|127.0.0.1|localhost"
+   ],
+   "steps": [
+    "Copy from 127.0.0.1",
+    "Open localhost",
+    "Paste into localhost",
+    "Fill in fields in localhost",
+    "Click “Save row” in localhost",
+    "Submit in localhost",
+    "Open 127.0.0.1"
+   ],
+   "count": 5,
+   "days": 2,
+   "perDay": 2.5,
+   "weeklyMinutes": 9,
+   "regular": null,
+   "confidence": "medium",
+   "automatability": 88,
+   "rank": 8.25,
+   "when": null
+  }
+ ],
+ "feedback": {
+  "entry|localhost|/tracker.html": {
+   "rating": "accurate",
+   "at": 1791742777896
+  }
+ },
+ "events": [
+  {
+   "t": 1791569949553,
+   "type": "view",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {}
+  },
+  {
+   "t": 1791569949706,
+   "type": "view",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {}
+  },
+  {
+   "t": 1791569949739,
+   "type": "view",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {}
+  },
+  {
+   "t": 1791569950160,
+   "type": "copy",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {
+    "kind": "number",
+    "len": "short"
+   }
+  },
+  {
+   "t": 1791569950491,
+   "type": "view",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {}
+  },
+  {
+   "t": 1791569951038,
+   "type": "paste",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "kind": "number",
+    "len": "short",
+    "field": "Amount"
+   }
+  },
+  {
+   "t": 1791569951181,
+   "type": "entry",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "n": 3,
+    "sensitive": 1,
+    "labels": [
+     "Amount",
+     "Client"
+    ]
+   }
+  },
+  {
+   "t": 1791569951187,
+   "type": "click",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "label": "Save row"
+   }
+  },
+  {
+   "t": 1791569951193,
+   "type": "submit",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "n": 5
+   }
+  },
+  {
+   "t": 1791569954406,
+   "type": "view",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {}
+  },
+  {
+   "t": 1791570854813,
+   "type": "copy",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {
+    "kind": "number",
+    "len": "short"
+   }
+  },
+  {
+   "t": 1791570855127,
+   "type": "view",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {}
+  },
+  {
+   "t": 1791570855564,
+   "type": "paste",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "kind": "number",
+    "len": "short",
+    "field": "Amount"
+   }
+  },
+  {
+   "t": 1791570855684,
+   "type": "entry",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "n": 2,
+    "sensitive": 0,
+    "labels": [
+     "Amount",
+     "Client"
+    ]
+   }
+  },
+  {
+   "t": 1791570855686,
+   "type": "click",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "label": "Save row"
+   }
+  },
+  {
+   "t": 1791570855687,
+   "type": "submit",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "n": 5
+   }
+  },
+  {
+   "t": 1791570858901,
+   "type": "view",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {}
+  },
+  {
+   "t": 1791571759307,
+   "type": "copy",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {
+    "kind": "number",
+    "len": "short"
+   }
+  },
+  {
+   "t": 1791571759621,
+   "type": "view",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {}
+  },
+  {
+   "t": 1791571760066,
+   "type": "paste",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "kind": "number",
+    "len": "short",
+    "field": "Amount"
+   }
+  },
+  {
+   "t": 1791571760165,
+   "type": "entry",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "n": 2,
+    "sensitive": 0,
+    "labels": [
+     "Amount",
+     "Client"
+    ]
+   }
+  },
+  {
+   "t": 1791571760168,
+   "type": "click",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "label": "Save row"
+   }
+  },
+  {
+   "t": 1791571760169,
+   "type": "submit",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "n": 5
+   }
+  },
+  {
+   "t": 1791571763380,
+   "type": "view",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {}
+  },
+  {
+   "t": 1791659063784,
+   "type": "copy",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {
+    "kind": "number",
+    "len": "short"
+   }
+  },
+  {
+   "t": 1791659064107,
+   "type": "view",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {}
+  },
+  {
+   "t": 1791659064557,
+   "type": "paste",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "kind": "number",
+    "len": "short",
+    "field": "Amount"
+   }
+  },
+  {
+   "t": 1791659064650,
+   "type": "entry",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "n": 2,
+    "sensitive": 0,
+    "labels": [
+     "Amount",
+     "Client"
+    ]
+   }
+  },
+  {
+   "t": 1791659064651,
+   "type": "click",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "label": "Save row"
+   }
+  },
+  {
+   "t": 1791659064653,
+   "type": "submit",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "n": 5
+   }
+  },
+  {
+   "t": 1791659067871,
+   "type": "view",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {}
+  },
+  {
+   "t": 1791659968274,
+   "type": "copy",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {
+    "kind": "number",
+    "len": "short"
+   }
+  },
+  {
+   "t": 1791659968591,
+   "type": "view",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {}
+  },
+  {
+   "t": 1791659969030,
+   "type": "paste",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "kind": "number",
+    "len": "short",
+    "field": "Amount"
+   }
+  },
+  {
+   "t": 1791659969113,
+   "type": "entry",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "n": 2,
+    "sensitive": 0,
+    "labels": [
+     "Amount",
+     "Client"
+    ]
+   }
+  },
+  {
+   "t": 1791659969115,
+   "type": "click",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "label": "Save row"
+   }
+  },
+  {
+   "t": 1791659969116,
+   "type": "submit",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "n": 5
+   }
+  },
+  {
+   "t": 1791659972331,
+   "type": "view",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {}
+  },
+  {
+   "t": 1791659972419,
+   "type": "download",
+   "app": "127.0.0.1",
+   "host": "127.0.0.1",
+   "page": "/inbox.html",
+   "title": "Payment received from Acme Co - Invoice # - Mailbox",
+   "d": {
+    "ext": "csv"
+   }
+  },
+  {
+   "t": 1791659972479,
+   "type": "view",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {}
+  },
+  {
+   "t": 1791659972530,
+   "type": "upload",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "n": 1,
+    "ext": "csv"
+   }
+  },
+  {
+   "t": 1791659976619,
+   "type": "entry",
+   "app": "localhost",
+   "host": "localhost",
+   "page": "/tracker.html",
+   "title": "AR tracker # - Tracker",
+   "d": {
+    "n": 1,
+    "sensitive": 0,
+    "labels": [
+     "Client"
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workflow Detective Pilot Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: operator console. Summary tiles → where the work is → people → every finding, filterable. Highlighter marks what needs a look. */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --sunk:#E9EDF2; --line:#D8DEE6;
+  --ink:#16202C; --muted:#586376;
+  --brand:#1C5A86; --brand-ink:#FFFFFF; --brand-soft:#E1ECF6;
+  --bar:#1E62B0; --grid:#E3E8EE;
+  --mark:#FFE27A; --mark-ink:#2E2400;
+  --good:#1D7A4E; --good-bg:#E1F3E9; --warn:#93570A; --warn-bg:#FBEED8; --bad:#B3261E; --bad-bg:#FBE4E2;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E131A; --surface:#161C25; --sunk:#1D2430; --line:#2A3341;
+  --ink:#E6EAF0; --muted:#98A2B4;
+  --brand:#6CB2E2; --brand-ink:#08131D; --brand-soft:#17293A;
+  --bar:#3D8FE0; --grid:#232B37;
+  --mark:#E5C247; --mark-ink:#1C1500;
+  --good:#5ED19A; --good-bg:#122C1E; --warn:#F1B45C; --warn-bg:#33240F; --bad:#FF8A80; --bad-bg:#3A1A18;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0E131A; --surface:#161C25; --sunk:#1D2430; --line:#2A3341;
+  --ink:#E6EAF0; --muted:#98A2B4;
+  --brand:#6CB2E2; --brand-ink:#08131D; --brand-soft:#17293A;
+  --bar:#3D8FE0; --grid:#232B37;
+  --mark:#E5C247; --mark-ink:#1C1500;
+  --good:#5ED19A; --good-bg:#122C1E; --warn:#F1B45C; --warn-bg:#33240F; --bad:#FF8A80; --bad-bg:#3A1A18;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14.5px;line-height:1.55}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:5px}
+h1,h2,h3{margin:0;font-family:var(--display);letter-spacing:-.015em;text-wrap:balance}
+p{margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:24px 64px;display:flex;flex-direction:column;gap:20px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:600;font-size:16px}
+.brand svg{width:24px;height:24px}
+h1{font-size:clamp(26px,3.4vw,36px);font-weight:800;line-height:1.1;margin-top:10px}
+.sub{color:var(--muted);margin-top:6px;max-width:70ch}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;font-size:14px}
+.btn:hover{background:var(--sunk)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink);font-weight:600}
+.btn.sm{padding:4px 10px;font-size:13px}
+.banner{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--mark);color:var(--mark-ink);border-radius:8px;padding:10px 14px;font-size:14px}
+.banner b{font-weight:600}
+.err{background:var(--bad-bg);color:var(--bad);border-radius:8px;padding:10px 14px;font-size:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;min-width:0}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.card-h h2{font-size:18px;font-weight:600}
+.muted{color:var(--muted)} .small{font-size:13px}
+.tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+@media (max-width:980px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:520px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tile .k{font-size:12.5px;color:var(--muted)}
+.tile .v{font-family:var(--body);font-weight:600;font-size:24px;line-height:1.2}
+.tile .n{font-size:12px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px;align-items:start}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+/* chart */
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:var(--body);font-size:12.5px;fill:var(--ink)}
+.chart .tick{fill:var(--muted);font-size:11.5px}
+.chart .hit{fill:transparent;cursor:default}
+.chart .bar{fill:var(--bar)}
+.chart .row:hover .bar,.chart .row:focus .bar{filter:brightness(1.12)}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);border-radius:6px;padding:7px 10px;font-size:12.5px;line-height:1.4;white-space:nowrap;transform:translate(-50%,-100%);margin-top:-8px;z-index:2}
+/* tables */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{text-align:left;font-weight:500;font-size:12px;color:var(--muted);padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.people{min-width:520px}
+.chip{display:inline-block;font-size:11.5px;font-weight:600;border-radius:999px;padding:1px 8px;background:var(--sunk);white-space:nowrap}
+.chip.ai{background:var(--mark);color:var(--mark-ink)}
+.chip.good{background:var(--good-bg);color:var(--good)} .chip.warn{background:var(--warn-bg);color:var(--warn)} .chip.bad{background:var(--bad-bg);color:var(--bad)}
+.chip.dot::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;margin-right:5px;vertical-align:1px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filters select{background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:6px 9px;font-size:13.5px}
+.filters label{display:flex;gap:6px;align-items:center;font-size:13.5px}
+.findings{min-width:760px}
+.findings tr.f{cursor:pointer}
+.findings tr.f:hover td{background:var(--sunk)}
+.findings tr.f td:first-child{min-width:280px}
+.ftitle{font-weight:600}
+.who{font-size:12.5px;color:var(--muted)}
+tr.detail td{background:var(--sunk);padding:14px 16px}
+.dgrid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px}
+@media (max-width:720px){.dgrid{grid-template-columns:minmax(0,1fr)}}
+.dgrid h3{font-family:var(--body);font-size:13px;font-weight:600;margin-bottom:4px}
+.dgrid ol{margin:4px 0 0;padding-left:18px}
+.note{border-left:3px solid var(--mark);padding-left:10px;font-size:13.5px}
+.mono{font-family:var(--mono);font-size:12px}
+.drop{position:fixed;inset:0;background:color-mix(in srgb,var(--brand) 18%,transparent);border:3px dashed var(--brand);display:grid;place-items:center;font-family:var(--display);font-size:24px;color:var(--ink);z-index:20}
+.foot{font-size:13px;color:var(--muted);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:720px){.foot{grid-template-columns:minmax(0,1fr)}}
+.foot b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head><body>
+
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--brand)"/><circle cx="13.5" cy="13.5" r="7" fill="none" stroke="var(--brand-ink)" stroke-width="2.6"/><path d="M18.8 18.8l6 6" stroke="var(--brand-ink)" stroke-width="3" stroke-linecap="round"/><path d="M10 13.5h7" stroke="var(--mark)" stroke-width="2.4" stroke-linecap="round"/></svg>Workflow Detective</div>
+      <h1>Pilot console</h1>
+      <p class="sub">Load the results files participants send you. Files are read in this browser and never uploaded anywhere.</p>
+    </div>
+    <div class="actions">
+      <input type="file" id="files" accept=".json,application/json" multiple hidden>
+      <button class="btn primary" id="pick">Load participant files</button>
+      <button class="btn" id="clear" hidden>Clear</button>
+    </div>
+  </div>
+
+  <div class="banner" id="sampleBanner"><b>Sample data.</b> Six made-up people at three made-up companies, from simulated weeks (one on the Windows app, one on the Mac app). Load real results files to replace them.</div>
+  <div class="err" id="err" hidden></div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="grid2">
+    <section class="card">
+      <div class="card-h"><h2>Where the repeated work is</h2><span class="small muted">hours a week, all participants</span></div>
+      <div class="chart" id="chart"></div>
+    </section>
+    <section class="card">
+      <div class="card-h"><h2>Participants</h2><span class="small muted" id="pcount"></span></div>
+      <div class="tbl"><table class="people"><thead><tr><th>Person</th><th>Company</th><th class="num">Watch days</th><th class="num">Found / wk</th><th class="num">Findings</th><th class="num">Accurate</th></tr></thead><tbody id="people"></tbody></table></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="card-h">
+      <h2>Every finding</h2>
+      <div class="filters">
+        <label for="fCompany" class="small muted">Company</label><select id="fCompany"></select>
+        <label for="fType" class="small muted">Type</label><select id="fType"></select>
+        <label><input type="checkbox" id="fHideWrong" checked> Hide ones rated wrong</label>
+      </div>
+    </div>
+    <div class="tbl"><table class="findings"><thead><tr><th>Process</th><th>Type</th><th class="num">Time / wk</th><th>Confidence</th><th>How to automate</th><th>Participant says</th></tr></thead><tbody id="findings"></tbody></table></div>
+  </section>
+
+  <div class="foot">
+    <p><b>Accurate</b> is the share of rated findings the participant marked “Yes, I do this” or “Yes, and I hadn’t thought of automating it.” <b>New to them</b> is the share of accurate findings they hadn’t thought of automating. That’s the discovery the product exists for.</p>
+    <p><b>Time / wk</b> is projected from the watch days to a 5-day week, using the time between the first and last step each time. It leaves out reading and thinking time, so it runs low. Results files that include the activity log are re-analyzed with this console’s detector (v<span id="dver"></span>).</p>
+  </div>
+</div>
+<div class="drop" id="drop" hidden>Drop results files to load them</div>
+
+<script>/*
+ * Workflow Detective — pattern detection engine
+ *
+ * Input: an array of activity events captured by the extension, e.g.
+ *   { t: 1759900000000, type: "copy", app: "Gmail", page: "/mail/#inbox/:id", title: "Payment received from #", d: { kind: "number" } }
+ *
+ * Event types: view, copy, paste, entry, submit, click, download, upload, away
+ *
+ * Output: { version, summary, findings[] } — every finding is written in plain English and
+ * carries its evidence (occurrences), a time estimate, and a suggested way to automate it.
+ *
+ * Runs in the browser (window.WDDetector) and in Node (module.exports). No dependencies.
+ */
+(function (root) {
+  "use strict";
+  const VERSION = "0.1.0";
+  const MIN = 60000;
+
+  const EMAIL_APPS = new Set(["Gmail", "Outlook", "Apple Mail"]);
+  // Chat is communication, not a process: typing or pasting into it is never flagged on its own.
+  const COMM_APPS = new Set(["Slack", "Microsoft Teams", "Google Chat", "Discord", "WhatsApp", "Zoom", "Messenger", "Messages"]);
+  const WRITING_LABEL = /reply|message|body|comment|note|description|response|post/i;
+  // In a spreadsheet, editing cells *is* the work. It only counts as a process when the data comes from another app.
+  const SHEET_APPS = new Set(["Excel", "Excel Online", "Google Sheets", "Numbers"]);
+  const DOC_HINT = /\.pdf\b|invoice|receipt|statement|order|purchase order|\bpo\b|bill|quote|application|resume|cv\b/i;
+  const SEARCH_LABEL = /^(search|find|filter|search mail|search\b.*|query|q)$/i;
+
+  /* ---------- small helpers ---------- */
+  function dayKey(t) {
+    const d = new Date(t);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function minuteOfDay(t) { const d = new Date(t); return d.getHours() * 60 + d.getMinutes(); }
+  function median(a) {
+    if (!a.length) return 0;
+    const s = [...a].sort((x, y) => x - y), m = s.length >> 1;
+    return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+  }
+  function stdev(a) {
+    if (a.length < 2) return 0;
+    const mu = a.reduce((s, x) => s + x, 0) / a.length;
+    return Math.sqrt(a.reduce((s, x) => s + (x - mu) ** 2, 0) / (a.length - 1));
+  }
+  function counts(arr) {
+    const c = new Map();
+    for (const x of arr) if (x != null && x !== "") c.set(x, (c.get(x) || 0) + 1);
+    return [...c.entries()].sort((a, b) => b[1] - a[1]);
+  }
+  function mode(arr) { const c = counts(arr); return c.length ? c[0][0] : null; }
+  function distinctDays(occ) { return new Set(occ.map(o => dayKey(o.t0))).size; }
+  function list(words) {
+    const w = words.filter(Boolean);
+    if (w.length <= 1) return w.join("");
+    if (w.length === 2) return w[0] + " and " + w[1];
+    return w.slice(0, -1).join(", ") + ", and " + w[w.length - 1];
+  }
+  function plural(n, one, many) { return n === 1 ? one : (many || one + "s"); }
+  function clockLabel(mins) {
+    let h = Math.floor(mins / 60), m = Math.round(mins % 60);
+    if (m === 60) { h += 1; m = 0; }
+    const ap = h >= 12 ? "pm" : "am", hh = ((h + 11) % 12) + 1;
+    return hh + ":" + String(m).padStart(2, "0") + " " + ap;
+  }
+  function overlaps(a, b) { return a.t0 <= b.t1 && b.t0 <= a.t1; }
+  /** Drop the trailing " - Google Sheets" / " | Greenhouse" style app suffix from a page title. */
+  function short(title, app) {
+    if (!title) return title;
+    const word = String(app || "").split(" ").pop().toLowerCase();
+    let parts = title.split(/\s+[-–|·:]\s+/);
+    while (parts.length > 1 && (parts[parts.length - 1].toLowerCase().includes(word) || /^google( \w+)?$/i.test(parts[parts.length - 1]))) parts.pop();
+    return parts.join(" · ");
+  }
+
+  /* ---------- sessions & time accounting ---------- */
+  function splitSessions(ev, gapMin) {
+    const out = []; let cur = [];
+    for (const e of ev) {
+      const prev = cur[cur.length - 1];
+      if (e.type === "away" || (prev && e.t - prev.t > gapMin * MIN)) {
+        if (cur.length) out.push(cur);
+        cur = e.type === "away" ? [] : [e];
+      } else cur.push(e);
+    }
+    if (cur.length) out.push(cur);
+    return out;
+  }
+  function timeByApp(sessions) {
+    const per = new Map(); let total = 0;
+    for (const s of sessions) {
+      let app = null;
+      for (let i = 0; i < s.length; i++) {
+        if (s[i].app) app = s[i].app;
+        const next = s[i + 1];
+        if (!next || !app) continue;
+        const gap = Math.min(next.t - s[i].t, 5 * MIN);
+        per.set(app, (per.get(app) || 0) + gap); total += gap;
+      }
+    }
+    return { total, apps: [...per.entries()].sort((a, b) => b[1] - a[1]).map(([app, ms]) => ({ app, minutes: Math.round(ms / MIN) })) };
+  }
+
+  /* ---------- detector 1: copy in one app, paste into another ---------- */
+  function detectTransfers(ev) {
+    const pairs = []; let lastCopy = null;
+    for (const e of ev) {
+      if (e.type === "copy") lastCopy = e;
+      else if (e.type === "paste" && lastCopy && e.app && lastCopy.app && e.app !== lastCopy.app && !COMM_APPS.has(e.app) && e.t - lastCopy.t <= 5 * MIN) {
+        pairs.push({ from: lastCopy.app, to: e.app, t0: lastCopy.t, t1: e.t, kind: (e.d && e.d.kind !== "unknown" && e.d.kind) || (lastCopy.d && lastCopy.d.kind) || "unknown", field: e.d && e.d.field, srcTitle: lastCopy.title, dstTitle: e.title });
+      }
+    }
+    const byKey = new Map();
+    for (const p of pairs) { const k = p.from + "→" + p.to; if (!byKey.has(k)) byKey.set(k, []); byKey.get(k).push(p); }
+    const out = [];
+    for (const [k, ps] of byKey) {
+      ps.sort((a, b) => a.t0 - b.t0);
+      const bursts = [];
+      for (const p of ps) {
+        const b = bursts[bursts.length - 1];
+        if (b && p.t0 - b.t1 <= 3 * MIN) { b.items.push(p); b.t1 = Math.max(b.t1, p.t1); }
+        else bursts.push({ t0: p.t0, t1: p.t1, items: [p] });
+      }
+      const n = bursts.length, days = distinctDays(bursts);
+      if (!(n >= 5 || (n >= 3 && days >= 2))) continue;
+      const [from, to] = k.split("→");
+      const fields = median(bursts.map(b => b.items.length));
+      const kinds = counts(ps.map(p => p.kind).filter(x => x && x !== "unknown")).slice(0, 3).map(x => kindWord(x[0]));
+      const labels = counts(ps.map(p => p.field).filter(f => f && f !== "[sensitive]")).slice(0, 4).map(x => x[0]);
+      const srcTitle = short(mode(ps.map(p => p.srcTitle)), from), dstTitle = short(mode(ps.map(p => p.dstTitle)), to);
+      const fromDoc = EMAIL_APPS.has(from) || DOC_HINT.test(srcTitle || "");
+      out.push({
+        type: "transfer", key: "transfer|" + from + "|" + to, apps: [from, to],
+        title: "Copying information from " + from + " into " + to,
+        detail: "Usually " + Math.round(fields) + " " + plural(Math.round(fields), "piece") + " of information at a time" +
+          (kinds.length ? " (mostly " + list(kinds) + ")" : "") + (labels.length ? ", into fields like " + list(labels.map(q)) : "") + ".",
+        context: { from: srcTitle, to: dstTitle, fieldsEach: Math.round(fields) },
+        occurrences: bursts.map(b => ({ t0: b.t0, t1: b.t1, note: b.items.length + " " + plural(b.items.length, "paste") + (b.items[0].srcTitle ? " · from “" + short(b.items[0].srcTitle, from) + "”" : "") })),
+        minutesEach: Math.max(0.5, median(bursts.map(b => (b.t1 - b.t0) / MIN)) + 0.25),
+        base: fromDoc ? 88 : 85,
+        automation: fromDoc ? {
+          method: "AI reads it, then an automation fills it in",
+          how: "Each time a new " + (EMAIL_APPS.has(from) ? "email like this" : "item like this") + " shows up in " + from + ", AI picks out the " + (labels.length ? list(labels.map(x => x.toLowerCase())) : "details") + " and an automation adds them to " + to + ".",
+          ai: true, why: "Reading a message and picking out the right details used to need a person. AI can now do this reliably, and you review anything it isn’t sure about."
+        } : {
+          method: "Connect the two apps",
+          how: "An integration (Zapier, Make, or a built-in connector) copies these fields from " + from + " to " + to + " the moment they change.",
+          ai: false
+        }
+      });
+    }
+    return out;
+  }
+  function kindWord(k) { return ({ number: "numbers and amounts", text: "short text", email: "email addresses", date: "dates", link: "links", table: "rows of cells", "long text": "paragraphs", cells: "cells" })[k] || k; }
+  function q(s) { return "“" + s + "”"; }
+
+  /* ---------- detector 2: filling in the same form again and again ---------- */
+  function detectEntry(ev) {
+    const groups = new Map();
+    const lastViewByIdx = [];
+    let lastView = null, prevApp = null, prevAppT = 0;
+    for (const e of ev) {
+      if (e.type === "view") {
+        if (lastView && lastView.app !== e.app) { prevApp = lastView.app; prevAppT = e.t; }
+        lastView = e;
+      }
+      if (e.type !== "entry" || !e.app || COMM_APPS.has(e.app)) continue;
+      const labels = (e.d && e.d.labels) || [];
+      if (labels.length && labels.every(l => SEARCH_LABEL.test(l))) continue; // searching, not data entry
+      const k = e.app + "|" + (e.page || "");
+      if (!groups.has(k)) groups.set(k, []);
+      groups.get(k).push({ e, src: prevApp && e.t - prevAppT < 10 * MIN ? prevApp : null, viewT: lastView && lastView.app === e.app ? lastView.t : e.t });
+    }
+    const out = [];
+    for (const [k, items] of groups) {
+      const occ = [];
+      for (const it of items) {
+        const o = occ[occ.length - 1];
+        if (o && it.e.t - o.t1 <= 3 * MIN) { o.t1 = it.e.t; (it.e.d.labels || []).forEach(l => o.labels.add(l)); o.n += it.e.d.n || 0; }
+        else occ.push({ t0: Math.max(it.viewT, it.e.t - 5 * MIN), t1: it.e.t, labels: new Set(it.e.d.labels || []), n: it.e.d.n || 0, src: it.src, title: it.e.title });
+      }
+      const n = occ.length, days = distinctDays(occ);
+      if (!(n >= 4 && days >= 2)) continue;
+      const [app, page] = k.split("|");
+      const lab = counts(occ.flatMap(o => [...o.labels])).filter(([l, c]) => c >= n * 0.5 && l !== "[sensitive]").map(x => x[0]);
+      const fieldsEach = Math.round(median(occ.map(o => Math.max(o.n, o.labels.size))));
+      const srcs = counts(occ.map(o => o.src).filter(Boolean));
+      const src = srcs.length && srcs[0][1] >= n * 0.5 ? srcs[0][0] : null;
+      const title = short(mode(occ.map(o => o.title)), app);
+      const consistent = lab.length >= 2;
+      if (SHEET_APPS.has(app) && !src) continue;
+      const isEmail = EMAIL_APPS.has(app);
+      if (isEmail || (fieldsEach <= 2 && lab.some(l => WRITING_LABEL.test(l)))) {
+        const what = isEmail ? "emails" : "replies";
+        out.push({
+          type: "drafting", key: "drafting|" + app + "|" + page, apps: src && !isEmail ? [src, app] : [app],
+          title: "Writing similar " + what + " in " + app + (!isEmail && title ? " (" + q(title) + ")" : ""),
+          detail: "You wrote " + n + " " + what + " like this. Ones that follow a pattern can start from an AI draft.",
+          occurrences: occ.map(o => ({ t0: o.t0, t1: o.t1, note: (o.labels.size ? [...o.labels].slice(0, 3).join(", ") : "email") })),
+          minutesEach: Math.max(1, median(occ.map(o => (o.t1 - o.t0) / MIN)) + 0.5),
+          base: 45,
+          automation: { method: "AI drafts, you send", how: "AI writes a first draft in your usual wording, filling in the facts from your other apps. You read it and press send.", ai: true, why: "AI is good at first drafts that follow a pattern. You keep the final say because these go to people." }
+        });
+        continue;
+      }
+      out.push({
+        type: "entry", key: "entry|" + app + "|" + page, apps: src ? [src, app] : [app],
+        title: (src ? "Typing details from " + src + " into " + app : "Filling in the same form in " + app) + (title ? " (" + q(title) + ")" : ""),
+        detail: "About " + fieldsEach + " " + plural(fieldsEach, "field") + " each time" + (lab.length ? ": " + list(lab.slice(0, 6)) : "") + "." + (src ? " You usually look at " + src + " right before." : ""),
+        context: { page, title, source: src, fields: lab },
+        occurrences: occ.map(o => ({ t0: o.t0, t1: o.t1, note: (o.n || o.labels.size) + " fields" + (o.src ? " · after " + o.src : "") })),
+        minutesEach: Math.max(0.75, median(occ.map(o => (o.t1 - o.t0) / MIN)) + 0.25),
+        base: 70 + (consistent ? 6 : 0) + (src ? 6 : 0),
+        automation: src ? (EMAIL_APPS.has(src) || DOC_HINT.test(title || "") ? {
+          method: "AI fills in the form for you",
+          how: "AI reads what you were looking at in " + src + ", fills in " + (lab.length ? list(lab.slice(0, 4).map(x => x.toLowerCase())) : "the form") + " in " + app + ", and leaves it for you to check and save.",
+          ai: true, why: "Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."
+        } : {
+          method: "Send the data over automatically",
+          how: "The details you copy by eye from " + src + " can flow into " + app + " automatically, so the form is already filled in when you open it.",
+          ai: false
+        }) : {
+          method: "Templates or auto-fill",
+          how: "Most of these fields are the same every time. A saved template or an auto-fill rule in " + app + " fills them in, so you only type what actually changes.",
+          ai: false
+        }
+      });
+    }
+    return out;
+  }
+
+  /* ---------- detector 3 & 4: downloading files and uploading them elsewhere / regular exports ---------- */
+  function detectFiles(ev) {
+    const downloads = ev.filter(e => e.type === "download" && e.app);
+    const uploads = ev.filter(e => e.type === "upload" && e.app);
+    const used = new Set(); const shuttles = new Map();
+    for (const dl of downloads) {
+      const up = uploads.find(u => u.t > dl.t && u.t - dl.t <= 30 * MIN && u.app !== dl.app && (!u.d.ext || !dl.d.ext || u.d.ext === dl.d.ext));
+      if (!up) continue;
+      used.add(dl);
+      const k = dl.app + "→" + up.app + "|" + (dl.d.ext || "");
+      if (!shuttles.has(k)) shuttles.set(k, []);
+      shuttles.get(k).push({ t0: dl.t, t1: up.t, title: dl.title, ext: dl.d.ext });
+    }
+    const out = [];
+    for (const [k, occ] of shuttles) {
+      const n = occ.length, days = distinctDays(occ);
+      if (!(n >= 3 && days >= 2)) continue;
+      const [route, ext] = k.split("|"); const [from, to] = route.split("→");
+      out.push({
+        type: "shuttle", key: "shuttle|" + from + "|" + to + "|" + ext, apps: [from, to],
+        title: "Downloading " + (ext ? "." + ext + " " : "") + "files from " + from + " and uploading them to " + to,
+        detail: "The same download-then-upload, " + n + " times.",
+        context: { from, to, ext },
+        occurrences: occ.map(o => ({ t0: o.t0, t1: o.t1, note: (o.ext ? "." + o.ext : "file") + (o.title ? " · " + q(short(o.title, from)) : "") })),
+        minutesEach: Math.max(1, Math.min(15, median(occ.map(o => (o.t1 - o.t0) / MIN)) + 0.5)),
+        base: 82,
+        automation: { method: "Sync the file automatically", how: "An automation pulls the file from " + from + " and puts it in " + to + " on a schedule or as soon as it’s ready. No downloading.", ai: false }
+      });
+    }
+    const exp = new Map();
+    for (const dl of downloads) {
+      if (used.has(dl)) continue;
+      const k = dl.app + "|" + (dl.d.ext || "");
+      if (!exp.has(k)) exp.set(k, []);
+      exp.get(k).push({ t0: dl.t, t1: dl.t, title: dl.title, ext: dl.d.ext });
+    }
+    for (const [k, occ] of exp) {
+      const n = occ.length, days = distinctDays(occ);
+      if (!(n >= 3 && days >= 2)) continue;
+      const [app, ext] = k.split("|");
+      out.push({
+        type: "export", key: "export|" + app + "|" + ext, apps: [app],
+        title: "Exporting " + (ext ? "." + ext + " " : "") + "files from " + app,
+        detail: "You downloaded the same kind of file " + n + " times. Reports like this can usually be sent or refreshed automatically.",
+        occurrences: occ.map(o => ({ t0: o.t0, t1: o.t1, note: (o.ext ? "." + o.ext : "file") + (o.title ? " · " + q(o.title) : "") })),
+        minutesEach: 3, base: 72,
+        automation: { method: "Scheduled report", how: "Set " + app + " (or an automation) to produce this file on a schedule and send it where it goes next.", ai: false }
+      });
+    }
+    return out;
+  }
+
+  /* ---------- detector 5: flipping back and forth between two apps ---------- */
+  function detectLookups(sessions) {
+    const eps = new Map();
+    for (const s of sessions) {
+      const v = [];
+      for (const e of s) if (e.type === "view" && e.app && (!v.length || v[v.length - 1].app !== e.app)) v.push(e);
+      let i = 0;
+      while (i < v.length - 1) {
+        const A = v[i].app, B = v[i + 1].app; let j = i + 1;
+        while (j < v.length && (v[j].app === A || v[j].app === B) && v[j].app !== v[j - 1].app && v[j].t - v[j - 1].t < 90000) j++;
+        const switches = j - 1 - i;
+        const busy = switches >= 6 ? s.filter(e => e.t >= v[i].t && e.t <= v[j - 1].t && (e.type === "copy" || e.type === "paste" || e.type === "entry")).length : 0;
+        if (switches >= 6 && busy < 2) {
+          const pair = [A, B].sort(); const k = pair.join("|");
+          if (!eps.has(k)) eps.set(k, []);
+          eps.get(k).push({ t0: v[i].t, t1: v[j - 1].t + 30000, switches, titleA: v[i].title, titleB: v[i + 1].title });
+          i = j - 1;
+        } else i++;
+      }
+    }
+    const out = [];
+    for (const [k, occ] of eps) {
+      const n = occ.length, days = distinctDays(occ);
+      if (!(n >= 3 && days >= 2)) continue;
+      const [A, B] = k.split("|");
+      out.push({
+        type: "lookup", key: "lookup|" + k, apps: [A, B],
+        title: "Switching back and forth between " + A + " and " + B,
+        detail: "About " + Math.round(median(occ.map(o => o.switches))) + " switches each time, a few seconds per look. This usually means checking or matching information by eye.",
+        occurrences: occ.map(o => ({ t0: o.t0, t1: o.t1, note: o.switches + " switches" })),
+        minutesEach: Math.max(1, median(occ.map(o => (o.t1 - o.t0) / MIN))),
+        base: 58,
+        automation: { method: "Match it automatically", how: "If you’re checking that " + A + " and " + B + " agree, an automation can compare them and only show you the rows that don’t match. If you’re looking things up, the data can be pulled into one place.", ai: false }
+      });
+    }
+    return out;
+  }
+
+  /* ---------- detector 6: multi-step routines (frequent step sequences) ---------- */
+  function token(e) {
+    if (e.type !== "view" && COMM_APPS.has(e.app)) return null;
+    if (e.type === "entry" && (e.d.labels || []).length && e.d.labels.every(l => SEARCH_LABEL.test(l))) return null;
+    switch (e.type) {
+      case "view": return "Open " + e.app;
+      case "copy": return "Copy from " + e.app;
+      case "paste": return "Paste into " + e.app;
+      case "entry": return "Fill in fields in " + e.app;
+      case "submit": return "Submit in " + e.app;
+      case "click": return e.d && e.d.label ? "Click “" + e.d.label + "” in " + e.app : null;
+      case "download": return "Download " + (e.d.ext ? "." + e.d.ext : "a file") + " from " + e.app;
+      case "upload": return "Upload " + (e.d.ext ? "." + e.d.ext : "a file") + " to " + e.app;
+      default: return null;
+    }
+  }
+  function detectRoutines(sessions, observedDays) {
+    const seqs = sessions.map(s => {
+      const out = [];
+      for (const e of s) {
+        if (!e.app) continue;
+        const tk = token(e); if (!tk) continue;
+        if (out.length && out[out.length - 1].tk === tk) { out[out.length - 1].t1 = e.t; continue; }
+        out.push({ tk, t0: e.t, t1: e.t, app: e.app });
+      }
+      return out;
+    });
+    const grams = new Map();
+    seqs.forEach((seq, si) => {
+      for (let L = 3; L <= 8; L++) {
+        const lastEnd = new Map();
+        for (let i = 0; i + L <= seq.length; i++) {
+          const g = seq.slice(i, i + L).map(x => x.tk).join(" ▸ ");
+          if ((lastEnd.get(g) ?? -1) >= i) continue; // non-overlapping within a session
+          lastEnd.set(g, i + L - 1);
+          if (!grams.has(g)) grams.set(g, { L, steps: seq.slice(i, i + L).map(x => x.tk), occ: [] });
+          grams.get(g).occ.push({ t0: seq[i].t0, t1: seq[i + L - 1].t1, si });
+        }
+      }
+    });
+    let cand = [...grams.values()].filter(g => {
+      const apps = new Set(g.steps.map(s => s.replace(/^.* (?:in|from|into|to) /, "").replace(/^Open /, "")));
+      const actions = g.steps.filter(s => !s.startsWith("Open ")).length;
+      const productive = g.steps.filter(s => /^(Paste into|Fill in fields|Submit in|Download|Upload|Click)/.test(s)).length;
+      return g.occ.length >= 3 && distinctDays(g.occ) >= Math.min(2, observedDays) && apps.size >= 2 && actions >= 2 && productive >= 1;
+    });
+    cand.sort((a, b) => b.L - a.L || b.occ.length - a.occ.length);
+    const kept = [];
+    for (const g of cand) {
+      const key = " ▸ " + g.steps.join(" ▸ ") + " ▸ ";
+      if (kept.some(h => (" ▸ " + h.steps.join(" ▸ ") + " ▸ ").includes(key) && h.occ.length >= g.occ.length * 0.75)) continue;
+      kept.push(g);
+    }
+    kept.sort((a, b) => b.occ.length * b.L - a.occ.length * a.L);
+    return kept.slice(0, 8).map(g => {
+      const apps = [...new Set(g.steps.map(s => s.replace(/^.* (?:in|from|into|to) /, "").replace(/^Open /, "")))];
+      return {
+        type: "routine", key: "routine|" + g.steps.join("|"), apps,
+        title: "A " + g.L + "-step routine across " + list(apps),
+        detail: "You did these same steps in the same order " + g.occ.length + " times.",
+        steps: g.steps,
+        occurrences: g.occ.map(o => ({ t0: o.t0, t1: o.t1, note: g.L + " steps" })),
+        minutesEach: Math.max(0.5, median(g.occ.map(o => (o.t1 - o.t0) / MIN))),
+        base: 62,
+        automation: { method: "One workflow runs the steps", how: "A workflow automation can run these steps in order, starting from the first one. You only step in where a decision is needed.", ai: false }
+      };
+    });
+  }
+
+  /* ---------- finishing: rates, regularity, confidence, ranking ---------- */
+  function finalize(f, observedDays, workdaysPerWeek) {
+    const occ = f.occurrences.sort((a, b) => a.t0 - b.t0);
+    const n = occ.length, days = distinctDays(occ);
+    const perDay = n / observedDays;
+    const weeklyMinutes = perDay * workdaysPerWeek * f.minutesEach;
+    const firstByDay = new Map();
+    occ.forEach(o => { const k = dayKey(o.t0); if (!firstByDay.has(k)) firstByDay.set(k, minuteOfDay(o.t0)); });
+    const firsts = [...firstByDay.values()];
+    const regular = firsts.length >= 3 && stdev(firsts) <= 45 && perDay <= 2.5 ? { around: clockLabel(median(firsts)) } : null;
+    const confidence = n >= 8 && days >= 3 ? "high" : n >= 4 && days >= 2 ? "medium" : "low";
+    const score = Math.min(97, f.base + (regular ? 5 : 0) + (confidence === "high" ? 3 : confidence === "low" ? -8 : 0));
+    const out = Object.assign({}, f, {
+      count: n, days, perDay: +perDay.toFixed(2), minutesEach: +f.minutesEach.toFixed(1),
+      weeklyMinutes: Math.round(weeklyMinutes), regular, confidence, automatability: score,
+      rank: weeklyMinutes * score / 100,
+      when: regular ? "Usually around " + regular.around + (days >= observedDays ? " every day we watched" : "") + "." : null
+    });
+    if (regular && (f.type === "export" || f.type === "shuttle" || f.type === "routine")) {
+      out.automation = Object.assign({}, out.automation, { how: out.automation.how + " It happens around " + regular.around + ", so it can run on a schedule before you start." });
+    }
+    delete out.base;
+    return out;
+  }
+
+  /** One real-world process often trips two detectors (e.g. download a resume + type the candidate in). Fold them into one finding. */
+  function mergeSameProcess(findings) {
+    const rankOf = { entry: 3, transfer: 2, shuttle: 1, drafting: 0.5 };
+    const pool = findings.slice().sort((a, b) => (rankOf[b.type] || 0) - (rankOf[a.type] || 0));
+    const absorbed = new Set(), out = [];
+    const near = p => ({ t0: p.t0 - 2 * MIN, t1: p.t1 + 2 * MIN });
+    for (const f of pool) {
+      if (absorbed.has(f)) continue;
+      if (rankOf[f.type]) for (const g of pool) {
+        if (g === f || absorbed.has(g) || !rankOf[g.type] || rankOf[g.type] >= rankOf[f.type]) continue;
+        if (!g.apps.every(a => f.apps.includes(a))) continue;
+        const frac = g.occurrences.filter(o => f.occurrences.some(p => overlaps(o, near(p)))).length / g.occurrences.length;
+        if (frac < 0.6) continue;
+        absorbed.add(g);
+        f.occurrences = f.occurrences.map(p => {
+          const hits = g.occurrences.filter(o => overlaps(o, near(p)));
+          if (!hits.length) return p;
+          return { t0: Math.min(p.t0, ...hits.map(h => h.t0)), t1: Math.max(p.t1, ...hits.map(h => h.t1)), note: p.note + " · " + hits[0].note };
+        });
+        f.minutesEach = Math.max(f.minutesEach, median(f.occurrences.map(o => (o.t1 - o.t0) / MIN)) + 0.25);
+        f.detail += g.type === "shuttle" ? " It also includes downloading a " + (g.context.ext ? "." + g.context.ext + " " : "") + "file from " + g.context.from + " and uploading it to " + g.context.to + "."
+          : g.type === "drafting" ? " Each time, you also write a similar message in " + g.apps[0] + "."
+          : " It also includes copying and pasting from " + g.apps[0] + " into " + g.apps[1] + ".";
+        if (f.type === "entry" && g.type === "transfer") f.title = f.title.replace(/^Typing details/, "Copying details");
+        f.base = Math.max(f.base, g.base);
+        f.merged = (f.merged || []).concat(g.key);
+      }
+      out.push(f);
+    }
+    return out;
+  }
+
+  /** Trim lead-in/lead-out "Open X" steps for unrelated apps, and fold a repeated cycle (copy▸paste ×3) into one pass. */
+  function tidySteps(steps, apps) {
+    let st = steps.slice();
+    const unrelated = s => s.startsWith("Open ") && !apps.includes(s.slice(5));
+    while (st.length && unrelated(st[0])) st.shift();
+    while (st.length && unrelated(st[st.length - 1])) st.pop();
+    for (let k = 2; k <= st.length / 2; k++) {
+      if (st.length % k) continue;
+      if (st.every((x, i) => x === st[i % k])) return st.slice(0, k).concat(["Repeat for each piece of information"]);
+    }
+    return st;
+  }
+
+  function attachRoutines(findings, routines) {
+    const standalone = [];
+    for (const r of routines) {
+      let best = null, bestFrac = 0;
+      for (const f of findings) {
+        if (!r.apps.every(a => f.apps.includes(a)) && !f.apps.every(a => r.apps.includes(a))) continue;
+        const frac = r.occurrences.filter(o => f.occurrences.some(p => overlaps(o, p))).length / r.occurrences.length;
+        if (frac > bestFrac) { bestFrac = frac; best = f; }
+      }
+      if (best && bestFrac >= 0.5) { const st = tidySteps(r.steps, best.apps); if (!best.steps || best.steps.length < st.length) best.steps = st; }
+      else standalone.push(r);
+    }
+    return standalone;
+  }
+
+  function analyze(events, opts) {
+    opts = opts || {};
+    const workdaysPerWeek = opts.workdaysPerWeek || 5;
+    const ev = (events || []).filter(e => e && e.t && e.type).slice().sort((a, b) => a.t - b.t).map(e => Object.assign({ d: {} }, e, { d: e.d || {} }));
+    const days = [...new Set(ev.filter(e => e.type !== "away").map(e => dayKey(e.t)))].sort();
+    const observedDays = Math.max(1, days.length);
+    const sessions = splitSessions(ev, opts.sessionGapMin || 10);
+    const time = timeByApp(sessions);
+
+    let base = mergeSameProcess([...detectTransfers(ev), ...detectEntry(ev), ...detectFiles(ev), ...detectLookups(sessions)]);
+    const routines = detectRoutines(sessions, observedDays);
+    const standalone = attachRoutines(base, routines);
+    // keep only routines that add something new
+    base = base.concat(standalone.slice(0, 4));
+
+    const findings = base.map(f => finalize(f, observedDays, workdaysPerWeek))
+      .filter(f => f.weeklyMinutes >= (opts.minWeeklyMinutes ?? 5))
+      .sort((a, b) => b.rank - a.rank);
+
+    const automatableMinutes = findings.reduce((s, f) => s + f.weeklyMinutes * (f.automatability >= 60 ? 1 : 0), 0);
+    return {
+      version: VERSION,
+      generatedAt: new Date().toISOString(),
+      summary: {
+        events: ev.length, days, observedDays,
+        activeMinutes: Math.round(time.total / MIN),
+        activeMinutesPerDay: Math.round(time.total / MIN / observedDays),
+        timeByApp: time.apps.slice(0, 12),
+        findings: findings.length,
+        automatableWeeklyMinutes: automatableMinutes
+      },
+      findings
+    };
+  }
+
+  /** Plain-text brief for one finding — pasteable into an AI assistant or a consultant's notes. Contains no raw activity. */
+  function brief(f, who) {
+    const lines = [];
+    lines.push("PROCESS: " + f.title);
+    if (who) lines.push("WHO: " + who);
+    lines.push("WHAT WE SAW: " + f.detail + " Seen " + f.count + " times over " + f.days + " " + plural(f.days, "day") + " (about " + f.minutesEach + " min each, ≈" + fmtMin(f.weeklyMinutes) + " a week)." + (f.when ? " " + f.when : ""));
+    if (f.steps) lines.push("STEPS: " + f.steps.map((s, i) => (i + 1) + ". " + s).join("  "));
+    lines.push("APPS: " + f.apps.join(", "));
+    lines.push("SUGGESTED APPROACH: " + f.automation.method + ". " + f.automation.how);
+    if (f.automation.ai) lines.push("WHY AI HELPS: " + f.automation.why);
+    lines.push("CONFIDENCE: " + f.confidence + " · automatability " + f.automatability + "/100");
+    return lines.join("\n");
+  }
+  function fmtMin(m) { m = Math.round(m); const h = Math.floor(m / 60), r = m % 60; return h ? h + "h " + r + "m" : r + "m"; }
+
+  const api = { VERSION, analyze, brief, fmtMin, dayKey };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  root.WDDetector = api;
+})(typeof globalThis !== "undefined" ? globalThis : this);
+</script>
+<script>
+const SAMPLES = [{"schema":"workflow-detective/bundle@1","sample":true,"exportedAt":"2026-10-23T16:00:00.000Z","extensionVersion":"0.1.0","detectorVersion":"0.1.0","participant":"Dana R.","company":"NORTHLINE (sample)","study":{"startDate":"2026-10-12","weeks":2,"scheduleMode":"rotate","hours":[8,18],"watchDaysTotal":6,"watchDaysDone":6},"summary":{"events":1839,"days":["2026-10-12","2026-10-14","2026-10-16","2026-10-20","2026-10-21","2026-10-22"],"observedDays":6,"activeMinutes":2335,"activeMinutesPerDay":389,"timeByApp":[{"app":"Slack","minutes":943},{"app":"Gmail","minutes":348},{"app":"Google Docs","minutes":305},{"app":"Google Calendar","minutes":275},{"app":"news.example.com","minutes":264},{"app":"Google Sheets","minutes":73},{"app":"QuickBooks","minutes":69},{"app":"HubSpot","minutes":28},{"app":"Salesforce","minutes":24},{"app":"Stripe","minutes":6}],"findings":4,"automatableWeeklyMinutes":102},"findings":[{"type":"entry","key":"entry|QuickBooks|/app/invoice","apps":["HubSpot","QuickBooks"],"title":"Typing details from HubSpot into QuickBooks (“Invoice”)","detail":"About 6 fields each time: Customer, Invoice date, Product/service, Qty, Rate, and Terms. You usually look at HubSpot right before.","context":{"page":"/app/invoice","title":"Invoice","source":"HubSpot","fields":["Customer","Invoice date","Product/service","Qty","Rate","Terms"]},"occurrences":[{"t0":1791823954894,"t1":1791824044595,"note":"6 fields · after HubSpot"},{"t0":1791833565371,"t1":1791833647262,"note":"6 fields · after HubSpot"},{"t0":1791836454088,"t1":1791836552977,"note":"6 fields · after HubSpot"},{"t0":1791995010899,"t1":1791995072762,"note":"6 fields · after HubSpot"},{"t0":1791995559702,"t1":1791995660710,"note":"6 fields · after HubSpot"},{"t0":1792011076816,"t1":1792011144627,"note":"6 fields · after HubSpot"},{"t0":1792011607376,"t1":1792011678447,"note":"6 fields · after HubSpot"},{"t0":1792169254724,"t1":1792169321623,"note":"6 fields · after HubSpot"},{"t0":1792169825017,"t1":1792169925113,"note":"6 fields · after HubSpot"},{"t0":1792176007551,"t1":1792176073598,"note":"6 fields · after HubSpot"},{"t0":1792181924091,"t1":1792182004662,"note":"6 fields · after HubSpot"},{"t0":1792512654693,"t1":1792512762160,"note":"6 fields · after HubSpot"},{"t0":1792518793281,"t1":1792518868203,"note":"6 fields · after HubSpot"},{"t0":1792520553469,"t1":1792520613713,"note":"6 fields · after HubSpot"},{"t0":1792525943471,"t1":1792526023677,"note":"6 fields · after HubSpot"},{"t0":1792527474752,"t1":1792527558766,"note":"6 fields · after HubSpot"},{"t0":1792599731061,"t1":1792599833992,"note":"6 fields · after HubSpot"},{"t0":1792602358483,"t1":1792602445813,"note":"6 fields · after HubSpot"},{"t0":1792606046663,"t1":1792606129561,"note":"6 fields · after HubSpot"},{"t0":1792609570971,"t1":1792609639169,"note":"6 fields · after HubSpot"},{"t0":1792615882685,"t1":1792615948016,"note":"6 fields · after HubSpot"},{"t0":1792691942820,"t1":1792692015085,"note":"6 fields · after HubSpot"},{"t0":1792693729988,"t1":1792693832564,"note":"6 fields · after HubSpot"},{"t0":1792699861937,"t1":1792699933823,"note":"6 fields · after HubSpot"}],"minutesEach":1.6,"automation":{"method":"AI fills in the form for you","how":"AI reads what you were looking at in HubSpot, fills in customer, invoice date, product/service, and qty in QuickBooks, and leaves it for you to check and save.","ai":true,"why":"Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."},"count":24,"days":6,"perDay":4,"weeklyMinutes":32,"regular":null,"confidence":"high","automatability":85,"rank":27.02674166666667,"when":null},{"type":"transfer","key":"transfer|Gmail|Google Sheets","apps":["Gmail","Google Sheets"],"title":"Copying information from Gmail into Google Sheets","detail":"Usually 3 pieces of information at a time (mostly numbers and amounts, short text, and dates).","context":{"from":"Payment received from Acme Co · Invoice #","to":"AR tracker #","fieldsEach":3},"occurrences":[{"t0":1791818791847,"t1":1791818840444,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1791821503505,"t1":1791821555150,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1791828363836,"t1":1791828418724,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1791828886859,"t1":1791828939916,"note":"3 pastes · from “Payment received from Brightline · Invoice #”"},{"t0":1791831799532,"t1":1791831846043,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1791833142467,"t1":1791833189807,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1791838575360,"t1":1791838627620,"note":"3 pastes · from “Payment received from Brightline · Invoice #”"},{"t0":1791987132810,"t1":1791987187878,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792001227779,"t1":1792001282973,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792005435859,"t1":1792005486586,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792014560200,"t1":1792014605515,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792014955766,"t1":1792015004022,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792162940076,"t1":1792162992782,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792174463137,"t1":1792174515865,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792179953298,"t1":1792180001138,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792185647471,"t1":1792185702189,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792505018418,"t1":1792505069744,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792518913771,"t1":1792519074036,"note":"6 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792525142030,"t1":1792525189737,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792532566713,"t1":1792532616000,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792533143303,"t1":1792533191339,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792592729527,"t1":1792592786197,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792597059191,"t1":1792597107756,"note":"3 pastes · from “Payment received from Brightline · Invoice #”"},{"t0":1792598056679,"t1":1792598107757,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792608920473,"t1":1792608969004,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792613724035,"t1":1792613770747,"note":"3 pastes · from “Payment received from Harbor Foods · Invoice #”"},{"t0":1792614995193,"t1":1792615043766,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792679341589,"t1":1792679386216,"note":"3 pastes · from “Payment received from Brightline · Invoice #”"},{"t0":1792688555739,"t1":1792688608692,"note":"3 pastes · from “Payment received from Harbor Foods · Invoice #”"},{"t0":1792692345125,"t1":1792692394333,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792696046246,"t1":1792696093712,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792696890636,"t1":1792696935199,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792703830952,"t1":1792703873305,"note":"3 pastes · from “Payment received from Harbor Foods · Invoice #”"}],"minutesEach":1.1,"automation":{"method":"AI reads it, then an automation fills it in","how":"Each time a new email like this shows up in Gmail, AI picks out the details and an automation adds them to Google Sheets.","ai":true,"why":"Reading a message and picking out the right details used to need a person. AI can now do this reliably, and you review anything it isn’t sure about."},"steps":["Open Gmail","Copy from Gmail","Open Google Sheets","Paste into Google Sheets","Repeat for each piece of information"],"count":33,"days":6,"perDay":5.5,"weeklyMinutes":29,"regular":null,"confidence":"high","automatability":91,"rank":26.780086666666666,"when":null},{"type":"lookup","key":"lookup|Google Sheets|Salesforce","apps":["Google Sheets","Salesforce"],"title":"Switching back and forth between Google Sheets and Salesforce","detail":"About 10 switches each time, a few seconds per look. This usually means checking or matching information by eye.","occurrences":[{"t0":1791833971750,"t1":1791834256832,"note":"8 switches"},{"t0":1792014600829,"t1":1792014934809,"note":"10 switches"},{"t0":1792182040187,"t1":1792182352843,"note":"8 switches"},{"t0":1792526236615,"t1":1792526661410,"note":"13 switches"},{"t0":1792528819811,"t1":1792529228558,"note":"12 switches"},{"t0":1792616953197,"t1":1792617278014,"note":"10 switches"},{"t0":1792698233089,"t1":1792698521668,"note":"7 switches"},{"t0":1792700823369,"t1":1792701151067,"note":"10 switches"}],"minutesEach":5.4,"automation":{"method":"Match it automatically","how":"If you’re checking that Google Sheets and Salesforce agree, an automation can compare them and only show you the rows that don’t match. If you’re looking things up, the data can be pulled into one place.","ai":false},"count":8,"days":6,"perDay":1.33,"weeklyMinutes":36,"regular":null,"confidence":"high","automatability":61,"rank":22.113008333333333,"when":null},{"type":"shuttle","key":"shuttle|Stripe|Google Sheets|csv","apps":["Stripe","Google Sheets"],"title":"Downloading .csv files from Stripe and uploading them to Google Sheets","detail":"The same download-then-upload, 6 times.","context":{"from":"Stripe","to":"Google Sheets","ext":"csv"},"occurrences":[{"t0":1791813695281,"t1":1791813726375,"note":".csv · “Payments”"},{"t0":1791986205654,"t1":1791986227598,"note":".csv · “Payments”"},{"t0":1792159033967,"t1":1792159063461,"note":".csv · “Payments”"},{"t0":1792504439009,"t1":1792504468197,"note":".csv · “Payments”"},{"t0":1792591538212,"t1":1792591570125,"note":".csv · “Payments”"},{"t0":1792677599341,"t1":1792677629992,"note":".csv · “Payments”"}],"minutesEach":1,"automation":{"method":"Sync the file automatically","how":"An automation pulls the file from Stripe and puts it in Google Sheets on a schedule or as soon as it’s ready. No downloading. It happens around 8:58 am, so it can run on a schedule before you start.","ai":false},"count":6,"days":6,"perDay":1,"weeklyMinutes":5,"regular":{"around":"8:58 am"},"confidence":"medium","automatability":87,"rank":4.35525625,"when":"Usually around 8:58 am every day we watched."}],"feedback":{"entry|QuickBooks|/app/invoice":{"rating":"new","at":1792771200000},"transfer|Gmail|Google Sheets":{"rating":"accurate","at":1792771200000},"lookup|Google Sheets|Salesforce":{"rating":"accurate","at":1792771200000},"shuttle|Stripe|Google Sheets|csv":{"rating":"accurate","at":1792771200000}}},{"schema":"workflow-detective/bundle@1","sample":true,"exportedAt":"2026-10-23T16:00:00.000Z","extensionVersion":"0.1.0","detectorVersion":"0.1.0","participant":"Priya S.","company":"NORTHLINE (sample)","study":{"startDate":"2026-10-12","weeks":2,"scheduleMode":"rotate","hours":[8,18],"watchDaysTotal":6,"watchDaysDone":6},"summary":{"events":1554,"days":["2026-10-12","2026-10-14","2026-10-16","2026-10-20","2026-10-21","2026-10-22"],"observedDays":6,"activeMinutes":2366,"activeMinutesPerDay":394,"timeByApp":[{"app":"Slack","minutes":839},{"app":"Google Calendar","minutes":420},{"app":"Google Docs","minutes":415},{"app":"Gmail","minutes":366},{"app":"news.example.com","minutes":266},{"app":"Greenhouse","minutes":60}],"findings":2,"automatableWeeklyMinutes":105},"findings":[{"type":"lookup","key":"lookup|Gmail|Google Calendar","apps":["Gmail","Google Calendar"],"title":"Switching back and forth between Gmail and Google Calendar","detail":"About 9 switches each time, a few seconds per look. This usually means checking or matching information by eye.","occurrences":[{"t0":1791822502579,"t1":1791822833218,"note":"11 switches"},{"t0":1791828261647,"t1":1791828467881,"note":"8 switches"},{"t0":1791829218636,"t1":1791829498513,"note":"11 switches"},{"t0":1791991722694,"t1":1791991981736,"note":"9 switches"},{"t0":1792003486755,"t1":1792003659750,"note":"6 switches"},{"t0":1792164309554,"t1":1792164569144,"note":"8 switches"},{"t0":1792176037803,"t1":1792176268848,"note":"9 switches"},{"t0":1792178210147,"t1":1792178451711,"note":"9 switches"},{"t0":1792511333700,"t1":1792511542322,"note":"7 switches"},{"t0":1792518571473,"t1":1792518912727,"note":"11 switches"},{"t0":1792519256786,"t1":1792519497126,"note":"9 switches"},{"t0":1792521088783,"t1":1792521412934,"note":"11 switches"},{"t0":1792604963797,"t1":1792605240057,"note":"11 switches"},{"t0":1792609849040,"t1":1792610107238,"note":"9 switches"},{"t0":1792686474480,"t1":1792686710614,"note":"8 switches"},{"t0":1792692376980,"t1":1792692608784,"note":"9 switches"},{"t0":1792696034146,"t1":1792696308284,"note":"10 switches"},{"t0":1792699704555,"t1":1792700072068,"note":"11 switches"}],"minutesEach":4.3,"automation":{"method":"Match it automatically","how":"If you’re checking that Gmail and Google Calendar agree, an automation can compare them and only show you the rows that don’t match. If you’re looking things up, the data can be pulled into one place.","ai":false},"count":18,"days":6,"perDay":3,"weeklyMinutes":65,"regular":null,"confidence":"high","automatability":61,"rank":39.43955,"when":null},{"type":"entry","key":"entry|Greenhouse|/people/new","apps":["Gmail","Greenhouse"],"title":"Typing details from Gmail into Greenhouse (“Add a Candidate”)","detail":"About 6 fields each time: First name, Last name, Email, Phone, Job, and Source. You usually look at Gmail right before. It also includes downloading a .pdf file from Gmail and uploading it to Greenhouse.","context":{"page":"/people/new","title":"Add a Candidate","source":"Gmail","fields":["First name","Last name","Email","Phone","Job","Source"]},"occurrences":[{"t0":1791828135301,"t1":1791828241133,"note":"6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"},{"t0":1791831368525,"t1":1791831488084,"note":"6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"},{"t0":1791838310902,"t1":1791838435846,"note":"6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"},{"t0":1791988837964,"t1":1791988937095,"note":"6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"},{"t0":1791994587369,"t1":1791994663901,"note":"6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"},{"t0":1791995479399,"t1":1791995588909,"note":"6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"},{"t0":1792000114417,"t1":1792000231656,"note":"6 fields · after Gmail · .pdf · “Application: Driver · resume.pdf”"},{"t0":1792003127674,"t1":1792003266652,"note":"6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"},{"t0":1792164681031,"t1":1792164775323,"note":"6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"},{"t0":1792169545330,"t1":1792169785461,"note":"12 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"},{"t0":1792174409388,"t1":1792174489802,"note":"6 fields · after Gmail · .pdf · “Application: Driver · resume.pdf”"},{"t0":1792179259170,"t1":1792179337039,"note":"6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"},{"t0":1792510219703,"t1":1792510300322,"note":"6 fields · after Gmail · .pdf · “Application: Driver · resume.pdf”"},{"t0":1792513279682,"t1":1792513362053,"note":"6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"},{"t0":1792518936984,"t1":1792519060229,"note":"6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"},{"t0":1792523996053,"t1":1792524117116,"note":"6 fields · after Gmail · .pdf · “Application: Driver · resume.pdf”"},{"t0":1792526917969,"t1":1792527008394,"note":"6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"},{"t0":1792527673809,"t1":1792527785991,"note":"6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"},{"t0":1792592155986,"t1":1792592274610,"note":"6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"},{"t0":1792605256457,"t1":1792605350656,"note":"6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"},{"t0":1792609735241,"t1":1792609824583,"note":"6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"},{"t0":1792687659227,"t1":1792687743252,"note":"6 fields · after Gmail · .pdf · “Application: Driver · resume.pdf”"},{"t0":1792692656453,"t1":1792692742985,"note":"6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"},{"t0":1792694555583,"t1":1792694650228,"note":"6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"},{"t0":1792695541453,"t1":1792695624301,"note":"6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"},{"t0":1792698323734,"t1":1792698411155,"note":"6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"}],"minutesEach":1.8,"automation":{"method":"AI fills in the form for you","how":"AI reads what you were looking at in Gmail, fills in first name, last name, email, and phone in Greenhouse, and leaves it for you to check and save.","ai":true,"why":"Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."},"merged":["shuttle|Gmail|Greenhouse|pdf"],"steps":["Open Gmail","Download .pdf from Gmail","Open Greenhouse","Fill in fields in Greenhouse","Upload .pdf to Greenhouse","Click “Add Candidate” in Greenhouse","Open Gmail"],"count":26,"days":6,"perDay":4.33,"weeklyMinutes":40,"regular":null,"confidence":"high","automatability":85,"rank":33.60074791666666,"when":null}],"feedback":{"lookup|Gmail|Google Calendar":{"rating":"new","at":1792771200000},"entry|Greenhouse|/people/new":{"rating":"accurate","at":1792771200000}}},{"schema":"workflow-detective/bundle@1","sample":true,"exportedAt":"2026-10-23T16:00:00.000Z","extensionVersion":"0.1.0","detectorVersion":"0.1.0","participant":"Luis M.","company":"COPPER & PINE (sample)","study":{"startDate":"2026-10-12","weeks":2,"scheduleMode":"rotate","hours":[8,18],"watchDaysTotal":6,"watchDaysDone":6},"summary":{"events":2241,"days":["2026-10-12","2026-10-14","2026-10-16","2026-10-20","2026-10-21","2026-10-22"],"observedDays":6,"activeMinutes":2353,"activeMinutesPerDay":392,"timeByApp":[{"app":"Slack","minutes":962},{"app":"Google Docs","minutes":357},{"app":"Gmail","minutes":313},{"app":"Google Calendar","minutes":288},{"app":"news.example.com","minutes":204},{"app":"Zendesk","minutes":91},{"app":"ShipStation","minutes":75},{"app":"Shopify","minutes":41},{"app":"Airtable","minutes":21}],"findings":4,"automatableWeeklyMinutes":56},"findings":[{"type":"transfer","key":"transfer|Shopify|ShipStation","apps":["Shopify","ShipStation"],"title":"Copying information from Shopify into ShipStation","detail":"Usually 4 pieces of information at a time (mostly short text and numbers and amounts), into fields like “Recipient name”, “Street address”, “City”, and “Weight (oz)”.","context":{"from":"Order # · Copper & Pine","to":"Awaiting Shipment","fieldsEach":4},"occurrences":[{"t0":1791815762424,"t1":1791815808925,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1791824971379,"t1":1791825015295,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1791828276091,"t1":1791828567003,"note":"16 pastes · from “Order # · Copper & Pine”"},{"t0":1791829061736,"t1":1791829178567,"note":"8 pastes · from “Order # · Copper & Pine”"},{"t0":1791835234208,"t1":1791835276592,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1791987857524,"t1":1791987895801,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1791988702524,"t1":1791988741435,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1791990193066,"t1":1791990235514,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1791994573564,"t1":1791994616319,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792001283106,"t1":1792001330515,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792003594697,"t1":1792003640106,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792005781078,"t1":1792005828988,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792006150177,"t1":1792006195213,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792160829842,"t1":1792160878393,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792164411316,"t1":1792164455040,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792165176074,"t1":1792165215278,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792165561358,"t1":1792165604468,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792169249693,"t1":1792169295259,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792174991971,"t1":1792175111451,"note":"8 pastes · from “Order # · Copper & Pine”"},{"t0":1792178097545,"t1":1792178146406,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792178610589,"t1":1792178653750,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792180190756,"t1":1792180232787,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792182655343,"t1":1792182698800,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792512441522,"t1":1792512482549,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792514303999,"t1":1792514351254,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792515576542,"t1":1792515615601,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792519500890,"t1":1792519544038,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792521458413,"t1":1792521498479,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792525257573,"t1":1792525298899,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792526002236,"t1":1792526043488,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792529457359,"t1":1792529498712,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792592852955,"t1":1792592897153,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792594899155,"t1":1792594943333,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792598113444,"t1":1792598159960,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792598826265,"t1":1792598868559,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792600281232,"t1":1792600329673,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792601801559,"t1":1792601841992,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792602368944,"t1":1792602412021,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792678860985,"t1":1792678904886,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792679133929,"t1":1792679175781,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792680393821,"t1":1792680437958,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792687817570,"t1":1792687863747,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792691890020,"t1":1792691932708,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792692187994,"t1":1792692228009,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792693046588,"t1":1792693089769,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792696922097,"t1":1792696966502,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792699015475,"t1":1792699059030,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792700455650,"t1":1792700498360,"note":"4 pastes · from “Order # · Copper & Pine”"},{"t0":1792701236152,"t1":1792701281308,"note":"4 pastes · from “Order # · Copper & Pine”"}],"minutesEach":1,"automation":{"method":"AI reads it, then an automation fills it in","how":"Each time a new item like this shows up in Shopify, AI picks out the recipient name, street address, city, and weight (oz) and an automation adds them to ShipStation.","ai":true,"why":"Reading a message and picking out the right details used to need a person. AI can now do this reliably, and you review anything it isn’t sure about."},"steps":["Open Shopify","Copy from Shopify","Open ShipStation","Paste into ShipStation","Repeat for each piece of information"],"count":49,"days":6,"perDay":8.17,"weeklyMinutes":40,"regular":null,"confidence":"high","automatability":91,"rank":36.2027448611111,"when":null},{"type":"drafting","key":"drafting|Zendesk|/agent/tickets/:id","apps":["Zendesk"],"title":"Writing similar replies in Zendesk (“Where is my order?”)","detail":"You wrote 31 replies like this. Ones that follow a pattern can start from an AI draft.","occurrences":[{"t0":1791818750179,"t1":1791818792594,"note":"Public reply"},{"t0":1791821590536,"t1":1791821634707,"note":"Public reply"},{"t0":1791824540405,"t1":1791824573402,"note":"Public reply"},{"t0":1791825047138,"t1":1791825099369,"note":"Public reply"},{"t0":1791986751750,"t1":1791986791815,"note":"Public reply"},{"t0":1791990653254,"t1":1791990706776,"note":"Public reply"},{"t0":1791994646564,"t1":1791994816997,"note":"Public reply"},{"t0":1791996908740,"t1":1791996939559,"note":"Public reply"},{"t0":1792007078822,"t1":1792007117281,"note":"Public reply"},{"t0":1792165013356,"t1":1792165048267,"note":"Public reply"},{"t0":1792166952402,"t1":1792167009838,"note":"Public reply"},{"t0":1792167590788,"t1":1792167622050,"note":"Public reply"},{"t0":1792185485088,"t1":1792185531310,"note":"Public reply"},{"t0":1792518786111,"t1":1792518831946,"note":"Public reply"},{"t0":1792523458219,"t1":1792523491593,"note":"Public reply"},{"t0":1792524906606,"t1":1792524949914,"note":"Public reply"},{"t0":1792526399970,"t1":1792526431794,"note":"Public reply"},{"t0":1792530311456,"t1":1792530367420,"note":"Public reply"},{"t0":1792532467455,"t1":1792532517393,"note":"Public reply"},{"t0":1792591937243,"t1":1792591979969,"note":"Public reply"},{"t0":1792593715865,"t1":1792593759497,"note":"Public reply"},{"t0":1792596724098,"t1":1792596769128,"note":"Public reply"},{"t0":1792597369163,"t1":1792597399702,"note":"Public reply"},{"t0":1792611644484,"t1":1792611693814,"note":"Public reply"},{"t0":1792615630674,"t1":1792615665734,"note":"Public reply"},{"t0":1792681850212,"t1":1792681888509,"note":"Public reply"},{"t0":1792682587245,"t1":1792682627772,"note":"Public reply"},{"t0":1792691744485,"t1":1792691801598,"note":"Public reply"},{"t0":1792692245374,"t1":1792692281483,"note":"Public reply"},{"t0":1792695308175,"t1":1792695357297,"note":"Public reply"},{"t0":1792697895610,"t1":1792697955067,"note":"Public reply"}],"minutesEach":1.2,"automation":{"method":"AI drafts, you send","how":"AI writes a first draft in your usual wording, filling in the facts from your other apps. You read it and press send.","ai":true,"why":"AI is good at first drafts that follow a pattern. You keep the final say because these go to people."},"count":31,"days":6,"perDay":5.17,"weeklyMinutes":32,"regular":null,"confidence":"high","automatability":48,"rank":15.15032,"when":null},{"type":"shuttle","key":"shuttle|Shopify|Gmail|csv","apps":["Shopify","Gmail"],"title":"Downloading .csv files from Shopify and uploading them to Gmail","detail":"The same download-then-upload, 6 times. Each time, you also write a similar message in Gmail.","context":{"from":"Shopify","to":"Gmail","ext":"csv"},"occurrences":[{"t0":1791819753573,"t1":1791819825015,"note":".csv · “Inventory · Copper & Pine” · To recipients, Subject, Message Body"},{"t0":1791991921234,"t1":1791992002754,"note":".csv · “Inventory · Copper & Pine” · To recipients, Subject, Message Body"},{"t0":1792164895509,"t1":1792164993566,"note":".csv · “Inventory · Copper & Pine” · To recipients, Subject, Message Body"},{"t0":1792510944707,"t1":1792511022493,"note":".csv · “Inventory · Copper & Pine” · To recipients, Subject, Message Body"},{"t0":1792597554243,"t1":1792597658164,"note":".csv · “Inventory · Copper & Pine” · To recipients, Subject, Message Body"},{"t0":1792683409036,"t1":1792683506966,"note":".csv · “Inventory · Copper & Pine” · To recipients, Subject, Message Body"}],"minutesEach":2,"automation":{"method":"Sync the file automatically","how":"An automation pulls the file from Shopify and puts it in Gmail on a schedule or as soon as it’s ready. No downloading. It happens around 10:39 am, so it can run on a schedule before you start.","ai":false},"merged":["drafting|Gmail|/mail/u/#/#inbox?compose=new"],"count":6,"days":6,"perDay":1,"weeklyMinutes":10,"regular":{"around":"10:39 am"},"confidence":"medium","automatability":87,"rank":8.680062500000002,"when":"Usually around 10:39 am every day we watched."},{"type":"entry","key":"entry|Airtable|/:id/:id/:id","apps":["Gmail","Airtable"],"title":"Typing details from Gmail into Airtable (“Purchase orders: Grid view”)","detail":"About 5 fields each time: Supplier, SKU, Qty, Unit cost, and Expected date. You usually look at Gmail right before.","context":{"page":"/:id/:id/:id","title":"Purchase orders: Grid view","source":"Gmail","fields":["Supplier","SKU","Qty","Unit cost","Expected date"]},"occurrences":[{"t0":1791832991925,"t1":1791833169912,"note":"10 fields · after Gmail"},{"t0":1792006055035,"t1":1792006061599,"note":"5 fields · after Gmail"},{"t0":1792011664244,"t1":1792011672471,"note":"5 fields · after Gmail"},{"t0":1792168570508,"t1":1792168707534,"note":"10 fields · after Gmail"},{"t0":1792519212019,"t1":1792519217194,"note":"5 fields · after Gmail"},{"t0":1792525740232,"t1":1792525749734,"note":"5 fields · after Gmail"},{"t0":1792606637957,"t1":1792606786375,"note":"10 fields · after Gmail"},{"t0":1792687679719,"t1":1792687689392,"note":"5 fields · after Gmail"},{"t0":1792692027146,"t1":1792692037029,"note":"5 fields · after Gmail"},{"t0":1792701352949,"t1":1792701359911,"note":"5 fields · after Gmail"}],"minutesEach":0.8,"automation":{"method":"AI fills in the form for you","how":"AI reads what you were looking at in Gmail, fills in supplier, sku, qty, and unit cost in Airtable, and leaves it for you to check and save.","ai":true,"why":"Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."},"count":10,"days":6,"perDay":1.67,"weeklyMinutes":6,"regular":null,"confidence":"high","automatability":85,"rank":5.3125,"when":null}],"feedback":{"transfer|Shopify|ShipStation":{"rating":"new","at":1792771200000},"drafting|Zendesk|/agent/tickets/:id":{"rating":"new","note":"Half of these are the same 'where is my order' answer.","at":1792771200000},"shuttle|Shopify|Gmail|csv":{"rating":"accurate","at":1792771200000},"entry|Airtable|/:id/:id/:id":{"rating":"accurate","at":1792771200000}}},{"schema":"workflow-detective/bundle@1","sample":true,"exportedAt":"2026-10-23T16:00:00.000Z","extensionVersion":"0.1.0","detectorVersion":"0.1.0","participant":"Sam T.","company":"HARBORVIEW (sample)","study":{"startDate":"2026-10-12","weeks":2,"scheduleMode":"rotate","hours":[8,18],"watchDaysTotal":6,"watchDaysDone":6},"summary":{"events":1844,"days":["2026-10-12","2026-10-14","2026-10-16","2026-10-20","2026-10-21","2026-10-22"],"observedDays":6,"activeMinutes":2281,"activeMinutesPerDay":380,"timeByApp":[{"app":"Slack","minutes":835},{"app":"Gmail","minutes":402},{"app":"Google Docs","minutes":362},{"app":"Google Calendar","minutes":278},{"app":"news.example.com","minutes":219},{"app":"Google Sheets","minutes":69},{"app":"QuickBooks","minutes":63},{"app":"HubSpot","minutes":27},{"app":"Salesforce","minutes":21},{"app":"Stripe","minutes":5}],"findings":4,"automatableWeeklyMinutes":103},"findings":[{"type":"entry","key":"entry|QuickBooks|/app/invoice","apps":["HubSpot","QuickBooks"],"title":"Typing details from HubSpot into QuickBooks (“Invoice”)","detail":"About 6 fields each time: Customer, Invoice date, Product/service, Qty, Rate, and Terms. You usually look at HubSpot right before.","context":{"page":"/app/invoice","title":"Invoice","source":"HubSpot","fields":["Customer","Invoice date","Product/service","Qty","Rate","Terms"]},"occurrences":[{"t0":1791818819604,"t1":1791818903719,"note":"6 fields · after HubSpot"},{"t0":1791822870363,"t1":1791822940336,"note":"6 fields · after HubSpot"},{"t0":1791824702665,"t1":1791824809773,"note":"6 fields · after HubSpot"},{"t0":1791825400781,"t1":1791825487234,"note":"6 fields · after HubSpot"},{"t0":1791833050599,"t1":1791833150458,"note":"6 fields · after HubSpot"},{"t0":1791998468446,"t1":1791998531211,"note":"6 fields · after HubSpot"},{"t0":1792003142721,"t1":1792003243946,"note":"6 fields · after HubSpot"},{"t0":1792006679609,"t1":1792006745403,"note":"6 fields · after HubSpot"},{"t0":1792007332949,"t1":1792007418607,"note":"6 fields · after HubSpot"},{"t0":1792164448244,"t1":1792164525145,"note":"6 fields · after HubSpot"},{"t0":1792178534534,"t1":1792178596751,"note":"6 fields · after HubSpot"},{"t0":1792183418690,"t1":1792183492289,"note":"6 fields · after HubSpot"},{"t0":1792509801292,"t1":1792509878351,"note":"6 fields · after HubSpot"},{"t0":1792519431967,"t1":1792519505618,"note":"6 fields · after HubSpot"},{"t0":1792519955619,"t1":1792520056710,"note":"6 fields · after HubSpot"},{"t0":1792523850214,"t1":1792523929453,"note":"6 fields · after HubSpot"},{"t0":1792529836308,"t1":1792529903186,"note":"6 fields · after HubSpot"},{"t0":1792596447309,"t1":1792596515980,"note":"6 fields · after HubSpot"},{"t0":1792607065960,"t1":1792607158339,"note":"6 fields · after HubSpot"},{"t0":1792610348670,"t1":1792610439782,"note":"6 fields · after HubSpot"},{"t0":1792616280681,"t1":1792616342345,"note":"6 fields · after HubSpot"},{"t0":1792681669352,"t1":1792681745968,"note":"6 fields · after HubSpot"},{"t0":1792687169435,"t1":1792687254684,"note":"6 fields · after HubSpot"},{"t0":1792691085797,"t1":1792691187359,"note":"6 fields · after HubSpot"},{"t0":1792701002310,"t1":1792701065128,"note":"6 fields · after HubSpot"}],"minutesEach":1.5,"automation":{"method":"AI fills in the form for you","how":"AI reads what you were looking at in HubSpot, fills in customer, invoice date, product/service, and qty in QuickBooks, and leaves it for you to check and save.","ai":true,"why":"Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."},"count":25,"days":6,"perDay":4.17,"weeklyMinutes":32,"regular":null,"confidence":"high","automatability":85,"rank":27.170190972222226,"when":null},{"type":"transfer","key":"transfer|Gmail|Google Sheets","apps":["Gmail","Google Sheets"],"title":"Copying information from Gmail into Google Sheets","detail":"Usually 3 pieces of information at a time (mostly numbers and amounts, short text, and dates).","context":{"from":"Payment received from Brightline · Invoice #","to":"AR tracker #","fieldsEach":3},"occurrences":[{"t0":1791813710345,"t1":1791813758979,"note":"3 pastes · from “Payment received from Brightline · Invoice #”"},{"t0":1791814101028,"t1":1791814148327,"note":"3 pastes · from “Payment received from Brightline · Invoice #”"},{"t0":1791816811480,"t1":1791816865136,"note":"3 pastes · from “Payment received from Brightline · Invoice #”"},{"t0":1791825277043,"t1":1791825320545,"note":"3 pastes · from “Payment received from Brightline · Invoice #”"},{"t0":1791833888234,"t1":1791833940937,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1791837219013,"t1":1791837264199,"note":"3 pastes · from “Payment received from Brightline · Invoice #”"},{"t0":1791986693783,"t1":1791986741916,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1791989454847,"t1":1791989501095,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1791990817077,"t1":1791990868651,"note":"3 pastes · from “Payment received from Brightline · Invoice #”"},{"t0":1792003862391,"t1":1792003918076,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792009509709,"t1":1792009656183,"note":"6 pastes · from “Payment received from Brightline · Invoice #”"},{"t0":1792015161024,"t1":1792015211206,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792160533471,"t1":1792160582443,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792165098300,"t1":1792165143154,"note":"3 pastes · from “Payment received from Harbor Foods · Invoice #”"},{"t0":1792167032172,"t1":1792167078803,"note":"3 pastes · from “Payment received from Harbor Foods · Invoice #”"},{"t0":1792167406454,"t1":1792167458426,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792175335646,"t1":1792175384053,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792184845868,"t1":1792184893665,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792505873602,"t1":1792505920641,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792511454512,"t1":1792511506070,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792514952549,"t1":1792514996059,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792519123163,"t1":1792519174508,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792527211198,"t1":1792527270127,"note":"3 pastes · from “Payment received from Brightline · Invoice #”"},{"t0":1792592609836,"t1":1792592654551,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792602803625,"t1":1792602856471,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792606267981,"t1":1792606320126,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792617173629,"t1":1792617222441,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792678390441,"t1":1792678435253,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792679795657,"t1":1792679848076,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792680501519,"t1":1792680552552,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792684225462,"t1":1792684274501,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792693845045,"t1":1792693892785,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"}],"minutesEach":1.1,"automation":{"method":"AI reads it, then an automation fills it in","how":"Each time a new email like this shows up in Gmail, AI picks out the details and an automation adds them to Google Sheets.","ai":true,"why":"Reading a message and picking out the right details used to need a person. AI can now do this reliably, and you review anything it isn’t sure about."},"steps":["Open Gmail","Copy from Gmail","Open Google Sheets","Paste into Google Sheets","Repeat for each piece of information"],"count":32,"days":6,"perDay":5.33,"weeklyMinutes":28,"regular":null,"confidence":"high","automatability":91,"rank":25.84076444444444,"when":null},{"type":"lookup","key":"lookup|Google Sheets|Salesforce","apps":["Google Sheets","Salesforce"],"title":"Switching back and forth between Google Sheets and Salesforce","detail":"About 12 switches each time, a few seconds per look. This usually means checking or matching information by eye.","occurrences":[{"t0":1791833935252,"t1":1791834398854,"note":"12 switches"},{"t0":1792006144944,"t1":1792006607092,"note":"12 switches"},{"t0":1792180530888,"t1":1792180882148,"note":"11 switches"},{"t0":1792528064243,"t1":1792528557438,"note":"13 switches"},{"t0":1792610706033,"t1":1792610979973,"note":"7 switches"},{"t0":1792703670525,"t1":1792704114536,"note":"12 switches"}],"minutesEach":7.6,"automation":{"method":"Match it automatically","how":"If you’re checking that Google Sheets and Salesforce agree, an automation can compare them and only show you the rows that don’t match. If you’re looking things up, the data can be pulled into one place.","ai":false},"count":6,"days":6,"perDay":1,"weeklyMinutes":38,"regular":{"around":"2:47 pm"},"confidence":"medium","automatability":63,"rank":23.78667375,"when":"Usually around 2:47 pm every day we watched."},{"type":"shuttle","key":"shuttle|Stripe|Google Sheets|csv","apps":["Stripe","Google Sheets"],"title":"Downloading .csv files from Stripe and uploading them to Google Sheets","detail":"The same download-then-upload, 6 times.","context":{"from":"Stripe","to":"Google Sheets","ext":"csv"},"occurrences":[{"t0":1791814215441,"t1":1791814247054,"note":".csv · “Payments”"},{"t0":1791986582081,"t1":1791986610482,"note":".csv · “Payments”"},{"t0":1792159132705,"t1":1792159152535,"note":".csv · “Payments”"},{"t0":1792504682355,"t1":1792504706691,"note":".csv · “Payments”"},{"t0":1792591473596,"t1":1792591508213,"note":".csv · “Payments”"},{"t0":1792678119967,"t1":1792678150022,"note":".csv · “Payments”"}],"minutesEach":1,"automation":{"method":"Sync the file automatically","how":"An automation pulls the file from Stripe and puts it in Google Sheets on a schedule or as soon as it’s ready. No downloading. It happens around 9:04 am, so it can run on a schedule before you start.","ai":false},"count":6,"days":6,"perDay":1,"weeklyMinutes":5,"regular":{"around":"9:04 am"},"confidence":"medium","automatability":87,"rank":4.35,"when":"Usually around 9:04 am every day we watched."}],"feedback":{"entry|QuickBooks|/app/invoice":{"rating":"new","at":1792771200000},"transfer|Gmail|Google Sheets":{"rating":"accurate","at":1792771200000},"lookup|Google Sheets|Salesforce":{"rating":"wrong","note":"That's me checking two dashboards before the Monday meeting, not matching data.","at":1792771200000},"shuttle|Stripe|Google Sheets|csv":{"rating":"accurate","at":1792771200000}}},{"schema":"workflow-detective/bundle@1","sample":true,"source":"desktop","exportedAt":"2026-10-23T16:00:00.000Z","extensionVersion":"0.1.0","detectorVersion":"0.1.0","participant":"Marcus L.","company":"HARBORVIEW (sample)","os":"windows","study":{"startDate":"2026-10-12","weeks":2,"scheduleMode":"rotate","days":[2,3,4],"hours":[8,18],"watchDaysTotal":6,"watchDaysDone":0,"captureTitles":true,"captureFieldLabels":true},"summary":{"events":2012,"days":["2026-10-12","2026-10-14","2026-10-16","2026-10-20","2026-10-21","2026-10-22"],"observedDays":6,"activeMinutes":1902,"activeMinutesPerDay":317,"timeByApp":[{"app":"Microsoft Teams","minutes":852},{"app":"Excel","minutes":307},{"app":"Chrome","minutes":303},{"app":"Outlook","minutes":300},{"app":"File Explorer","minutes":76},{"app":"QuickBooks Desktop","minutes":64}],"findings":4,"automatableWeeklyMinutes":56},"findings":[{"type":"entry","key":"entry|QuickBooks Desktop|Create Invoices - Northline Supply","apps":["Excel","QuickBooks Desktop"],"title":"Typing details from Excel into QuickBooks Desktop (“Create Invoices · Northline Supply”)","detail":"About 6 fields each time: Customer:Job, Date, Terms, Item, Quantity, and Rate. You usually look at Excel right before.","context":{"page":"Create Invoices - Northline Supply","title":"Create Invoices · Northline Supply","source":"Excel","fields":["Customer:Job","Date","Terms","Item","Quantity","Rate"]},"occurrences":[{"t0":1791821149288,"t1":1791821205256,"note":"6 fields · after Excel"},{"t0":1791822363394,"t1":1791822417680,"note":"6 fields · after Excel"},{"t0":1791822893855,"t1":1791822939098,"note":"6 fields · after Excel"},{"t0":1791833820515,"t1":1791833868662,"note":"6 fields · after Excel"},{"t0":1791995276141,"t1":1791995324964,"note":"6 fields · after Excel"},{"t0":1791999244193,"t1":1791999291747,"note":"6 fields · after Excel"},{"t0":1792002390408,"t1":1792002439745,"note":"6 fields · after Excel"},{"t0":1792004530088,"t1":1792004577204,"note":"6 fields · after Excel"},{"t0":1792007711750,"t1":1792007756589,"note":"6 fields · after Excel"},{"t0":1792164804833,"t1":1792164855764,"note":"6 fields · after Excel"},{"t0":1792168888812,"t1":1792168937844,"note":"6 fields · after Excel"},{"t0":1792169779544,"t1":1792169934499,"note":"12 fields · after Excel"},{"t0":1792510672330,"t1":1792510723970,"note":"6 fields · after Excel"},{"t0":1792515048655,"t1":1792515099957,"note":"6 fields · after Excel"},{"t0":1792515839230,"t1":1792515891638,"note":"6 fields · after Excel"},{"t0":1792520008537,"t1":1792520062726,"note":"6 fields · after Excel"},{"t0":1792526380864,"t1":1792526434130,"note":"6 fields · after Excel"},{"t0":1792595438530,"t1":1792595494279,"note":"6 fields · after Excel"},{"t0":1792606395967,"t1":1792606539303,"note":"12 fields · after Excel"},{"t0":1792613154968,"t1":1792613201671,"note":"6 fields · after Excel"},{"t0":1792683658961,"t1":1792683707009,"note":"6 fields · after Excel"},{"t0":1792684099812,"t1":1792684159030,"note":"6 fields · after Excel"},{"t0":1792698715133,"t1":1792698764542,"note":"6 fields · after Excel"},{"t0":1792700985631,"t1":1792701032461,"note":"6 fields · after Excel"}],"minutesEach":1.1,"automation":{"method":"AI fills in the form for you","how":"AI reads what you were looking at in Excel, fills in customer:job, date, terms, and item in QuickBooks Desktop, and leaves it for you to check and save.","ai":true,"why":"Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."},"count":24,"days":6,"perDay":4,"weeklyMinutes":22,"regular":null,"confidence":"high","automatability":85,"rank":18.464833333333335,"when":null},{"type":"entry","key":"entry|Excel|AR Tracker #.xlsx › Payments","apps":["Outlook","Excel"],"title":"Copying details from Outlook into Excel (“AR Tracker #.xlsx › Payments”)","detail":"About 3 fields each time: Amount, Client, and Date paid. You usually look at Outlook right before. It also includes copying and pasting from Outlook into Excel.","context":{"page":"AR Tracker #.xlsx › Payments","title":"AR Tracker #.xlsx › Payments","source":"Outlook","fields":["Amount","Client","Date paid"]},"occurrences":[{"t0":1791818481880,"t1":1791818513588,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1791821420018,"t1":1791821451366,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Harbor Foods · Invoice #”"},{"t0":1791828659254,"t1":1791828693541,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1791834498444,"t1":1791834534193,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792009611429,"t1":1792009638390,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792012648588,"t1":1792012745412,"note":"6 fields · after Outlook · 6 pastes · from “Payment received from Harbor Foods · Invoice #”"},{"t0":1792014052841,"t1":1792014090360,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Harbor Foods · Invoice #”"},{"t0":1792159621325,"t1":1792159649462,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792160580218,"t1":1792160606361,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Harbor Foods · Invoice #”"},{"t0":1792169968906,"t1":1792170000798,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792175758367,"t1":1792175795625,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792505880173,"t1":1792505912603,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792512318182,"t1":1792512353189,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792519310858,"t1":1792519402466,"note":"6 fields · after Outlook · 6 pastes · from “Payment received from Harbor Foods · Invoice #”"},{"t0":1792521656390,"t1":1792521689253,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792530415831,"t1":1792530449626,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792591257678,"t1":1792591293002,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792595876180,"t1":1792595911133,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792600827256,"t1":1792600865073,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792606584299,"t1":1792606617819,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Harbor Foods · Invoice #”"},{"t0":1792614917256,"t1":1792614948400,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792679338198,"t1":1792679367480,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792679753772,"t1":1792679790164,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792686485481,"t1":1792686517198,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Harbor Foods · Invoice #”"},{"t0":1792695955021,"t1":1792695992812,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Harbor Foods · Invoice #”"},{"t0":1792700872804,"t1":1792700906021,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792701638148,"t1":1792701668129,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792706200245,"t1":1792706227805,"note":"3 fields · after Outlook · 3 pastes · from “Payment received from Lumen Studio · Invoice #”"}],"minutesEach":0.8,"automation":{"method":"AI fills in the form for you","how":"AI reads what you were looking at in Outlook, fills in amount, client, and date paid in Excel, and leaves it for you to check and save.","ai":true,"why":"Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."},"merged":["transfer|Outlook|Excel"],"steps":["Open Outlook","Copy from Outlook","Open Excel","Paste into Excel","Fill in fields in Excel","Open Outlook","Copy from Outlook","Open Excel"],"count":28,"days":6,"perDay":4.67,"weeklyMinutes":19,"regular":null,"confidence":"high","automatability":91,"rank":17.117074722222224,"when":null},{"type":"export","key":"export|QuickBooks Desktop|xlsx","apps":["QuickBooks Desktop"],"title":"Exporting .xlsx files from QuickBooks Desktop","detail":"You downloaded the same kind of file 6 times. Reports like this can usually be sent or refreshed automatically.","occurrences":[{"t0":1791813318065,"t1":1791813318065,"note":".xlsx · “A/R Aging Summary - Northline Supply”"},{"t0":1791986168000,"t1":1791986168000,"note":".xlsx · “A/R Aging Summary - Northline Supply”"},{"t0":1792159818284,"t1":1792159818284,"note":".xlsx · “A/R Aging Summary - Northline Supply”"},{"t0":1792505695814,"t1":1792505695814,"note":".xlsx · “A/R Aging Summary - Northline Supply”"},{"t0":1792590987606,"t1":1792590987606,"note":".xlsx · “A/R Aging Summary - Northline Supply”"},{"t0":1792677456531,"t1":1792677456531,"note":".xlsx · “A/R Aging Summary - Northline Supply”"}],"minutesEach":3,"automation":{"method":"Scheduled report","how":"Set QuickBooks Desktop (or an automation) to produce this file on a schedule and send it where it goes next. It happens around 8:57 am, so it can run on a schedule before you start.","ai":false},"count":6,"days":6,"perDay":1,"weeklyMinutes":15,"regular":{"around":"8:57 am"},"confidence":"medium","automatability":77,"rank":11.55,"when":"Usually around 8:57 am every day we watched."},{"type":"drafting","key":"drafting|Outlook|Compose message","apps":["Outlook"],"title":"Writing similar emails in Outlook","detail":"You wrote 16 emails like this. Ones that follow a pattern can start from an AI draft.","occurrences":[{"t0":1791821220538,"t1":1791821288763,"note":"Subject, Message"},{"t0":1791822952101,"t1":1791823026654,"note":"Subject, Message"},{"t0":1791824677836,"t1":1791824719614,"note":"Subject, Message"},{"t0":1792008283147,"t1":1792008378592,"note":"Subject, Message"},{"t0":1792009883520,"t1":1792009957779,"note":"Subject, Message"},{"t0":1792161385996,"t1":1792161439921,"note":"Subject, Message"},{"t0":1792166453682,"t1":1792166522497,"note":"Subject, Message"},{"t0":1792180336432,"t1":1792180387229,"note":"Subject, Message"},{"t0":1792505063858,"t1":1792505139070,"note":"Subject, Message"},{"t0":1792519404468,"t1":1792519502181,"note":"Subject, Message"},{"t0":1792522982359,"t1":1792523020960,"note":"Subject, Message"},{"t0":1792530453272,"t1":1792530502127,"note":"Subject, Message"},{"t0":1792601168482,"t1":1792601206722,"note":"Subject, Message"},{"t0":1792612121901,"t1":1792612162788,"note":"Subject, Message"},{"t0":1792680767735,"t1":1792680817743,"note":"Subject, Message"},{"t0":1792687904731,"t1":1792687986776,"note":"Subject, Message"}],"minutesEach":1.5,"automation":{"method":"AI drafts, you send","how":"AI writes a first draft in your usual wording, filling in the facts from your other apps. You read it and press send.","ai":true,"why":"AI is good at first drafts that follow a pattern. You keep the final say because these go to people."},"count":16,"days":6,"perDay":2.67,"weeklyMinutes":20,"regular":null,"confidence":"high","automatability":48,"rank":9.714666666666666,"when":null}],"feedback":{"entry|QuickBooks Desktop|Create Invoices - Northline Supply":{"rating":"accurate","at":1792771200000},"entry|Excel|AR Tracker #.xlsx › Payments":{"rating":"new","at":1792771200000},"export|QuickBooks Desktop|xlsx":{"rating":"accurate","at":1792771200000},"drafting|Outlook|Compose message":{"rating":"accurate","at":1792771200000}}},{"schema":"workflow-detective/bundle@1","sample":true,"source":"desktop","os":"mac","exportedAt":"2026-10-23T16:00:00.000Z","extensionVersion":"0.1.0","detectorVersion":"0.1.0","participant":"Ana P.","company":"COPPER & PINE (sample)","study":{"startDate":"2026-10-12","weeks":2,"scheduleMode":"rotate","hours":[8,18],"watchDaysTotal":6,"watchDaysDone":6},"summary":{"events":1382,"days":["2026-10-12","2026-10-14","2026-10-16","2026-10-20","2026-10-21","2026-10-22"],"observedDays":6,"activeMinutes":1776,"activeMinutesPerDay":296,"timeByApp":[{"app":"Microsoft Teams","minutes":774},{"app":"Excel","minutes":345},{"app":"Safari","minutes":292},{"app":"Outlook","minutes":190},{"app":"Finder","minutes":64},{"app":"QuickBooks Desktop","minutes":58},{"app":"Apple Mail","minutes":53}],"findings":4,"automatableWeeklyMinutes":54},"findings":[{"type":"entry","key":"entry|QuickBooks Desktop|Create Invoices","apps":["Excel","QuickBooks Desktop"],"title":"Typing details from Excel into QuickBooks Desktop (“Create Invoices”)","detail":"About 6 fields each time: Customer:Job, Date, Terms, Item, Quantity, and Rate. You usually look at Excel right before.","context":{"page":"Create Invoices","title":"Create Invoices","source":"Excel","fields":["Customer:Job","Date","Terms","Item","Quantity","Rate"]},"occurrences":[{"t0":1791819351054.8318,"t1":1791819400432.3113,"note":"6 fields · after Excel"},{"t0":1791824757210.2979,"t1":1791824812299.0269,"note":"6 fields · after Excel"},{"t0":1791831023274.1167,"t1":1791831069416.0173,"note":"6 fields · after Excel"},{"t0":1791833560309.6826,"t1":1791833604800.9824,"note":"6 fields · after Excel"},{"t0":1791834882472.485,"t1":1791834931566.5256,"note":"6 fields · after Excel"},{"t0":1791991880007.3894,"t1":1791991929596.0784,"note":"6 fields · after Excel"},{"t0":1791994418496.7922,"t1":1791994471775.2407,"note":"6 fields · after Excel"},{"t0":1791997346212.6484,"t1":1791997391710.2458,"note":"6 fields · after Excel"},{"t0":1792007078836.9866,"t1":1792007127471.1956,"note":"6 fields · after Excel"},{"t0":1792010197625.169,"t1":1792010251435.5427,"note":"6 fields · after Excel"},{"t0":1792166394868.6096,"t1":1792166441447.9116,"note":"6 fields · after Excel"},{"t0":1792167986799.2588,"t1":1792168034769.023,"note":"6 fields · after Excel"},{"t0":1792168539027.0422,"t1":1792168586419.2922,"note":"6 fields · after Excel"},{"t0":1792169794451.3494,"t1":1792169843134.3022,"note":"6 fields · after Excel"},{"t0":1792174070262.7173,"t1":1792174117272.4917,"note":"6 fields · after Excel"},{"t0":1792521237968.8938,"t1":1792521286002.855,"note":"6 fields · after Excel"},{"t0":1792527079471.1685,"t1":1792527133295.9724,"note":"6 fields · after Excel"},{"t0":1792528955441.8555,"t1":1792529002734.3308,"note":"6 fields · after Excel"},{"t0":1792596209028.7668,"t1":1792596264366.2568,"note":"6 fields · after Excel"},{"t0":1792605458558.655,"t1":1792605645511.5251,"note":"12 fields · after Excel"},{"t0":1792611705649.8376,"t1":1792611755358.8086,"note":"6 fields · after Excel"},{"t0":1792682943406.378,"t1":1792682991956.246,"note":"6 fields · after Excel"},{"t0":1792684218457.5786,"t1":1792684269748.4417,"note":"6 fields · after Excel"},{"t0":1792695164682.8796,"t1":1792695215286.6677,"note":"6 fields · after Excel"}],"minutesEach":1.1,"automation":{"method":"AI fills in the form for you","how":"AI reads what you were looking at in Excel, fills in customer:job, date, terms, and item in QuickBooks Desktop, and leaves it for you to check and save.","ai":true,"why":"Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."},"count":24,"days":6,"perDay":4,"weeklyMinutes":21,"regular":null,"confidence":"high","automatability":85,"rank":18.101740732828777,"when":null},{"type":"transfer","key":"transfer|Outlook|Excel","apps":["Outlook","Excel"],"title":"Copying information from Outlook into Excel","detail":"Usually 3 pieces of information at a time (mostly short text).","context":{"from":"Payment received from Northwind · Invoice #","to":"AR Tracker #.xlsx","fieldsEach":3},"occurrences":[{"t0":1791815907710.7493,"t1":1791815926640.6858,"note":"2 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1791822943519.972,"t1":1791822962169.8337,"note":"2 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1791824860655.126,"t1":1791824891792.5151,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1791831318355.6323,"t1":1791831350436.505,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1791833441268.2727,"t1":1791833461728.7412,"note":"2 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1791833922034.9185,"t1":1791833953944.1826,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1791836951689.4177,"t1":1791836979121.4822,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1791986844618.2305,"t1":1791986864751.5898,"note":"2 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1791988059890.7764,"t1":1791988089043.3047,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792000472127.0938,"t1":1792000490626.9995,"note":"2 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792007344625.0376,"t1":1792007366158.5034,"note":"2 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792014191833.3835,"t1":1792014214466.0627,"note":"2 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792160454651.9414,"t1":1792160478384.598,"note":"2 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792160770960.1128,"t1":1792160792869.949,"note":"2 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792166126726.7036,"t1":1792166148709.0144,"note":"2 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792167887379.6062,"t1":1792167986799.2588,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792182328427.9404,"t1":1792182349310.4197,"note":"2 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792505195662.8162,"t1":1792505225040.9402,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792505875846.7107,"t1":1792505898039.3403,"note":"2 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792513284040.0938,"t1":1792513312939.2087,"note":"3 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792515477109.307,"t1":1792515513550.5884,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792593560591.2136,"t1":1792593592022.5374,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"},{"t0":1792595415360.69,"t1":1792595436877.9724,"note":"2 pastes · from “Payment received from Lumen Studio · Invoice #”"},{"t0":1792596671754.9675,"t1":1792596702616.5532,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792602973465.7737,"t1":1792603005076.232,"note":"3 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792687280694.8765,"t1":1792687316042.3003,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792698680400.5154,"t1":1792698708011.6396,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792699626287.5918,"t1":1792699647376.455,"note":"2 pastes · from “Payment received from Acme Co · Invoice #”"},{"t0":1792703106781.4636,"t1":1792703138963.3586,"note":"3 pastes · from “Payment received from Juniper Bakery · Invoice #”"},{"t0":1792705550219.3193,"t1":1792705578161.996,"note":"3 pastes · from “Payment received from Northwind · Invoice #”"}],"minutesEach":0.7,"automation":{"method":"AI reads it, then an automation fills it in","how":"Each time a new email like this shows up in Outlook, AI picks out the details and an automation adds them to Excel.","ai":true,"why":"Reading a message and picking out the right details used to need a person. AI can now do this reliably, and you review anything it isn’t sure about."},"steps":["Open Outlook","Copy from Outlook","Open Excel","Paste into Excel","Repeat for each piece of information"],"count":30,"days":6,"perDay":5,"weeklyMinutes":18,"regular":null,"confidence":"high","automatability":91,"rank":16.122771194966635,"when":null},{"type":"export","key":"export|QuickBooks Desktop|xlsx","apps":["QuickBooks Desktop"],"title":"Exporting .xlsx files from QuickBooks Desktop","detail":"You downloaded the same kind of file 6 times. Reports like this can usually be sent or refreshed automatically.","occurrences":[{"t0":1791813634943.0898,"t1":1791813634943.0898,"note":".xlsx · “A/R Aging Summary”"},{"t0":1791986536382.1553,"t1":1791986536382.1553,"note":".xlsx · “A/R Aging Summary”"},{"t0":1792159366734.8774,"t1":1792159366734.8774,"note":".xlsx · “A/R Aging Summary”"},{"t0":1792505247326.4636,"t1":1792505247326.4636,"note":".xlsx · “A/R Aging Summary”"},{"t0":1792591002530.5688,"t1":1792591002530.5688,"note":".xlsx · “A/R Aging Summary”"},{"t0":1792678175276.1897,"t1":1792678175276.1897,"note":".xlsx · “A/R Aging Summary”"}],"minutesEach":3,"automation":{"method":"Scheduled report","how":"Set QuickBooks Desktop (or an automation) to produce this file on a schedule and send it where it goes next. It happens around 9:02 am, so it can run on a schedule before you start.","ai":false},"count":6,"days":6,"perDay":1,"weeklyMinutes":15,"regular":{"around":"9:02 am"},"confidence":"medium","automatability":77,"rank":11.55,"when":"Usually around 9:02 am every day we watched."},{"type":"drafting","key":"drafting|Apple Mail|Re: Question about invoice #","apps":["Apple Mail"],"title":"Writing similar emails in Apple Mail","detail":"You wrote 17 emails like this. Ones that follow a pattern can start from an AI draft.","occurrences":[{"t0":1791826443334.8735,"t1":1791826525498.5693,"note":"Subject, Message body"},{"t0":1791840930806.7976,"t1":1791841017196.6885,"note":"Subject, Message body"},{"t0":1791994942314.2097,"t1":1791995011198.7432,"note":"Subject, Message body"},{"t0":1792005574504.4912,"t1":1792005621160.5723,"note":"Subject, Message body"},{"t0":1792009781253.079,"t1":1792010023611.1477,"note":"Subject, Message body"},{"t0":1792163098380.3806,"t1":1792163141207.579,"note":"Subject, Message body"},{"t0":1792181445019.526,"t1":1792181483354.0894,"note":"Subject, Message body"},{"t0":1792509596318.4226,"t1":1792509653464.6143,"note":"Subject, Message body"},{"t0":1792518035314.0803,"t1":1792518079322.2673,"note":"Subject, Message body"},{"t0":1792524205412.7073,"t1":1792524295834.8994,"note":"Subject, Message body"},{"t0":1792524998867.6848,"t1":1792525057446.5193,"note":"Subject, Message body"},{"t0":1792594076036.4993,"t1":1792594143790.508,"note":"Subject, Message body"},{"t0":1792596934200.4548,"t1":1792596983354.3855,"note":"Subject, Message body"},{"t0":1792601231413.816,"t1":1792601273773.899,"note":"Subject, Message body"},{"t0":1792608134620.446,"t1":1792608227830.5735,"note":"Subject, Message body"},{"t0":1792691487540.787,"t1":1792691543757.8179,"note":"Subject, Message body"},{"t0":1792692711620.4304,"t1":1792692796382.4895,"note":"Subject, Message body"}],"minutesEach":1.5,"automation":{"method":"AI drafts, you send","how":"AI writes a first draft in your usual wording, filling in the facts from your other apps. You read it and press send.","ai":true,"why":"AI is good at first drafts that follow a pattern. You keep the final say because these go to people."},"count":17,"days":6,"perDay":2.83,"weeklyMinutes":21,"regular":null,"confidence":"high","automatability":48,"rank":10.038934573567708,"when":null}],"feedback":{"entry|QuickBooks Desktop|Create Invoices":{"rating":"new","at":1792771200000},"transfer|Outlook|Excel":{"rating":"accurate","at":1792771200000},"export|QuickBooks Desktop|xlsx":{"rating":"accurate","at":1792771200000},"drafting|Apple Mail|Re: Question about invoice #":{"rating":"wrong","note":"Those replies are all different.","at":1792771200000}}}];
+const D = window.WDDetector;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const TYPE = { transfer: "Copying between apps", entry: "Same form, again", drafting: "Writing similar messages", shuttle: "Moving files by hand", export: "Regular export", lookup: "Back-and-forth checking", routine: "Repeated routine" };
+const RATING = { accurate: ["Yes, does this", "good"], new: ["Yes, new to them", "good"], wrong: ["Not accurate", "bad"] };
+const fmt = D.fmtMin;
+let bundles = [], usingSamples = true, open = new Set();
+
+function prep(b) {
+  b = JSON.parse(JSON.stringify(b));
+  if (Array.isArray(b.events) && b.events.length) {
+    const r = D.analyze(b.events);
+    b.reanalyzed = b.detectorVersion !== D.VERSION; b.findings = r.findings; b.summary = r.summary;
+  }
+  b.source = b.source || "browser";
+  b.person = (b.company || "?") + "|" + (b.participant || "?");
+  b.id = b.person + "|" + b.source;
+  b.findings = (b.findings || []).map(f => Object.assign({}, f, { fb: (b.feedback || {})[f.key] || null }));
+  return b;
+}
+// One person may send a browser-extension file and a Windows-app file. When both include the activity log,
+// analyze them together (dropping the Windows app's view of browser windows, which the extension sees in detail),
+// so processes that cross from desktop apps into web apps are found.
+const BROWSER_PROCS = new Set(["chrome", "msedge", "firefox", "brave", "opera", "vivaldi", "arc"]);
+function combine(list) {
+  const groups = new Map();
+  list.forEach(b => { if (!groups.has(b.person)) groups.set(b.person, []); groups.get(b.person).push(b); });
+  const out = [];
+  for (const g of groups.values()) {
+    const web = g.find(b => b.source !== "desktop"), win = g.find(b => b.source === "desktop");
+    if (web && win && Array.isArray(web.events) && web.events.length && Array.isArray(win.events) && win.events.length) {
+      const ev = web.events.concat(win.events.filter(e => !BROWSER_PROCS.has(String(e.host || "").toLowerCase())));
+      const r = D.analyze(ev);
+      const feedback = Object.assign({}, win.feedback, web.feedback);
+      out.push(Object.assign({}, win, { source: "both", reanalyzed: true, summary: r.summary, feedback,
+        findings: r.findings.map(f => Object.assign({}, f, { fb: feedback[f.key] || null })),
+        exportedAt: [web.exportedAt || "", win.exportedAt || ""].sort().pop() }));
+    } else out.push(...g);
+  }
+  return out;
+}
+function sourceChip(b) {
+  const os = b.os === "mac" ? "Mac" : "Windows";
+  return b.source === "desktop" ? os + " app" : b.source === "both" ? "Browser + " + os : "";
+}
+function stats(fs) {
+  const rated = fs.filter(f => f.fb && f.fb.rating), ok = rated.filter(f => f.fb.rating !== "wrong"), nw = rated.filter(f => f.fb.rating === "new");
+  return { rated: rated.length, ok: ok.length, nw: nw.length, acc: rated.length ? ok.length / rated.length : null, newRate: ok.length ? nw.length / ok.length : null };
+}
+const pct = x => x == null ? "–" : Math.round(x * 100) + "%";
+const weekly = fs => fs.filter(f => f.automatability >= 60 && !(f.fb && f.fb.rating === "wrong")).reduce((s, f) => s + f.weeklyMinutes, 0);
+function median(a) { if (!a.length) return 0; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
+
+function render() {
+  $("sampleBanner").hidden = !usingSamples; $("clear").hidden = usingSamples; $("dver").textContent = D.VERSION;
+  const shown = combine(bundles);
+  const all = shown.flatMap(b => b.findings.map(f => Object.assign({ who: b.participant, company: b.company }, f)));
+  const st = stats(all);
+  const people = [...new Set(shown.map(b => b.person))];
+  const per = people.map(p => weekly(shown.filter(b => b.person === p).flatMap(b => b.findings)));
+  const companies = [...new Set(shown.map(b => b.company))];
+  $("tiles").innerHTML = [
+    ["People", people.length, companies.length + " " + (companies.length === 1 ? "company" : "companies")],
+    ["Repeated work found", fmt(per.reduce((s, x) => s + x, 0)), "a week, everyone combined"],
+    ["Per person", fmt(median(per)), "median a week"],
+    ["Findings", all.length, all.filter(f => f.automation && f.automation.ai).length + " where AI helps"],
+    ["Accurate", pct(st.acc), st.rated + " of " + all.length + " rated"],
+    ["New to them", pct(st.newRate), "of accurate findings"]
+  ].map(([k, v, n]) => `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="n">${n}</span></div>`).join("");
+
+  // chart: hours/week by type (excludes findings rated wrong)
+  const byType = new Map();
+  all.filter(f => !(f.fb && f.fb.rating === "wrong")).forEach(f => { const t = byType.get(f.type) || { m: 0, n: 0, who: new Set() }; t.m += f.weeklyMinutes; t.n++; t.who.add(f.who); byType.set(f.type, t); });
+  drawChart([...byType.entries()].map(([type, v]) => ({ label: TYPE[type] || type, m: v.m, n: v.n, people: v.who.size })).sort((a, b) => b.m - a.m));
+
+  $("pcount").textContent = people.length + (people.length === 1 ? " person" : " people");
+  $("people").innerHTML = shown.slice().sort((a, b) => weekly(b.findings) - weekly(a.findings)).map(b => {
+    const s = stats(b.findings), sd = b.study || {};
+    return `<tr><td><b>${esc(b.participant || "Unnamed")}</b>${sourceChip(b) ? ` <span class="chip">${sourceChip(b)}</span>` : ""}${b.reanalyzed ? ` <span class="chip" title="Re-analyzed from the activity log with detector v${D.VERSION}">re-analyzed</span>` : ""}<div class="who mono">${b.exportedAt ? "sent " + new Date(b.exportedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : ""}</div></td><td>${esc(b.company || "")}</td><td class="num">${sd.watchDaysDone ?? b.summary?.observedDays ?? "–"}${sd.watchDaysTotal ? " / " + sd.watchDaysTotal : ""}</td><td class="num">${fmt(weekly(b.findings))}</td><td class="num">${b.findings.length}</td><td class="num">${s.rated ? `<span class="chip ${s.acc >= .75 ? "good" : s.acc >= .5 ? "warn" : "bad"}">${pct(s.acc)}</span><div class="who">${s.rated} rated</div>` : `<span class="chip warn">not rated</span>`}</td></tr>`;
+  }).join("") || `<tr><td colspan="6" class="muted">No participants loaded.</td></tr>`;
+
+  const cSel = $("fCompany"), tSel = $("fType"), cv = cSel.value, tv = tSel.value;
+  cSel.innerHTML = `<option value="">All</option>` + companies.sort().map(c => `<option ${c === cv ? "selected" : ""}>${esc(c)}</option>`).join("");
+  const types = [...new Set(all.map(f => f.type))];
+  tSel.innerHTML = `<option value="">All</option>` + types.map(t => `<option value="${t}" ${t === tv ? "selected" : ""}>${TYPE[t] || t}</option>`).join("");
+  renderFindings(all);
+}
+
+function renderFindings(all) {
+  const c = $("fCompany").value, t = $("fType").value, hide = $("fHideWrong").checked;
+  const rows = all.filter(f => (!c || f.company === c) && (!t || f.type === t) && !(hide && f.fb && f.fb.rating === "wrong")).sort((a, b) => b.weeklyMinutes - a.weeklyMinutes);
+  $("findings").innerHTML = rows.map((f, i) => {
+    const id = f.company + "|" + f.who + "|" + f.key;
+    const r = f.fb && RATING[f.fb.rating];
+    const conf = { high: "good", medium: "", low: "warn" }[f.confidence];
+    let html = `<tr class="f" data-id="${esc(id)}" tabindex="0" aria-expanded="${open.has(id)}"><td><div class="ftitle">${esc(f.title)}</div><div class="who">${esc(f.who)} · ${esc(f.company)} · seen ${f.count}× over ${f.days} days</div></td><td><span class="chip">${TYPE[f.type] || f.type}</span></td><td class="num"><b>${fmt(f.weeklyMinutes)}</b></td><td><span class="chip dot ${conf}">${f.confidence}</span></td><td>${esc(f.automation.method)} ${f.automation.ai ? `<span class="chip ai">AI</span>` : ""}</td><td>${r ? `<span class="chip ${r[1]}">${r[0]}</span>` : `<span class="muted small">not rated</span>`}</td></tr>`;
+    if (open.has(id)) html += `<tr class="detail"><td colspan="6"><div class="dgrid">
+      <div><h3>What we saw</h3><p>${esc(f.detail)}${f.when ? " " + esc(f.when) : ""}</p>${f.steps ? `<h3 style="margin-top:10px">Steps</h3><ol>${f.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
+        ${f.fb && f.fb.note ? `<h3 style="margin-top:10px">Participant’s note</h3><p class="note">${esc(f.fb.note)}</p>` : ""}</div>
+      <div><h3>Suggested approach</h3><p>${esc(f.automation.how)}</p>${f.automation.ai ? `<p class="small muted" style="margin-top:6px">${esc(f.automation.why)}</p>` : ""}
+        <p class="small muted" style="margin-top:10px">About ${f.minutesEach} min each · ${f.perDay}× per watch day · automatability ${f.automatability}/100</p>
+        <div class="actions" style="margin-top:10px"><button class="btn sm" data-brief="${esc(id)}">Copy brief</button><span class="small muted" data-msg="${esc(id)}"></span></div></div>
+    </div></td></tr>`;
+    return html;
+  }).join("") || `<tr><td colspan="6" class="muted">No findings match these filters.</td></tr>`;
+  $("findings").__rows = rows;
+}
+
+function drawChart(data) {
+  const el = $("chart");
+  if (!data.length) { el.innerHTML = `<p class="muted small">No findings yet.</p>`; return; }
+  const W = 520, labelW = 170, valW = 64, rowH = 34, barH = 18, top = 8, axisH = 22;
+  const H = top + data.length * rowH + axisH;
+  const max = Math.max(...data.map(d => d.m));
+  const stepH = max > 600 ? 300 : max > 240 ? 120 : 60;
+  const niceMax = Math.ceil(max / stepH) * stepH;
+  const plotW = W - labelW - valW;
+  const x = m => labelW + (m / niceMax) * plotW;
+  let g = "";
+  for (let v = 0; v <= niceMax; v += stepH) {
+    g += `<line x1="${x(v)}" x2="${x(v)}" y1="${top - 4}" y2="${H - axisH + 2}" stroke="var(--grid)" stroke-width="1"/>`;
+    g += `<text class="tick" x="${x(v)}" y="${H - 6}" text-anchor="middle">${v / 60}h</text>`;
+  }
+  data.forEach((d, i) => {
+    const y = top + i * rowH + (rowH - barH) / 2, w = Math.max(2, x(d.m) - labelW), r = Math.min(4, w / 2);
+    const path = `M${labelW},${y} h${w - r} a${r},${r} 0 0 1 ${r},${r} v${barH - 2 * r} a${r},${r} 0 0 1 -${r},${r} h-${w - r} z`;
+    g += `<g class="row" tabindex="0" data-i="${i}" aria-label="${esc(d.label)}: ${fmt(d.m)} a week">
+      <rect class="hit" x="0" y="${top + i * rowH}" width="${W}" height="${rowH}"/>
+      <text x="${labelW - 10}" y="${y + barH / 2 + 4}" text-anchor="end">${esc(d.label)}</text>
+      <path class="bar" d="${path}"/>
+      <text x="${labelW + w + 8}" y="${y + barH / 2 + 4}" style="font-variant-numeric:tabular-nums">${fmt(d.m)}</text></g>`;
+  });
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Hours a week of repeated work by type">${g}</svg>`;
+  el.__data = data;
+}
+function showTip(e) {
+  const row = e.target.closest(".row"), el = $("chart");
+  let tip = el.querySelector(".tip");
+  if (!row) { if (tip) tip.remove(); return; }
+  const d = el.__data[+row.dataset.i];
+  if (!tip) { tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip); }
+  tip.innerHTML = `<b>${esc(d.label)}</b><br>${fmt(d.m)} a week · ${d.n} ${d.n === 1 ? "finding" : "findings"} · ${d.people} ${d.people === 1 ? "person" : "people"}`;
+  const box = el.getBoundingClientRect(), rb = row.querySelector(".bar").getBoundingClientRect();
+  tip.style.left = Math.min(box.width - 90, Math.max(90, rb.right - box.left)) + "px";
+  tip.style.top = (rb.top - box.top) + "px";
+}
+$("chart").addEventListener("mousemove", showTip);
+$("chart").addEventListener("mouseleave", () => { const t = $("chart").querySelector(".tip"); if (t) t.remove(); });
+$("chart").addEventListener("focusin", showTip);
+$("chart").addEventListener("focusout", () => { const t = $("chart").querySelector(".tip"); if (t) t.remove(); });
+
+function toggle(id) { open.has(id) ? open.delete(id) : open.add(id); render(); }
+$("findings").addEventListener("click", async e => {
+  const b = e.target.closest("[data-brief]");
+  if (b) {
+    const f = $("findings").__rows.find(f => f.company + "|" + f.who + "|" + f.key === b.dataset.brief);
+    const msg = document.querySelector(`[data-msg="${CSS.escape(b.dataset.brief)}"]`);
+    try { await navigator.clipboard.writeText(D.brief(f, f.who + ", " + f.company)); msg.textContent = "Copied"; } catch { msg.textContent = "Copy blocked. Select the text above instead."; }
+    return;
+  }
+  const tr = e.target.closest("tr.f"); if (tr) toggle(tr.dataset.id);
+});
+$("findings").addEventListener("keydown", e => { const tr = e.target.closest("tr.f"); if (tr && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggle(tr.dataset.id); } });
+["fCompany", "fType", "fHideWrong"].forEach(id => $(id).addEventListener("change", render));
+
+async function load(files) {
+  const errs = [], loaded = [];
+  for (const file of files) {
+    try {
+      const b = JSON.parse(await file.text());
+      if (!String(b.schema || "").startsWith("workflow-detective/bundle")) throw new Error("not a Workflow Detective results file");
+      loaded.push(prep(b));
+    } catch (e) { errs.push(file.name + ": " + e.message); }
+  }
+  if (loaded.length) {
+    if (usingSamples) { bundles = []; usingSamples = false; open.clear(); }
+    for (const b of loaded) { // newest file per person wins
+      const i = bundles.findIndex(x => x.id === b.id);
+      if (i < 0) bundles.push(b); else if ((b.exportedAt || "") >= (bundles[i].exportedAt || "")) bundles[i] = b;
+    }
+  }
+  $("err").hidden = !errs.length;
+  $("err").textContent = errs.length ? "Couldn’t read " + errs.length + " file(s). " + errs.join(" · ") : "";
+  render();
+}
+$("pick").addEventListener("click", () => $("files").click());
+$("files").addEventListener("change", e => { load([...e.target.files]); e.target.value = ""; });
+$("clear").addEventListener("click", () => { bundles = SAMPLES.map(prep); usingSamples = true; open.clear(); render(); });
+let dragDepth = 0;
+window.addEventListener("dragenter", e => { if ([...(e.dataTransfer?.types || [])].includes("Files")) { dragDepth++; $("drop").hidden = false; } });
+window.addEventListener("dragleave", () => { if (--dragDepth <= 0) { dragDepth = 0; $("drop").hidden = true; } });
+window.addEventListener("dragover", e => e.preventDefault());
+window.addEventListener("drop", e => { e.preventDefault(); dragDepth = 0; $("drop").hidden = true; load([...(e.dataTransfer?.files || [])].filter(f => /\.json$/i.test(f.name))); });
+
+bundles = SAMPLES.map(prep);
+render();
+</script>
+
+</body></html>

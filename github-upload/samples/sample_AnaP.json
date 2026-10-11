@@ -1,0 +1,610 @@
+{
+ "schema": "workflow-detective/bundle@1",
+ "sample": true,
+ "source": "desktop",
+ "os": "mac",
+ "exportedAt": "2026-10-23T16:00:00.000Z",
+ "extensionVersion": "0.1.0",
+ "detectorVersion": "0.1.0",
+ "participant": "Ana P.",
+ "company": "COPPER & PINE (sample)",
+ "study": {
+  "startDate": "2026-10-12",
+  "weeks": 2,
+  "scheduleMode": "rotate",
+  "hours": [
+   8,
+   18
+  ],
+  "watchDaysTotal": 6,
+  "watchDaysDone": 6
+ },
+ "summary": {
+  "events": 1382,
+  "days": [
+   "2026-10-12",
+   "2026-10-14",
+   "2026-10-16",
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-22"
+  ],
+  "observedDays": 6,
+  "activeMinutes": 1776,
+  "activeMinutesPerDay": 296,
+  "timeByApp": [
+   {
+    "app": "Microsoft Teams",
+    "minutes": 774
+   },
+   {
+    "app": "Excel",
+    "minutes": 345
+   },
+   {
+    "app": "Safari",
+    "minutes": 292
+   },
+   {
+    "app": "Outlook",
+    "minutes": 190
+   },
+   {
+    "app": "Finder",
+    "minutes": 64
+   },
+   {
+    "app": "QuickBooks Desktop",
+    "minutes": 58
+   },
+   {
+    "app": "Apple Mail",
+    "minutes": 53
+   }
+  ],
+  "findings": 4,
+  "automatableWeeklyMinutes": 54
+ },
+ "findings": [
+  {
+   "type": "entry",
+   "key": "entry|QuickBooks Desktop|Create Invoices",
+   "apps": [
+    "Excel",
+    "QuickBooks Desktop"
+   ],
+   "title": "Typing details from Excel into QuickBooks Desktop (“Create Invoices”)",
+   "detail": "About 6 fields each time: Customer:Job, Date, Terms, Item, Quantity, and Rate. You usually look at Excel right before.",
+   "context": {
+    "page": "Create Invoices",
+    "title": "Create Invoices",
+    "source": "Excel",
+    "fields": [
+     "Customer:Job",
+     "Date",
+     "Terms",
+     "Item",
+     "Quantity",
+     "Rate"
+    ]
+   },
+   "occurrences": [
+    {
+     "t0": 1791819351054.8318,
+     "t1": 1791819400432.3113,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1791824757210.2979,
+     "t1": 1791824812299.0269,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1791831023274.1167,
+     "t1": 1791831069416.0173,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1791833560309.6826,
+     "t1": 1791833604800.9824,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1791834882472.485,
+     "t1": 1791834931566.5256,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1791991880007.3894,
+     "t1": 1791991929596.0784,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1791994418496.7922,
+     "t1": 1791994471775.2407,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1791997346212.6484,
+     "t1": 1791997391710.2458,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792007078836.9866,
+     "t1": 1792007127471.1956,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792010197625.169,
+     "t1": 1792010251435.5427,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792166394868.6096,
+     "t1": 1792166441447.9116,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792167986799.2588,
+     "t1": 1792168034769.023,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792168539027.0422,
+     "t1": 1792168586419.2922,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792169794451.3494,
+     "t1": 1792169843134.3022,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792174070262.7173,
+     "t1": 1792174117272.4917,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792521237968.8938,
+     "t1": 1792521286002.855,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792527079471.1685,
+     "t1": 1792527133295.9724,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792528955441.8555,
+     "t1": 1792529002734.3308,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792596209028.7668,
+     "t1": 1792596264366.2568,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792605458558.655,
+     "t1": 1792605645511.5251,
+     "note": "12 fields · after Excel"
+    },
+    {
+     "t0": 1792611705649.8376,
+     "t1": 1792611755358.8086,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792682943406.378,
+     "t1": 1792682991956.246,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792684218457.5786,
+     "t1": 1792684269748.4417,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792695164682.8796,
+     "t1": 1792695215286.6677,
+     "note": "6 fields · after Excel"
+    }
+   ],
+   "minutesEach": 1.1,
+   "automation": {
+    "method": "AI fills in the form for you",
+    "how": "AI reads what you were looking at in Excel, fills in customer:job, date, terms, and item in QuickBooks Desktop, and leaves it for you to check and save.",
+    "ai": true,
+    "why": "Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."
+   },
+   "count": 24,
+   "days": 6,
+   "perDay": 4,
+   "weeklyMinutes": 21,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 85,
+   "rank": 18.101740732828777,
+   "when": null
+  },
+  {
+   "type": "transfer",
+   "key": "transfer|Outlook|Excel",
+   "apps": [
+    "Outlook",
+    "Excel"
+   ],
+   "title": "Copying information from Outlook into Excel",
+   "detail": "Usually 3 pieces of information at a time (mostly short text).",
+   "context": {
+    "from": "Payment received from Northwind · Invoice #",
+    "to": "AR Tracker #.xlsx",
+    "fieldsEach": 3
+   },
+   "occurrences": [
+    {
+     "t0": 1791815907710.7493,
+     "t1": 1791815926640.6858,
+     "note": "2 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1791822943519.972,
+     "t1": 1791822962169.8337,
+     "note": "2 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1791824860655.126,
+     "t1": 1791824891792.5151,
+     "note": "3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1791831318355.6323,
+     "t1": 1791831350436.505,
+     "note": "3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1791833441268.2727,
+     "t1": 1791833461728.7412,
+     "note": "2 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1791833922034.9185,
+     "t1": 1791833953944.1826,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1791836951689.4177,
+     "t1": 1791836979121.4822,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1791986844618.2305,
+     "t1": 1791986864751.5898,
+     "note": "2 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1791988059890.7764,
+     "t1": 1791988089043.3047,
+     "note": "3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792000472127.0938,
+     "t1": 1792000490626.9995,
+     "note": "2 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792007344625.0376,
+     "t1": 1792007366158.5034,
+     "note": "2 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792014191833.3835,
+     "t1": 1792014214466.0627,
+     "note": "2 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792160454651.9414,
+     "t1": 1792160478384.598,
+     "note": "2 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792160770960.1128,
+     "t1": 1792160792869.949,
+     "note": "2 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792166126726.7036,
+     "t1": 1792166148709.0144,
+     "note": "2 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792167887379.6062,
+     "t1": 1792167986799.2588,
+     "note": "3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792182328427.9404,
+     "t1": 1792182349310.4197,
+     "note": "2 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792505195662.8162,
+     "t1": 1792505225040.9402,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792505875846.7107,
+     "t1": 1792505898039.3403,
+     "note": "2 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792513284040.0938,
+     "t1": 1792513312939.2087,
+     "note": "3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792515477109.307,
+     "t1": 1792515513550.5884,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792593560591.2136,
+     "t1": 1792593592022.5374,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792595415360.69,
+     "t1": 1792595436877.9724,
+     "note": "2 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792596671754.9675,
+     "t1": 1792596702616.5532,
+     "note": "3 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792602973465.7737,
+     "t1": 1792603005076.232,
+     "note": "3 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792687280694.8765,
+     "t1": 1792687316042.3003,
+     "note": "3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792698680400.5154,
+     "t1": 1792698708011.6396,
+     "note": "3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792699626287.5918,
+     "t1": 1792699647376.455,
+     "note": "2 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792703106781.4636,
+     "t1": 1792703138963.3586,
+     "note": "3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792705550219.3193,
+     "t1": 1792705578161.996,
+     "note": "3 pastes · from “Payment received from Northwind · Invoice #”"
+    }
+   ],
+   "minutesEach": 0.7,
+   "automation": {
+    "method": "AI reads it, then an automation fills it in",
+    "how": "Each time a new email like this shows up in Outlook, AI picks out the details and an automation adds them to Excel.",
+    "ai": true,
+    "why": "Reading a message and picking out the right details used to need a person. AI can now do this reliably, and you review anything it isn’t sure about."
+   },
+   "steps": [
+    "Open Outlook",
+    "Copy from Outlook",
+    "Open Excel",
+    "Paste into Excel",
+    "Repeat for each piece of information"
+   ],
+   "count": 30,
+   "days": 6,
+   "perDay": 5,
+   "weeklyMinutes": 18,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 91,
+   "rank": 16.122771194966635,
+   "when": null
+  },
+  {
+   "type": "export",
+   "key": "export|QuickBooks Desktop|xlsx",
+   "apps": [
+    "QuickBooks Desktop"
+   ],
+   "title": "Exporting .xlsx files from QuickBooks Desktop",
+   "detail": "You downloaded the same kind of file 6 times. Reports like this can usually be sent or refreshed automatically.",
+   "occurrences": [
+    {
+     "t0": 1791813634943.0898,
+     "t1": 1791813634943.0898,
+     "note": ".xlsx · “A/R Aging Summary”"
+    },
+    {
+     "t0": 1791986536382.1553,
+     "t1": 1791986536382.1553,
+     "note": ".xlsx · “A/R Aging Summary”"
+    },
+    {
+     "t0": 1792159366734.8774,
+     "t1": 1792159366734.8774,
+     "note": ".xlsx · “A/R Aging Summary”"
+    },
+    {
+     "t0": 1792505247326.4636,
+     "t1": 1792505247326.4636,
+     "note": ".xlsx · “A/R Aging Summary”"
+    },
+    {
+     "t0": 1792591002530.5688,
+     "t1": 1792591002530.5688,
+     "note": ".xlsx · “A/R Aging Summary”"
+    },
+    {
+     "t0": 1792678175276.1897,
+     "t1": 1792678175276.1897,
+     "note": ".xlsx · “A/R Aging Summary”"
+    }
+   ],
+   "minutesEach": 3,
+   "automation": {
+    "method": "Scheduled report",
+    "how": "Set QuickBooks Desktop (or an automation) to produce this file on a schedule and send it where it goes next. It happens around 9:02 am, so it can run on a schedule before you start.",
+    "ai": false
+   },
+   "count": 6,
+   "days": 6,
+   "perDay": 1,
+   "weeklyMinutes": 15,
+   "regular": {
+    "around": "9:02 am"
+   },
+   "confidence": "medium",
+   "automatability": 77,
+   "rank": 11.55,
+   "when": "Usually around 9:02 am every day we watched."
+  },
+  {
+   "type": "drafting",
+   "key": "drafting|Apple Mail|Re: Question about invoice #",
+   "apps": [
+    "Apple Mail"
+   ],
+   "title": "Writing similar emails in Apple Mail",
+   "detail": "You wrote 17 emails like this. Ones that follow a pattern can start from an AI draft.",
+   "occurrences": [
+    {
+     "t0": 1791826443334.8735,
+     "t1": 1791826525498.5693,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1791840930806.7976,
+     "t1": 1791841017196.6885,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1791994942314.2097,
+     "t1": 1791995011198.7432,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792005574504.4912,
+     "t1": 1792005621160.5723,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792009781253.079,
+     "t1": 1792010023611.1477,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792163098380.3806,
+     "t1": 1792163141207.579,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792181445019.526,
+     "t1": 1792181483354.0894,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792509596318.4226,
+     "t1": 1792509653464.6143,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792518035314.0803,
+     "t1": 1792518079322.2673,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792524205412.7073,
+     "t1": 1792524295834.8994,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792524998867.6848,
+     "t1": 1792525057446.5193,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792594076036.4993,
+     "t1": 1792594143790.508,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792596934200.4548,
+     "t1": 1792596983354.3855,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792601231413.816,
+     "t1": 1792601273773.899,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792608134620.446,
+     "t1": 1792608227830.5735,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792691487540.787,
+     "t1": 1792691543757.8179,
+     "note": "Subject, Message body"
+    },
+    {
+     "t0": 1792692711620.4304,
+     "t1": 1792692796382.4895,
+     "note": "Subject, Message body"
+    }
+   ],
+   "minutesEach": 1.5,
+   "automation": {
+    "method": "AI drafts, you send",
+    "how": "AI writes a first draft in your usual wording, filling in the facts from your other apps. You read it and press send.",
+    "ai": true,
+    "why": "AI is good at first drafts that follow a pattern. You keep the final say because these go to people."
+   },
+   "count": 17,
+   "days": 6,
+   "perDay": 2.83,
+   "weeklyMinutes": 21,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 48,
+   "rank": 10.038934573567708,
+   "when": null
+  }
+ ],
+ "feedback": {
+  "entry|QuickBooks Desktop|Create Invoices": {
+   "rating": "new",
+   "at": 1792771200000
+  },
+  "transfer|Outlook|Excel": {
+   "rating": "accurate",
+   "at": 1792771200000
+  },
+  "export|QuickBooks Desktop|xlsx": {
+   "rating": "accurate",
+   "at": 1792771200000
+  },
+  "drafting|Apple Mail|Re: Question about invoice #": {
+   "rating": "wrong",
+   "note": "Those replies are all different.",
+   "at": 1792771200000
+  }
+ }
+}

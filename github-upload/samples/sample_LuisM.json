@@ -1,0 +1,719 @@
+{
+ "schema": "workflow-detective/bundle@1",
+ "sample": true,
+ "exportedAt": "2026-10-23T16:00:00.000Z",
+ "extensionVersion": "0.1.0",
+ "detectorVersion": "0.1.0",
+ "participant": "Luis M.",
+ "company": "COPPER & PINE (sample)",
+ "study": {
+  "startDate": "2026-10-12",
+  "weeks": 2,
+  "scheduleMode": "rotate",
+  "hours": [
+   8,
+   18
+  ],
+  "watchDaysTotal": 6,
+  "watchDaysDone": 6
+ },
+ "summary": {
+  "events": 2241,
+  "days": [
+   "2026-10-12",
+   "2026-10-14",
+   "2026-10-16",
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-22"
+  ],
+  "observedDays": 6,
+  "activeMinutes": 2353,
+  "activeMinutesPerDay": 392,
+  "timeByApp": [
+   {
+    "app": "Slack",
+    "minutes": 962
+   },
+   {
+    "app": "Google Docs",
+    "minutes": 357
+   },
+   {
+    "app": "Gmail",
+    "minutes": 313
+   },
+   {
+    "app": "Google Calendar",
+    "minutes": 288
+   },
+   {
+    "app": "news.example.com",
+    "minutes": 204
+   },
+   {
+    "app": "Zendesk",
+    "minutes": 91
+   },
+   {
+    "app": "ShipStation",
+    "minutes": 75
+   },
+   {
+    "app": "Shopify",
+    "minutes": 41
+   },
+   {
+    "app": "Airtable",
+    "minutes": 21
+   }
+  ],
+  "findings": 4,
+  "automatableWeeklyMinutes": 56
+ },
+ "findings": [
+  {
+   "type": "transfer",
+   "key": "transfer|Shopify|ShipStation",
+   "apps": [
+    "Shopify",
+    "ShipStation"
+   ],
+   "title": "Copying information from Shopify into ShipStation",
+   "detail": "Usually 4 pieces of information at a time (mostly short text and numbers and amounts), into fields like “Recipient name”, “Street address”, “City”, and “Weight (oz)”.",
+   "context": {
+    "from": "Order # · Copper & Pine",
+    "to": "Awaiting Shipment",
+    "fieldsEach": 4
+   },
+   "occurrences": [
+    {
+     "t0": 1791815762424,
+     "t1": 1791815808925,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1791824971379,
+     "t1": 1791825015295,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1791828276091,
+     "t1": 1791828567003,
+     "note": "16 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1791829061736,
+     "t1": 1791829178567,
+     "note": "8 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1791835234208,
+     "t1": 1791835276592,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1791987857524,
+     "t1": 1791987895801,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1791988702524,
+     "t1": 1791988741435,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1791990193066,
+     "t1": 1791990235514,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1791994573564,
+     "t1": 1791994616319,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792001283106,
+     "t1": 1792001330515,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792003594697,
+     "t1": 1792003640106,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792005781078,
+     "t1": 1792005828988,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792006150177,
+     "t1": 1792006195213,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792160829842,
+     "t1": 1792160878393,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792164411316,
+     "t1": 1792164455040,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792165176074,
+     "t1": 1792165215278,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792165561358,
+     "t1": 1792165604468,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792169249693,
+     "t1": 1792169295259,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792174991971,
+     "t1": 1792175111451,
+     "note": "8 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792178097545,
+     "t1": 1792178146406,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792178610589,
+     "t1": 1792178653750,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792180190756,
+     "t1": 1792180232787,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792182655343,
+     "t1": 1792182698800,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792512441522,
+     "t1": 1792512482549,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792514303999,
+     "t1": 1792514351254,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792515576542,
+     "t1": 1792515615601,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792519500890,
+     "t1": 1792519544038,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792521458413,
+     "t1": 1792521498479,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792525257573,
+     "t1": 1792525298899,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792526002236,
+     "t1": 1792526043488,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792529457359,
+     "t1": 1792529498712,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792592852955,
+     "t1": 1792592897153,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792594899155,
+     "t1": 1792594943333,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792598113444,
+     "t1": 1792598159960,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792598826265,
+     "t1": 1792598868559,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792600281232,
+     "t1": 1792600329673,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792601801559,
+     "t1": 1792601841992,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792602368944,
+     "t1": 1792602412021,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792678860985,
+     "t1": 1792678904886,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792679133929,
+     "t1": 1792679175781,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792680393821,
+     "t1": 1792680437958,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792687817570,
+     "t1": 1792687863747,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792691890020,
+     "t1": 1792691932708,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792692187994,
+     "t1": 1792692228009,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792693046588,
+     "t1": 1792693089769,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792696922097,
+     "t1": 1792696966502,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792699015475,
+     "t1": 1792699059030,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792700455650,
+     "t1": 1792700498360,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    },
+    {
+     "t0": 1792701236152,
+     "t1": 1792701281308,
+     "note": "4 pastes · from “Order # · Copper & Pine”"
+    }
+   ],
+   "minutesEach": 1,
+   "automation": {
+    "method": "AI reads it, then an automation fills it in",
+    "how": "Each time a new item like this shows up in Shopify, AI picks out the recipient name, street address, city, and weight (oz) and an automation adds them to ShipStation.",
+    "ai": true,
+    "why": "Reading a message and picking out the right details used to need a person. AI can now do this reliably, and you review anything it isn’t sure about."
+   },
+   "steps": [
+    "Open Shopify",
+    "Copy from Shopify",
+    "Open ShipStation",
+    "Paste into ShipStation",
+    "Repeat for each piece of information"
+   ],
+   "count": 49,
+   "days": 6,
+   "perDay": 8.17,
+   "weeklyMinutes": 40,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 91,
+   "rank": 36.2027448611111,
+   "when": null
+  },
+  {
+   "type": "drafting",
+   "key": "drafting|Zendesk|/agent/tickets/:id",
+   "apps": [
+    "Zendesk"
+   ],
+   "title": "Writing similar replies in Zendesk (“Where is my order?”)",
+   "detail": "You wrote 31 replies like this. Ones that follow a pattern can start from an AI draft.",
+   "occurrences": [
+    {
+     "t0": 1791818750179,
+     "t1": 1791818792594,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1791821590536,
+     "t1": 1791821634707,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1791824540405,
+     "t1": 1791824573402,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1791825047138,
+     "t1": 1791825099369,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1791986751750,
+     "t1": 1791986791815,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1791990653254,
+     "t1": 1791990706776,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1791994646564,
+     "t1": 1791994816997,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1791996908740,
+     "t1": 1791996939559,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792007078822,
+     "t1": 1792007117281,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792165013356,
+     "t1": 1792165048267,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792166952402,
+     "t1": 1792167009838,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792167590788,
+     "t1": 1792167622050,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792185485088,
+     "t1": 1792185531310,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792518786111,
+     "t1": 1792518831946,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792523458219,
+     "t1": 1792523491593,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792524906606,
+     "t1": 1792524949914,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792526399970,
+     "t1": 1792526431794,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792530311456,
+     "t1": 1792530367420,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792532467455,
+     "t1": 1792532517393,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792591937243,
+     "t1": 1792591979969,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792593715865,
+     "t1": 1792593759497,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792596724098,
+     "t1": 1792596769128,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792597369163,
+     "t1": 1792597399702,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792611644484,
+     "t1": 1792611693814,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792615630674,
+     "t1": 1792615665734,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792681850212,
+     "t1": 1792681888509,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792682587245,
+     "t1": 1792682627772,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792691744485,
+     "t1": 1792691801598,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792692245374,
+     "t1": 1792692281483,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792695308175,
+     "t1": 1792695357297,
+     "note": "Public reply"
+    },
+    {
+     "t0": 1792697895610,
+     "t1": 1792697955067,
+     "note": "Public reply"
+    }
+   ],
+   "minutesEach": 1.2,
+   "automation": {
+    "method": "AI drafts, you send",
+    "how": "AI writes a first draft in your usual wording, filling in the facts from your other apps. You read it and press send.",
+    "ai": true,
+    "why": "AI is good at first drafts that follow a pattern. You keep the final say because these go to people."
+   },
+   "count": 31,
+   "days": 6,
+   "perDay": 5.17,
+   "weeklyMinutes": 32,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 48,
+   "rank": 15.15032,
+   "when": null
+  },
+  {
+   "type": "shuttle",
+   "key": "shuttle|Shopify|Gmail|csv",
+   "apps": [
+    "Shopify",
+    "Gmail"
+   ],
+   "title": "Downloading .csv files from Shopify and uploading them to Gmail",
+   "detail": "The same download-then-upload, 6 times. Each time, you also write a similar message in Gmail.",
+   "context": {
+    "from": "Shopify",
+    "to": "Gmail",
+    "ext": "csv"
+   },
+   "occurrences": [
+    {
+     "t0": 1791819753573,
+     "t1": 1791819825015,
+     "note": ".csv · “Inventory · Copper & Pine” · To recipients, Subject, Message Body"
+    },
+    {
+     "t0": 1791991921234,
+     "t1": 1791992002754,
+     "note": ".csv · “Inventory · Copper & Pine” · To recipients, Subject, Message Body"
+    },
+    {
+     "t0": 1792164895509,
+     "t1": 1792164993566,
+     "note": ".csv · “Inventory · Copper & Pine” · To recipients, Subject, Message Body"
+    },
+    {
+     "t0": 1792510944707,
+     "t1": 1792511022493,
+     "note": ".csv · “Inventory · Copper & Pine” · To recipients, Subject, Message Body"
+    },
+    {
+     "t0": 1792597554243,
+     "t1": 1792597658164,
+     "note": ".csv · “Inventory · Copper & Pine” · To recipients, Subject, Message Body"
+    },
+    {
+     "t0": 1792683409036,
+     "t1": 1792683506966,
+     "note": ".csv · “Inventory · Copper & Pine” · To recipients, Subject, Message Body"
+    }
+   ],
+   "minutesEach": 2,
+   "automation": {
+    "method": "Sync the file automatically",
+    "how": "An automation pulls the file from Shopify and puts it in Gmail on a schedule or as soon as it’s ready. No downloading. It happens around 10:39 am, so it can run on a schedule before you start.",
+    "ai": false
+   },
+   "merged": [
+    "drafting|Gmail|/mail/u/#/#inbox?compose=new"
+   ],
+   "count": 6,
+   "days": 6,
+   "perDay": 1,
+   "weeklyMinutes": 10,
+   "regular": {
+    "around": "10:39 am"
+   },
+   "confidence": "medium",
+   "automatability": 87,
+   "rank": 8.680062500000002,
+   "when": "Usually around 10:39 am every day we watched."
+  },
+  {
+   "type": "entry",
+   "key": "entry|Airtable|/:id/:id/:id",
+   "apps": [
+    "Gmail",
+    "Airtable"
+   ],
+   "title": "Typing details from Gmail into Airtable (“Purchase orders: Grid view”)",
+   "detail": "About 5 fields each time: Supplier, SKU, Qty, Unit cost, and Expected date. You usually look at Gmail right before.",
+   "context": {
+    "page": "/:id/:id/:id",
+    "title": "Purchase orders: Grid view",
+    "source": "Gmail",
+    "fields": [
+     "Supplier",
+     "SKU",
+     "Qty",
+     "Unit cost",
+     "Expected date"
+    ]
+   },
+   "occurrences": [
+    {
+     "t0": 1791832991925,
+     "t1": 1791833169912,
+     "note": "10 fields · after Gmail"
+    },
+    {
+     "t0": 1792006055035,
+     "t1": 1792006061599,
+     "note": "5 fields · after Gmail"
+    },
+    {
+     "t0": 1792011664244,
+     "t1": 1792011672471,
+     "note": "5 fields · after Gmail"
+    },
+    {
+     "t0": 1792168570508,
+     "t1": 1792168707534,
+     "note": "10 fields · after Gmail"
+    },
+    {
+     "t0": 1792519212019,
+     "t1": 1792519217194,
+     "note": "5 fields · after Gmail"
+    },
+    {
+     "t0": 1792525740232,
+     "t1": 1792525749734,
+     "note": "5 fields · after Gmail"
+    },
+    {
+     "t0": 1792606637957,
+     "t1": 1792606786375,
+     "note": "10 fields · after Gmail"
+    },
+    {
+     "t0": 1792687679719,
+     "t1": 1792687689392,
+     "note": "5 fields · after Gmail"
+    },
+    {
+     "t0": 1792692027146,
+     "t1": 1792692037029,
+     "note": "5 fields · after Gmail"
+    },
+    {
+     "t0": 1792701352949,
+     "t1": 1792701359911,
+     "note": "5 fields · after Gmail"
+    }
+   ],
+   "minutesEach": 0.8,
+   "automation": {
+    "method": "AI fills in the form for you",
+    "how": "AI reads what you were looking at in Gmail, fills in supplier, sku, qty, and unit cost in Airtable, and leaves it for you to check and save.",
+    "ai": true,
+    "why": "Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."
+   },
+   "count": 10,
+   "days": 6,
+   "perDay": 1.67,
+   "weeklyMinutes": 6,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 85,
+   "rank": 5.3125,
+   "when": null
+  }
+ ],
+ "feedback": {
+  "transfer|Shopify|ShipStation": {
+   "rating": "new",
+   "at": 1792771200000
+  },
+  "drafting|Zendesk|/agent/tickets/:id": {
+   "rating": "new",
+   "note": "Half of these are the same 'where is my order' answer.",
+   "at": 1792771200000
+  },
+  "shuttle|Shopify|Gmail|csv": {
+   "rating": "accurate",
+   "at": 1792771200000
+  },
+  "entry|Airtable|/:id/:id/:id": {
+   "rating": "accurate",
+   "at": 1792771200000
+  }
+ }
+}

@@ -1,0 +1,608 @@
+{
+ "schema": "workflow-detective/bundle@1",
+ "sample": true,
+ "source": "desktop",
+ "exportedAt": "2026-10-23T16:00:00.000Z",
+ "extensionVersion": "0.1.0",
+ "detectorVersion": "0.1.0",
+ "participant": "Marcus L.",
+ "company": "HARBORVIEW (sample)",
+ "os": "windows",
+ "study": {
+  "startDate": "2026-10-12",
+  "weeks": 2,
+  "scheduleMode": "rotate",
+  "days": [
+   2,
+   3,
+   4
+  ],
+  "hours": [
+   8,
+   18
+  ],
+  "watchDaysTotal": 6,
+  "watchDaysDone": 0,
+  "captureTitles": true,
+  "captureFieldLabels": true
+ },
+ "summary": {
+  "events": 2012,
+  "days": [
+   "2026-10-12",
+   "2026-10-14",
+   "2026-10-16",
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-22"
+  ],
+  "observedDays": 6,
+  "activeMinutes": 1902,
+  "activeMinutesPerDay": 317,
+  "timeByApp": [
+   {
+    "app": "Microsoft Teams",
+    "minutes": 852
+   },
+   {
+    "app": "Excel",
+    "minutes": 307
+   },
+   {
+    "app": "Chrome",
+    "minutes": 303
+   },
+   {
+    "app": "Outlook",
+    "minutes": 300
+   },
+   {
+    "app": "File Explorer",
+    "minutes": 76
+   },
+   {
+    "app": "QuickBooks Desktop",
+    "minutes": 64
+   }
+  ],
+  "findings": 4,
+  "automatableWeeklyMinutes": 56
+ },
+ "findings": [
+  {
+   "type": "entry",
+   "key": "entry|QuickBooks Desktop|Create Invoices - Northline Supply",
+   "apps": [
+    "Excel",
+    "QuickBooks Desktop"
+   ],
+   "title": "Typing details from Excel into QuickBooks Desktop (“Create Invoices · Northline Supply”)",
+   "detail": "About 6 fields each time: Customer:Job, Date, Terms, Item, Quantity, and Rate. You usually look at Excel right before.",
+   "context": {
+    "page": "Create Invoices - Northline Supply",
+    "title": "Create Invoices · Northline Supply",
+    "source": "Excel",
+    "fields": [
+     "Customer:Job",
+     "Date",
+     "Terms",
+     "Item",
+     "Quantity",
+     "Rate"
+    ]
+   },
+   "occurrences": [
+    {
+     "t0": 1791821149288,
+     "t1": 1791821205256,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1791822363394,
+     "t1": 1791822417680,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1791822893855,
+     "t1": 1791822939098,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1791833820515,
+     "t1": 1791833868662,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1791995276141,
+     "t1": 1791995324964,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1791999244193,
+     "t1": 1791999291747,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792002390408,
+     "t1": 1792002439745,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792004530088,
+     "t1": 1792004577204,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792007711750,
+     "t1": 1792007756589,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792164804833,
+     "t1": 1792164855764,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792168888812,
+     "t1": 1792168937844,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792169779544,
+     "t1": 1792169934499,
+     "note": "12 fields · after Excel"
+    },
+    {
+     "t0": 1792510672330,
+     "t1": 1792510723970,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792515048655,
+     "t1": 1792515099957,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792515839230,
+     "t1": 1792515891638,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792520008537,
+     "t1": 1792520062726,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792526380864,
+     "t1": 1792526434130,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792595438530,
+     "t1": 1792595494279,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792606395967,
+     "t1": 1792606539303,
+     "note": "12 fields · after Excel"
+    },
+    {
+     "t0": 1792613154968,
+     "t1": 1792613201671,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792683658961,
+     "t1": 1792683707009,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792684099812,
+     "t1": 1792684159030,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792698715133,
+     "t1": 1792698764542,
+     "note": "6 fields · after Excel"
+    },
+    {
+     "t0": 1792700985631,
+     "t1": 1792701032461,
+     "note": "6 fields · after Excel"
+    }
+   ],
+   "minutesEach": 1.1,
+   "automation": {
+    "method": "AI fills in the form for you",
+    "how": "AI reads what you were looking at in Excel, fills in customer:job, date, terms, and item in QuickBooks Desktop, and leaves it for you to check and save.",
+    "ai": true,
+    "why": "Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."
+   },
+   "count": 24,
+   "days": 6,
+   "perDay": 4,
+   "weeklyMinutes": 22,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 85,
+   "rank": 18.464833333333335,
+   "when": null
+  },
+  {
+   "type": "entry",
+   "key": "entry|Excel|AR Tracker #.xlsx › Payments",
+   "apps": [
+    "Outlook",
+    "Excel"
+   ],
+   "title": "Copying details from Outlook into Excel (“AR Tracker #.xlsx › Payments”)",
+   "detail": "About 3 fields each time: Amount, Client, and Date paid. You usually look at Outlook right before. It also includes copying and pasting from Outlook into Excel.",
+   "context": {
+    "page": "AR Tracker #.xlsx › Payments",
+    "title": "AR Tracker #.xlsx › Payments",
+    "source": "Outlook",
+    "fields": [
+     "Amount",
+     "Client",
+     "Date paid"
+    ]
+   },
+   "occurrences": [
+    {
+     "t0": 1791818481880,
+     "t1": 1791818513588,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1791821420018,
+     "t1": 1791821451366,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Harbor Foods · Invoice #”"
+    },
+    {
+     "t0": 1791828659254,
+     "t1": 1791828693541,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1791834498444,
+     "t1": 1791834534193,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792009611429,
+     "t1": 1792009638390,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792012648588,
+     "t1": 1792012745412,
+     "note": "6 fields · after Outlook · 6 pastes · from “Payment received from Harbor Foods · Invoice #”"
+    },
+    {
+     "t0": 1792014052841,
+     "t1": 1792014090360,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Harbor Foods · Invoice #”"
+    },
+    {
+     "t0": 1792159621325,
+     "t1": 1792159649462,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792160580218,
+     "t1": 1792160606361,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Harbor Foods · Invoice #”"
+    },
+    {
+     "t0": 1792169968906,
+     "t1": 1792170000798,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792175758367,
+     "t1": 1792175795625,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792505880173,
+     "t1": 1792505912603,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792512318182,
+     "t1": 1792512353189,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792519310858,
+     "t1": 1792519402466,
+     "note": "6 fields · after Outlook · 6 pastes · from “Payment received from Harbor Foods · Invoice #”"
+    },
+    {
+     "t0": 1792521656390,
+     "t1": 1792521689253,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792530415831,
+     "t1": 1792530449626,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792591257678,
+     "t1": 1792591293002,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792595876180,
+     "t1": 1792595911133,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792600827256,
+     "t1": 1792600865073,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792606584299,
+     "t1": 1792606617819,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Harbor Foods · Invoice #”"
+    },
+    {
+     "t0": 1792614917256,
+     "t1": 1792614948400,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Northwind · Invoice #”"
+    },
+    {
+     "t0": 1792679338198,
+     "t1": 1792679367480,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792679753772,
+     "t1": 1792679790164,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    },
+    {
+     "t0": 1792686485481,
+     "t1": 1792686517198,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Harbor Foods · Invoice #”"
+    },
+    {
+     "t0": 1792695955021,
+     "t1": 1792695992812,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Harbor Foods · Invoice #”"
+    },
+    {
+     "t0": 1792700872804,
+     "t1": 1792700906021,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Juniper Bakery · Invoice #”"
+    },
+    {
+     "t0": 1792701638148,
+     "t1": 1792701668129,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Acme Co · Invoice #”"
+    },
+    {
+     "t0": 1792706200245,
+     "t1": 1792706227805,
+     "note": "3 fields · after Outlook · 3 pastes · from “Payment received from Lumen Studio · Invoice #”"
+    }
+   ],
+   "minutesEach": 0.8,
+   "automation": {
+    "method": "AI fills in the form for you",
+    "how": "AI reads what you were looking at in Outlook, fills in amount, client, and date paid in Excel, and leaves it for you to check and save.",
+    "ai": true,
+    "why": "Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."
+   },
+   "merged": [
+    "transfer|Outlook|Excel"
+   ],
+   "steps": [
+    "Open Outlook",
+    "Copy from Outlook",
+    "Open Excel",
+    "Paste into Excel",
+    "Fill in fields in Excel",
+    "Open Outlook",
+    "Copy from Outlook",
+    "Open Excel"
+   ],
+   "count": 28,
+   "days": 6,
+   "perDay": 4.67,
+   "weeklyMinutes": 19,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 91,
+   "rank": 17.117074722222224,
+   "when": null
+  },
+  {
+   "type": "export",
+   "key": "export|QuickBooks Desktop|xlsx",
+   "apps": [
+    "QuickBooks Desktop"
+   ],
+   "title": "Exporting .xlsx files from QuickBooks Desktop",
+   "detail": "You downloaded the same kind of file 6 times. Reports like this can usually be sent or refreshed automatically.",
+   "occurrences": [
+    {
+     "t0": 1791813318065,
+     "t1": 1791813318065,
+     "note": ".xlsx · “A/R Aging Summary - Northline Supply”"
+    },
+    {
+     "t0": 1791986168000,
+     "t1": 1791986168000,
+     "note": ".xlsx · “A/R Aging Summary - Northline Supply”"
+    },
+    {
+     "t0": 1792159818284,
+     "t1": 1792159818284,
+     "note": ".xlsx · “A/R Aging Summary - Northline Supply”"
+    },
+    {
+     "t0": 1792505695814,
+     "t1": 1792505695814,
+     "note": ".xlsx · “A/R Aging Summary - Northline Supply”"
+    },
+    {
+     "t0": 1792590987606,
+     "t1": 1792590987606,
+     "note": ".xlsx · “A/R Aging Summary - Northline Supply”"
+    },
+    {
+     "t0": 1792677456531,
+     "t1": 1792677456531,
+     "note": ".xlsx · “A/R Aging Summary - Northline Supply”"
+    }
+   ],
+   "minutesEach": 3,
+   "automation": {
+    "method": "Scheduled report",
+    "how": "Set QuickBooks Desktop (or an automation) to produce this file on a schedule and send it where it goes next. It happens around 8:57 am, so it can run on a schedule before you start.",
+    "ai": false
+   },
+   "count": 6,
+   "days": 6,
+   "perDay": 1,
+   "weeklyMinutes": 15,
+   "regular": {
+    "around": "8:57 am"
+   },
+   "confidence": "medium",
+   "automatability": 77,
+   "rank": 11.55,
+   "when": "Usually around 8:57 am every day we watched."
+  },
+  {
+   "type": "drafting",
+   "key": "drafting|Outlook|Compose message",
+   "apps": [
+    "Outlook"
+   ],
+   "title": "Writing similar emails in Outlook",
+   "detail": "You wrote 16 emails like this. Ones that follow a pattern can start from an AI draft.",
+   "occurrences": [
+    {
+     "t0": 1791821220538,
+     "t1": 1791821288763,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1791822952101,
+     "t1": 1791823026654,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1791824677836,
+     "t1": 1791824719614,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792008283147,
+     "t1": 1792008378592,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792009883520,
+     "t1": 1792009957779,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792161385996,
+     "t1": 1792161439921,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792166453682,
+     "t1": 1792166522497,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792180336432,
+     "t1": 1792180387229,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792505063858,
+     "t1": 1792505139070,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792519404468,
+     "t1": 1792519502181,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792522982359,
+     "t1": 1792523020960,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792530453272,
+     "t1": 1792530502127,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792601168482,
+     "t1": 1792601206722,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792612121901,
+     "t1": 1792612162788,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792680767735,
+     "t1": 1792680817743,
+     "note": "Subject, Message"
+    },
+    {
+     "t0": 1792687904731,
+     "t1": 1792687986776,
+     "note": "Subject, Message"
+    }
+   ],
+   "minutesEach": 1.5,
+   "automation": {
+    "method": "AI drafts, you send",
+    "how": "AI writes a first draft in your usual wording, filling in the facts from your other apps. You read it and press send.",
+    "ai": true,
+    "why": "AI is good at first drafts that follow a pattern. You keep the final say because these go to people."
+   },
+   "count": 16,
+   "days": 6,
+   "perDay": 2.67,
+   "weeklyMinutes": 20,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 48,
+   "rank": 9.714666666666666,
+   "when": null
+  }
+ ],
+ "feedback": {
+  "entry|QuickBooks Desktop|Create Invoices - Northline Supply": {
+   "rating": "accurate",
+   "at": 1792771200000
+  },
+  "entry|Excel|AR Tracker #.xlsx › Payments": {
+   "rating": "new",
+   "at": 1792771200000
+  },
+  "export|QuickBooks Desktop|xlsx": {
+   "rating": "accurate",
+   "at": 1792771200000
+  },
+  "drafting|Outlook|Compose message": {
+   "rating": "accurate",
+   "at": 1792771200000
+  }
+ }
+}

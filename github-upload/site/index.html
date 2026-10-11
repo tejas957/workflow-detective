@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="workflow-detective-page" content="setup">
+<title>Workflow Detective Setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: one calm column. Greeting → (one question) → numbered steps with one big button each → "that's it". */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --sunk:#E9EDF2; --line:#D8DEE6;
+  --ink:#16202C; --muted:#586376;
+  --brand:#1C5A86; --brand-ink:#FFFFFF; --brand-soft:#E1ECF6;
+  --mark:#FFE27A; --mark-ink:#2E2400;
+  --good:#1D7A4E; --good-bg:#E1F3E9; --warn:#93570A; --warn-bg:#FBEED8;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E131A; --surface:#161C25; --sunk:#1D2430; --line:#2A3341; --ink:#E6EAF0; --muted:#98A2B4;
+  --brand:#6CB2E2; --brand-ink:#08131D; --brand-soft:#17293A; --mark:#E5C247; --mark-ink:#1C1500;
+  --good:#5ED19A; --good-bg:#122C1E; --warn:#F1B45C; --warn-bg:#33240F; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0E131A; --surface:#161C25; --sunk:#1D2430; --line:#2A3341; --ink:#E6EAF0; --muted:#98A2B4;
+  --brand:#6CB2E2; --brand-ink:#08131D; --brand-soft:#17293A; --mark:#E5C247; --mark-ink:#1C1500;
+  --good:#5ED19A; --good-bg:#122C1E; --warn:#F1B45C; --warn-bg:#33240F; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--brand);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.015em;text-wrap:balance;margin:0}
+p{margin:0}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:28px 72px;display:flex;flex-direction:column;gap:22px}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:600;font-size:16px;color:var(--muted)}
+.brand svg{width:26px;height:26px}
+h1{font-size:clamp(30px,5vw,42px);font-weight:800;line-height:1.08}
+.lead{font-size:19px;color:var(--muted);max-width:60ch}
+.lead b{color:var(--ink);font-weight:600}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+.card h2{font-size:22px;font-weight:600}
+.muted{color:var(--muted)} .small{font-size:14px}
+.choices{display:grid;gap:10px;margin-top:14px}
+.choice{display:flex;flex-direction:column;gap:2px;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer}
+.choice:hover{border-color:var(--brand)}
+.choice b{font-size:18px}
+.choice span{font-size:14px;color:var(--muted)}
+.choice[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft)}
+.linkbtn{background:none;border:0;padding:0;color:var(--brand);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:inherit}
+.device{font-size:15px;color:var(--muted)}
+.device b{color:var(--ink)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;counter-reset:s}
+.step{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 22px 22px 70px;counter-increment:s}
+.step::before{content:counter(s);position:absolute;left:20px;top:20px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;background:var(--brand);color:var(--brand-ink)}
+.step.done::before{content:"✓";background:var(--good)}
+.step h3{font-size:21px;font-weight:600}
+.step .why{color:var(--muted);font-size:15px;margin-top:4px}
+.big{display:inline-flex;align-items:center;gap:10px;margin-top:16px;background:var(--brand);color:var(--brand-ink);border:0;border-radius:12px;padding:15px 22px;font-size:18px;font-weight:600;text-decoration:none;cursor:pointer}
+.big:hover{filter:brightness(1.08)}
+.status{margin-top:12px;font-size:15px;border-radius:8px;padding:10px 12px;background:var(--sunk)}
+.status.good{background:var(--good-bg);color:var(--good);font-weight:600}
+.status.warn{background:var(--warn-bg);color:var(--warn)}
+.then{margin:14px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:6px;font-size:16px}
+.then li::marker{color:var(--muted)}
+.hint{font-size:14px;color:var(--muted);margin-top:10px}
+.code{font-family:var(--mono);font-size:13px;word-break:break-all;background:var(--sunk);border-radius:8px;padding:10px 12px;margin-top:8px;user-select:all}
+.field{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:15px}
+.field input{font-weight:400;font-size:17px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.form{display:grid;gap:14px;margin-top:14px}
+.banner{background:var(--mark);color:var(--mark-ink);border-radius:10px;padding:12px 14px;font-size:15px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.banner .linkbtn{color:var(--mark-ink)}
+.trust{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:560px){.trust{grid-template-columns:minmax(0,1fr)}}
+.trust ul{margin:6px 0 0;padding-left:18px;font-size:15px;display:flex;flex-direction:column;gap:4px}
+.trust h3{font-size:16px;font-family:var(--body);font-weight:600}
+kbd{font-family:var(--mono);font-size:13px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;background:var(--surface)}
+footer{font-size:14px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--brand)"/><circle cx="13.5" cy="13.5" r="7" fill="none" stroke="var(--brand-ink)" stroke-width="2.6"/><path d="M18.8 18.8l6 6" stroke="var(--brand-ink)" stroke-width="3" stroke-linecap="round"/><path d="M10 13.5h7" stroke="var(--mark)" stroke-width="2.4" stroke-linecap="round"/></svg>Workflow Detective · pilot setup</div>
+
+  <div class="banner" id="preview" hidden>This page is personalized by each person’s invite link. <button class="linkbtn" id="sample">See it with a sample person</button></div>
+
+  <section>
+    <h1 id="hello">Let’s get you set up</h1>
+    <p class="lead" id="lead" style="margin-top:12px">Your company is taking part in a two-week pilot that finds repetitive computer work that could be automated. Setup takes about 5 minutes, and you don’t need to know anything technical.</p>
+  </section>
+
+  <section class="card" id="who" hidden>
+    <h2>First, who are you?</h2>
+    <p class="muted small" style="margin-top:6px">Your email from the pilot team has your company code.</p>
+    <form class="form" id="whoForm">
+      <label class="field" for="whoName">Your name<input id="whoName" autocomplete="name" required maxlength="60"></label>
+      <label class="field" for="whoCompany" id="whoCompanyLabel">Company code<input id="whoCompany" autocomplete="off" required maxlength="40"></label>
+      <div><button class="big" type="submit" style="margin-top:4px">Continue</button></div>
+    </form>
+  </section>
+
+  <section class="card" id="question" hidden>
+    <h2>Where do you do most of your work?</h2>
+    <p class="muted small" style="margin-top:6px">This decides what to install. If you’re not sure, pick “A mix”.</p>
+    <div class="choices" role="group" aria-label="Where you work">
+      <button class="choice" type="button" data-work="web"><b>In websites</b><span>Like Gmail, Google Sheets, QuickBooks Online, Salesforce, Shopify</span></button>
+      <button class="choice" type="button" data-work="desktop"><b>In programs on my computer</b><span>Like Outlook, Excel, Word, QuickBooks Desktop</span></button>
+      <button class="choice" type="button" data-work="both"><b>A mix of both, or I’m not sure</b><span>We’ll set up both. It only adds one step.</span></button>
+    </div>
+  </section>
+
+  <section id="plan" hidden>
+    <p class="device" id="device"></p>
+    <p class="status warn" id="planNote" hidden style="margin-top:10px"></p>
+    <ol class="steps" id="steps" style="margin-top:14px"></ol>
+  </section>
+
+  <section class="card" id="finish" hidden>
+    <h2 id="finishTitle">That’s it</h2>
+    <p style="margin-top:8px">Once the steps above are done, just work as you normally do. It only watches 3 days a week for <span id="finishWeeks">2 weeks</span>, during work hours. At the end, the pilot team will set up a short call to go over what it found.</p>
+    <div class="trust">
+      <div><h3>What it notices</h3><ul><li>Which app or site you’re using</li><li>That you copied something, not what</li><li>Which fields you fill in, not what you type</li></ul></div>
+      <div><h3>What it never sees</h3><ul><li>What you type, or your emails and documents</li><li>Passwords and payment details</li><li>Your screen. No screenshots, ever.</li></ul></div>
+    </div>
+  </section>
+
+  <footer id="contact"></footer>
+</div>
+
+<script src="invite.js"></script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var I = window.WDInvite;
+  var cfg = { contactName: "the pilot team", contactEmail: "", chromeStoreUrl: "", windowsDownloadUrl: "", macDownloadUrl: "" };
+  var have = null;       // which downloads exist (from downloads.json, written by the publish workflow)
+  var invite = null, work = null, os = null, browser = null, code = null;
+
+  /* ---------- this computer ---------- */
+  function detect() {
+    var ua = navigator.userAgent || "", plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "";
+    if (/Android|iPhone|iPod/i.test(ua) || (/Mac/i.test(plat) && navigator.maxTouchPoints > 1)) os = "mobile";
+    else if (/Win/i.test(plat) || /Windows/i.test(ua)) os = "windows";
+    else if (/Mac/i.test(plat) || /Macintosh/i.test(ua)) os = "mac";
+    else if (/CrOS/i.test(ua)) os = "chromeos";
+    else os = "other";
+    browser = /Edg\//.test(ua) ? "edge" : /OPR\//.test(ua) ? "opera" : /Firefox\//.test(ua) ? "firefox" : /Chrome\//.test(ua) ? "chrome" : /Safari\//.test(ua) ? "safari" : "other";
+  }
+  var OS_NAME = { windows: "a Windows PC", mac: "a Mac", chromeos: "a Chromebook", mobile: "a phone or tablet", other: "this computer" };
+  var BROWSER_NAME = { chrome: "Chrome", edge: "Edge", firefox: "Firefox", safari: "Safari", opera: "Opera", other: "your browser" };
+
+  /* ---------- where downloads live ---------- */
+  function urls() {
+    var gh = /\.github\.io$/.test(location.hostname);
+    var owner = location.hostname.split(".")[0], repo = location.pathname.split("/").filter(Boolean)[0] || "";
+    var rel = gh && repo ? "https://github.com/" + owner + "/" + repo + "/releases/latest/download/" : "";
+    return {
+      windows: cfg.windowsDownloadUrl || (rel && rel + "WorkflowDetective.exe"),
+      mac: cfg.macDownloadUrl || (rel && rel + "WorkflowDetective-mac.zip"),
+      store: cfg.chromeStoreUrl
+    };
+  }
+  function available() {
+    var u = urls();
+    var a = { windows: !!u.windows, mac: !!u.mac, extension: !!u.store };
+    if (have) { a.windows = a.windows && have.windows !== false; a.mac = a.mac && have.mac !== false; }
+    if (!have && !/\.github\.io$/.test(location.hostname)) { a.windows = a.windows || true; a.mac = a.mac || true; a.extension = a.extension || true; a.preview = true; }
+    return a;
+  }
+
+  /* ---------- decide what this person needs ---------- */
+  function plan() {
+    var a = available();
+    var chromium = browser === "chrome" || browser === "edge" || os === "chromeos";
+    var ext = a.extension && chromium ? "extension" : null;
+    var app = os === "windows" && a.windows ? "windows" : os === "mac" && a.mac ? "mac" : null;
+    var steps = [], note = "";
+    if (work === "web") {
+      if (ext) steps = ["extension"];
+      else if (app) { steps = [app]; note = chromium ? "" : "The browser add-on needs Chrome or Edge, so we’ll use the " + (app === "mac" ? "Mac" : "Windows") + " app instead. It covers websites too."; }
+    } else if (work === "desktop") {
+      if (app) steps = [app];
+      else if (ext) { steps = ["extension"]; note = "The desktop app isn’t available for " + OS_NAME[os] + ", so this covers the websites you use."; }
+    } else {
+      if (ext) steps.push("extension");
+      if (app) steps.push(app);
+      if (!ext && app && !chromium) note = "You’re using " + BROWSER_NAME[browser] + ", so we’ll skip the browser add-on. The " + (app === "mac" ? "Mac" : "Windows") + " app covers websites too.";
+    }
+    return { steps: steps, note: note, preview: a.preview };
+  }
+
+  /* ---------- copy the invite code (used by the desktop downloads) ---------- */
+  function copyCode() {
+    if (!code) return Promise.resolve(false);
+    try { return navigator.clipboard.writeText(code).then(function () { return true; }, function () { return false; }); }
+    catch (e) { return Promise.resolve(false); }
+  }
+
+  /* ---------- the step cards ---------- */
+  function stepHTML(kind, i, total) {
+    var u = urls(), bname = browser === "edge" ? "Edge" : "Chrome";
+    if (kind === "extension") return '<li class="step" id="st-extension"><h3>Add Workflow Detective to ' + bname + '</h3>' +
+      '<p class="why">This watches the websites you use. It sets itself up with your details.</p>' +
+      '<a class="big" id="addExt" href="' + esc(u.store || "#") + '" target="_blank" rel="noopener">Add to ' + bname + '</a>' +
+      '<ol class="then"><li>In the store tab, click <b>Add to ' + bname + '</b>' + (browser === "edge" ? " (if asked, click <b>Allow extensions from other stores</b> first)" : "") + ', then <b>Add extension</b>.</li>' +
+      '<li>A setup page opens with your details already filled in. Tick <b>I agree</b> and click <b>Start the study</b>.</li></ol>' +
+      '<p class="status" id="extStatus">Waiting for the add-on…</p></li>';
+    var mac = kind === "mac";
+    var paste = mac ? "<kbd>⌘</kbd><kbd>V</kbd>" : "<kbd>Ctrl</kbd>+<kbd>V</kbd>";
+    return '<li class="step" id="st-' + kind + '"><h3>Install the ' + (mac ? "Mac" : "Windows") + ' app</h3>' +
+      '<p class="why">This watches desktop programs like Outlook and Excel.</p>' +
+      '<a class="big" id="dl-' + kind + '" href="' + esc((mac ? u.mac : u.windows) || "#") + '">Download for ' + (mac ? "Mac" : "Windows") + '</a>' +
+      '<p class="status" id="copied-' + kind + '" hidden></p>' +
+      (mac
+        ? '<ol class="then"><li>Open the downloaded file (it’s in <b>Downloads</b>). Drag <b>Workflow Detective</b> into <b>Applications</b>, then open it from there.</li>' +
+          '<li>If your Mac says it can’t be opened: open <b>System Settings → Privacy &amp; Security</b>, scroll down, click <b>Open Anyway</b>, then open it again.</li>' +
+          '<li>A setup window opens with your details filled in (we copied your code when you clicked Download). If your Mac asks to allow pasting, click <b>Allow</b>. If anything’s blank, press ' + paste + '.</li>' +
+          '<li>Click <b>Open Accessibility settings</b> and switch on <b>Workflow Detective</b>.</li>' +
+          '<li>Tick <b>I agree</b> and click <b>Start the study</b>. If asked about your Downloads folder, click <b>Allow</b>.</li></ol>'
+        : '<ol class="then"><li>Open the file you just downloaded. It’s at the top or bottom of your browser, or in <b>Downloads</b>.' +
+          (browser === "edge" ? ' If Edge says it <b>isn’t commonly downloaded</b>, click <b>⋯</b> → <b>Keep</b> → <b>Show more</b> → <b>Keep anyway</b>.' :
+           browser === "chrome" ? ' If Chrome says it <b>isn’t commonly downloaded</b>, click <b>Keep</b>.' : "") + '</li>' +
+          '<li>If Windows says <b>“Windows protected your PC”</b>, click <b>More info</b>, then <b>Run anyway</b>.</li>' +
+          '<li>A setup page opens with your details filled in. If anything’s blank, press ' + paste + ' on it.</li>' +
+          '<li>Tick <b>I agree</b> and click <b>Start the study</b>. A magnifying glass appears near the clock.</li></ol>') +
+      '<p class="hint">Details didn’t fill in? <button class="linkbtn" data-copy="1">Copy my code again</button>, then press ' + paste + ' on the setup page.</p></li>';
+  }
+  var WORDS = ["", "one", "two", "three", "four"];
+  function weeksText(w) { w = w || 2; return w === 1 ? "1 week" : w + " weeks"; }
+  function lead(inv) {
+    $("lead").innerHTML = "<b>" + esc(inv.company) + "</b> is taking part in a " + WORDS[inv.weeks || 2] + "-week pilot that finds repetitive computer work that could be automated. Setup takes about 5 minutes, and you don’t need to know anything technical.";
+  }
+  function esc(s) { return String(s || "").replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  function render() {
+    if (!invite) return;
+    $("hello").textContent = invite.participant ? "Hi " + invite.participant.split(" ")[0] + ", let’s get you set up" : "Let’s get you set up";
+    lead(invite);
+    $("finishWeeks").textContent = weeksText(invite.weeks);
+    $("who").hidden = true;
+    if (!work) { $("question").hidden = false; $("plan").hidden = true; $("finish").hidden = true; return; }
+    $("question").hidden = true;
+    var p = plan();
+    $("plan").hidden = false;
+    var other = os === "windows" ? "mac" : "windows";
+    $("device").innerHTML = "Setting up on <b>" + OS_NAME[os] + "</b> with <b>" + BROWSER_NAME[browser] + "</b>." +
+      (os === "windows" || os === "mac" ? ' <button class="linkbtn" id="switchOs">Not right? Switch to ' + (other === "mac" ? "Mac" : "Windows") + '</button>' : "") +
+      ' · <button class="linkbtn" id="changeWork">Change my answer</button>';
+    $("planNote").hidden = !p.note; $("planNote").textContent = p.note;
+    if (!p.steps.length) {
+      $("steps").innerHTML = '<li class="step"><h3>Please open this link on your work computer</h3><p class="why">' +
+        (os === "mobile" ? "Workflow Detective runs on Windows PCs and Macs, not phones or tablets. Email this link to yourself and open it on the computer you work on." :
+          "This computer isn’t supported yet. Contact " + esc(cfg.contactName) + " and we’ll sort it out.") + "</p></li>";
+      $("finish").hidden = true;
+    } else {
+      $("steps").innerHTML = p.steps.map(function (k, i) { return stepHTML(k, i, p.steps.length); }).join("");
+      $("finish").hidden = false;
+    }
+    wire();
+  }
+
+  function wire() {
+    var sw = $("switchOs"); if (sw) sw.onclick = function () { os = os === "windows" ? "mac" : "windows"; render(); };
+    $("changeWork").onclick = function () { work = null; save(); render(); };
+    ["windows", "mac"].forEach(function (k) {
+      var a = $("dl-" + k); if (!a) return;
+      a.addEventListener("click", function () {
+        copyCode().then(function (ok) {
+          var s = $("copied-" + k); s.hidden = false;
+          s.className = ok ? "status good" : "status warn";
+          s.innerHTML = ok ? "Downloading… Your invite code is copied, so setup can fill itself in." :
+            "Downloading… Copy this code. You’ll paste it into the setup page:<div class=\"code\">" + esc(code) + "</div>";
+          $("st-" + k).classList.add("done");
+        });
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-copy]"), function (b) {
+      b.onclick = function () { copyCode().then(function (ok) { b.textContent = ok ? "Copied" : "Copy failed: select the code below"; if (!ok) b.insertAdjacentHTML("afterend", '<div class="code">' + esc(code) + "</div>"); }); };
+    });
+    var add = $("addExt"); if (add) add.addEventListener("click", function () { $("extStatus").textContent = "Waiting for the add-on… Come back to this tab when it’s added."; });
+  }
+
+  /* ---------- the browser add-on reports back here ---------- */
+  function announce() {
+    if (!code) return;
+    var m = document.querySelector('meta[name="workflow-detective-invite"]');
+    if (!m) { m = document.createElement("meta"); m.name = "workflow-detective-invite"; document.head.appendChild(m); }
+    m.content = code;
+    window.postMessage({ type: "workflow-detective-invite", code: code }, "*");
+  }
+  setInterval(function () {
+    announce();
+    var st = document.documentElement.getAttribute("data-wd-extension"), el = $("extStatus");
+    if (!el || !st) return;
+    if (st === "ready") { el.className = "status good"; el.textContent = "Added and set up ✓"; $("st-extension").classList.add("done"); }
+    else { el.className = "status good"; el.textContent = "Added ✓ Now finish on the setup page that opened: tick I agree and click Start the study."; }
+  }, 1500);
+
+  /* ---------- remember answers if they come back ---------- */
+  function key() { return "wd-setup-" + (code || "").slice(-12); }
+  function save() { try { localStorage.setItem(key(), JSON.stringify({ work: work })); } catch (e) {} }
+  function restore() { try { var s = JSON.parse(localStorage.getItem(key()) || "{}"); if (s.work && !work) work = s.work; } catch (e) {} }
+
+  function useInvite(c) {
+    invite = I.decode(c); if (!invite) return false;
+    code = invite.code;
+    work = invite.work || null;
+    if (invite.computer && (os === "windows" || os === "mac") && invite.computer !== os) { /* trust the device they're on */ }
+    restore(); announce(); render();
+    return true;
+  }
+
+  /* ---------- start ---------- */
+  detect();
+  Array.prototype.forEach.call(document.querySelectorAll(".choice"), function (b) {
+    b.addEventListener("click", function () { work = b.getAttribute("data-work"); save(); render(); });
+  });
+  $("whoForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var base = invite ? invite : { company: $("whoCompany").value.trim() };
+    var made = I.encode(Object.assign({}, base, { participant: $("whoName").value.trim(), company: base.company || $("whoCompany").value.trim() }));
+    if (!useInvite(made)) return;
+    try { history.replaceState(null, "", "#" + made); } catch (e2) {}
+  });
+  $("sample").addEventListener("click", function () {
+    $("preview").hidden = true;
+    useInvite(I.encode({ company: "NORTHLINE (sample)", participant: "Dana Rivera", startDate: "2026-10-12", weeks: 2, hourStart: 8, hourEnd: 18 }));
+  });
+
+  function boot() {
+    $("contact").innerHTML = "Questions? Contact " + esc(cfg.contactName) + (cfg.contactEmail ? ' at <a href="mailto:' + esc(cfg.contactEmail) + '">' + esc(cfg.contactEmail) + "</a>" : "") + '. · <a href="privacy.html">Privacy</a>';
+    var c = I.find(location.hash);
+    var inv = c && I.decode(c);
+    if (inv && inv.participant) { useInvite(c); return; }
+    if (inv) {   // company link: just ask for a name
+      invite = inv; code = null;
+      $("who").hidden = false; $("whoCompanyLabel").hidden = true; $("whoCompany").value = inv.company; $("whoCompany").required = false;
+      lead(inv);
+      return;
+    }
+    $("who").hidden = false;
+    if (available().preview) $("preview").hidden = false;
+  }
+  function getJSON(u) { return fetch(u, { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }
+  Promise.all([getJSON("config.json"), getJSON("downloads.json")]).then(function (r) {
+    if (r[0]) Object.keys(r[0]).forEach(function (k) { if (r[0][k] !== "") cfg[k] = r[0][k]; });
+    if (r[1]) have = r[1];
+    boot();
+  });
+  window.addEventListener("hashchange", function () { var c = I.find(location.hash); if (c && c !== code) useInvite(c); });
+})();
+</script>
+</body>
+</html>

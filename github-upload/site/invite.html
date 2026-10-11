@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Workflow Detective Invites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: pilot-team tool. Study settings → people (add or paste a list) → one ready-to-send card per person. */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --sunk:#E9EDF2; --line:#D8DEE6; --ink:#16202C; --muted:#586376;
+  --brand:#1C5A86; --brand-ink:#FFFFFF; --brand-soft:#E1ECF6; --mark:#FFE27A; --mark-ink:#2E2400;
+  --good:#1D7A4E; --good-bg:#E1F3E9; --warn:#93570A; --warn-bg:#FBEED8; --bad:#B3261E;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E131A; --surface:#161C25; --sunk:#1D2430; --line:#2A3341; --ink:#E6EAF0; --muted:#98A2B4;
+  --brand:#6CB2E2; --brand-ink:#08131D; --brand-soft:#17293A; --mark:#E5C247; --mark-ink:#1C1500;
+  --good:#5ED19A; --good-bg:#122C1E; --warn:#F1B45C; --warn-bg:#33240F; --bad:#FF8A80; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0E131A; --surface:#161C25; --sunk:#1D2430; --line:#2A3341; --ink:#E6EAF0; --muted:#98A2B4;
+  --brand:#6CB2E2; --brand-ink:#08131D; --brand-soft:#17293A; --mark:#E5C247; --mark-ink:#1C1500;
+  --good:#5ED19A; --good-bg:#122C1E; --warn:#F1B45C; --warn-bg:#33240F; --bad:#FF8A80; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:5px}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.015em;margin:0;text-wrap:balance}
+p{margin:0}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:16px;padding-block:26px 72px;display:flex;flex-direction:column;gap:20px}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:600;font-size:15px;color:var(--muted)}
+.brand svg{width:24px;height:24px}
+h1{font-size:clamp(26px,3.6vw,36px);font-weight:800;line-height:1.1;margin-top:8px}
+.sub{color:var(--muted);margin-top:6px;max-width:72ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;min-width:0}
+.card h2{font-size:18px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:12px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600}
+label.f span{font-weight:400;color:var(--muted)}
+input,select,textarea{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px;width:100%;min-width:0}
+textarea{font-family:var(--mono);font-size:13px;min-height:96px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--sunk)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink);font-weight:600}
+.btn.sm{padding:4px 10px;font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)} .small{font-size:13px}
+.tbl{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:640px}
+th{text-align:left;font-weight:500;font-size:12px;color:var(--muted);padding:6px 6px;border-bottom:1px solid var(--line)}
+td{padding:6px;border-bottom:1px solid var(--line);vertical-align:middle}
+td input,td select{padding:6px 8px}
+.x{border:0;background:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0 6px}
+.x:hover{color:var(--bad)}
+.people{display:flex;flex-direction:column;gap:12px}
+.person{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 16px;align-items:start}
+.person h3{font-family:var(--body);font-size:17px;font-weight:600}
+.chip{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px;background:var(--brand-soft);color:var(--ink);margin:4px 6px 0 0}
+.chip.ask{background:var(--warn-bg);color:var(--warn)}
+.link{font-family:var(--mono);font-size:12px;color:var(--muted);word-break:break-all;margin-top:6px}
+.acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.ok{color:var(--good);font-size:13px;font-weight:600}
+.banner{background:var(--mark);color:var(--mark-ink);border-radius:10px;padding:10px 14px;font-size:14px}
+.empty{color:var(--muted);text-align:center;padding:28px 12px}
+@media (max-width:620px){.person{grid-template-columns:minmax(0,1fr)}.acts{justify-content:flex-start}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--brand)"/><circle cx="13.5" cy="13.5" r="7" fill="none" stroke="var(--brand-ink)" stroke-width="2.6"/><path d="M18.8 18.8l6 6" stroke="var(--brand-ink)" stroke-width="3" stroke-linecap="round"/><path d="M10 13.5h7" stroke="var(--mark)" stroke-width="2.4" stroke-linecap="round"/></svg>Workflow Detective · for the pilot team</div>
+    <h1>Invite participants</h1>
+    <p class="sub">Add each person once. You get their personal setup link and a ready-to-send email. If you know their computer and how they work, the right setup is chosen now; if not, their setup page asks them one question.</p>
+  </div>
+
+  <p class="banner" id="baseWarn" hidden>This copy isn’t running from your published site, so links use the address below. Change it to your GitHub Pages address once it’s live.</p>
+
+  <section class="card">
+    <h2>The study</h2>
+    <div class="grid">
+      <label class="f" for="start">Start date<span>A Monday gives the full schedule</span><input type="date" id="start"></label>
+      <label class="f" for="weeks">Length<span>&nbsp;</span><select id="weeks"><option value="1">1 week</option><option value="2" selected>2 weeks</option><option value="3">3 weeks</option><option value="4">4 weeks</option></select></label>
+      <label class="f" for="hours">Work hours<span>Watching only happens in these hours</span><select id="hours"><option value="7-17">7 am – 5 pm</option><option value="8-18" selected>8 am – 6 pm</option><option value="9-17">9 am – 5 pm</option><option value="9-19">9 am – 7 pm</option></select></label>
+      <label class="f" for="contact">Your name<span>Signs the emails</span><input id="contact"></label>
+      <label class="f" for="email">Your email<span>For questions</span><input id="email" type="email"></label>
+    </div>
+    <label class="f" for="base" style="margin-top:12px">Setup page address<span>Where participants’ links point</span><input id="base"></label>
+  </section>
+
+  <section class="card">
+    <div class="row" style="justify-content:space-between"><h2>People</h2><span class="small muted" id="count"></span></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Name</th><th>Company</th><th>Computer</th><th>Works mostly in</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="addRow">Add a person</button></div>
+    <details style="margin-top:14px">
+      <summary class="small" style="cursor:pointer;color:var(--brand)">Paste a list instead</summary>
+      <p class="small muted" style="margin:8px 0">One person per line: <b>Name, Company, Computer, Works in</b>. Computer and work are optional (Windows / Mac; websites / programs / both).</p>
+      <textarea id="paste" placeholder="Dana Rivera, NORTHLINE, Windows, programs&#10;Luis Moreno, COPPER & PINE, Mac, both&#10;Priya Shah, NORTHLINE"></textarea>
+      <div class="row" style="margin-top:8px"><button class="btn primary" id="addPaste">Add these people</button><span class="small muted" id="pasteMsg"></span></div>
+    </details>
+  </section>
+
+  <section>
+    <div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 style="font-size:20px">Ready to send</h2>
+      <div class="row"><button class="btn" id="copyAll">Copy all emails</button><button class="btn" id="copySheet">Copy as a spreadsheet</button><span class="ok" id="allMsg"></span></div></div>
+    <div class="people" id="out"></div>
+  </section>
+</div>
+
+<script src="invite.js"></script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var I = window.WDInvite;
+  var people = [];
+  var STORE = "wd-invite-tool";
+
+  function nextMonday() { var d = new Date(); d.setHours(0, 0, 0, 0); var add = (8 - d.getDay()) % 7 || (d.getDay() === 1 ? 0 : 7); d.setDate(d.getDate() + add); return d; }
+  function iso(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function nice(isoDate) { var p = isoDate.split("-").map(Number); return new Date(p[0], p[1] - 1, p[2]).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" }); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  function defaultBase() {
+    if (/\.github\.io$/.test(location.hostname)) return location.origin + location.pathname.replace(/[^/]*$/, "");
+    return "https://YOUR-GITHUB-NAME.github.io/workflow-detective/";
+  }
+  function load() {
+    var s = {};
+    try { s = JSON.parse(localStorage.getItem(STORE) || "{}"); } catch (e) {}
+    people = Array.isArray(s.people) ? s.people : [];
+    $("start").value = s.start || iso(nextMonday());
+    $("weeks").value = s.weeks || "2";
+    $("hours").value = s.hours || "8-18";
+    $("contact").value = s.contact || "";
+    $("email").value = s.email || "";
+    $("base").value = s.base || defaultBase();
+    $("baseWarn").hidden = /\.github\.io$/.test(location.hostname);
+  }
+  function save() {
+    try { localStorage.setItem(STORE, JSON.stringify({ people: people, start: $("start").value, weeks: $("weeks").value, hours: $("hours").value, contact: $("contact").value, email: $("email").value, base: $("base").value })); } catch (e) {}
+  }
+
+  function norm(v, kind) {
+    v = String(v || "").trim().toLowerCase();
+    if (kind === "computer") return /^w|pc/.test(v) ? "windows" : /^m|apple|macbook/.test(v) ? "mac" : "";
+    return /^web|site|browser|online/.test(v) ? "web" : /^prog|desk|app|software|outlook|excel/.test(v) ? "desktop" : /^both|mix/.test(v) ? "both" : "";
+  }
+  function recommend(p) {
+    if (!p.work) return { label: "Their setup page asks one question", ask: true };
+    if (p.work === "web") return { label: "Browser extension (Chrome or Edge)" };
+    var app = p.computer === "mac" ? "Mac app" : p.computer === "windows" ? "Windows app" : "Windows or Mac app (detected on their computer)";
+    return p.work === "desktop" ? { label: app } : { label: "Browser extension + " + app };
+  }
+  function codeFor(p) {
+    var h = $("hours").value.split("-").map(Number);
+    return I.encode({ company: p.company, participant: p.name, startDate: $("start").value, weeks: +$("weeks").value, hourStart: h[0], hourEnd: h[1], work: p.work || undefined, computer: p.computer || undefined });
+  }
+  function linkFor(p) { var b = $("base").value.trim(); if (b && !/\/$/.test(b) && !/\.html$/.test(b)) b += "/"; return b + "#" + codeFor(p); }
+
+  function emailFor(p) {
+    var first = (p.name || "there").split(" ")[0];
+    var end = new Date($("start").value + "T12:00"); end.setDate(end.getDate() + 7 * $("weeks").value - 3);
+    return {
+      subject: "Your 5-minute setup for the " + p.company + " workflow pilot",
+      body: "Hi " + first + ",\n\n" +
+        p.company + " is taking part in a " + $("weeks").value + "-week pilot of Workflow Detective, a tool that spots repetitive computer work that could be automated. You don't need to change how you work or know anything technical.\n\n" +
+        "Setup takes about 5 minutes. On your work computer, open your personal link and follow the steps:\n" + linkFor(p) + "\n\n" +
+        "It runs 3 days a week starting " + nice($("start").value) + ", during work hours only. It never sees what you type, your emails or documents, or your screen, and you can pause or stop it at any time. The attached notice explains exactly what it records.\n\n" +
+        "At the end we'll set up a short call to go over what it found.\n\n" +
+        "Thanks,\n" + ($("contact").value || "[your name]") + ($("email").value ? "\n" + $("email").value : "")
+    };
+  }
+  function noticeFor(p) {
+    var end = new Date($("start").value + "T12:00"); end.setDate(end.getDate() + 7 * $("weeks").value - 1);
+    var who = ($("contact").value || "[pilot contact]") + ($("email").value ? ", " + $("email").value : "");
+    return "WORKFLOW DETECTIVE PILOT: WHAT YOU'RE AGREEING TO\n\n" +
+      "Company: " + p.company + "   Participant: " + p.name + "   Dates: " + nice($("start").value) + " to " + end.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" }) + "   Pilot contact: " + who + "\n\n" +
+      "WHAT THIS IS\nYour company is taking part in a pilot to find repetitive work that could be automated. A small browser add-on and/or desktop app notices the steps you repeat and lists them in plain English. You review the list before anyone else sees it.\n\n" +
+      "WHEN IT RUNS\n3 days a week (week 1: Mon, Wed, Fri; week 2: Tue, Wed, Thu), during " + $("hours").selectedOptions[0].text + " only, on your work computer. You can pause, block any app or site, or stop at any time.\n\n" +
+      "WHAT IT RECORDS\n- Which app or site you're using and for how long, with window or page titles (numbers and email addresses removed)\n- That you copied something and what kind of thing it was, never what it was\n- The names of fields you fill in (like \"Customer\"), never what you type\n- That a file was downloaded or saved, and its type (like .csv), never the file or its name\n- In Excel on Windows: which sheet and column headings you edited, never cell contents. In Outlook on Windows: the subject of the email you're reading, with numbers removed\n\n" +
+      "WHAT IT NEVER RECORDS\n- What you type, or the contents of emails, chats, documents and spreadsheet cells\n- Your keystrokes, screenshots, or recordings of your screen\n- Passwords, card numbers, bank details, or other sensitive fields\n- Password managers, banking and health sites, private browser windows, and anything you add to the never-watch list\n\n" +
+      "WHERE YOUR DATA GOES\nIt stays on your computer. Nobody, including your employer and the pilot team, can see it. You can view and delete everything it recorded at any time. At the end, you decide whether to send a results file to the pilot team. Everything on your computer is deleted automatically 14 days after the study ends; the pilot team deletes results files 30 days after the pilot.\n\n" +
+      "YOUR CHOICES\nTaking part is voluntary. You can pause, delete data, or stop at any time with no consequences.\n\n" +
+      "I've read this notice and agree to take part.\n\nParticipant: ______________________   Date: ________\n\nCompany approver: ______________________   Title: __________   Date: ________\n";
+  }
+
+  function renderRows() {
+    $("rows").innerHTML = people.map(function (p, i) {
+      return '<tr data-i="' + i + '"><td><input aria-label="Name" data-k="name" value="' + esc(p.name) + '" placeholder="Full name"></td>' +
+        '<td><input aria-label="Company" data-k="company" value="' + esc(p.company) + '" placeholder="Company"></td>' +
+        '<td><select aria-label="Computer" data-k="computer"><option value="">Not sure</option><option value="windows"' + (p.computer === "windows" ? " selected" : "") + '>Windows</option><option value="mac"' + (p.computer === "mac" ? " selected" : "") + '>Mac</option></select></td>' +
+        '<td><select aria-label="Works mostly in" data-k="work"><option value="">Not sure</option><option value="web"' + (p.work === "web" ? " selected" : "") + '>Websites</option><option value="desktop"' + (p.work === "desktop" ? " selected" : "") + '>Programs</option><option value="both"' + (p.work === "both" ? " selected" : "") + '>Both</option></select></td>' +
+        '<td><button class="x" data-del="' + i + '" aria-label="Remove ' + esc(p.name) + '" title="Remove">×</button></td></tr>';
+    }).join("") || '<tr><td colspan="5" class="muted small">No one yet. Add a person or paste a list.</td></tr>';
+    $("count").textContent = people.length + (people.length === 1 ? " person" : " people");
+  }
+  function renderOut() {
+    var ready = people.filter(function (p) { return p.name && p.company; });
+    $("out").innerHTML = ready.map(function (p, i) {
+      var r = recommend(p), link = linkFor(p);
+      return '<article class="card person"><div><h3>' + esc(p.name) + ' <span class="muted small">· ' + esc(p.company) + '</span></h3>' +
+        '<span class="chip' + (r.ask ? " ask" : "") + '">' + esc(r.label) + '</span>' +
+        '<p class="link">' + esc(link) + '</p></div>' +
+        '<div class="acts"><button class="btn sm primary" data-act="email" data-i="' + people.indexOf(p) + '">Copy email</button>' +
+        '<button class="btn sm" data-act="link" data-i="' + people.indexOf(p) + '">Copy link</button>' +
+        '<button class="btn sm" data-act="notice" data-i="' + people.indexOf(p) + '">Copy consent notice</button>' +
+        '<span class="ok" data-msg="' + people.indexOf(p) + '"></span></div></article>';
+    }).join("") || '<div class="card empty">Each person shows up here with their link and email once they have a name and company.</div>';
+  }
+  function render() { renderRows(); renderOut(); save(); }
+
+  function copy(text, msgEl, what) {
+    function done(ok) { if (msgEl) { msgEl.textContent = ok ? what + " copied" : "Copy blocked: select and copy manually"; setTimeout(function () { msgEl.textContent = ""; }, 2500); } }
+    try { navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); }); } catch (e) { done(false); }
+  }
+
+  $("rows").addEventListener("input", function (e) {
+    var tr = e.target.closest("tr"); if (!tr || !e.target.dataset.k) return;
+    people[+tr.dataset.i][e.target.dataset.k] = e.target.value;
+    renderOut(); save();
+  });
+  $("rows").addEventListener("change", function (e) { if (e.target.tagName === "SELECT") { var tr = e.target.closest("tr"); people[+tr.dataset.i][e.target.dataset.k] = e.target.value; renderOut(); save(); } });
+  $("rows").addEventListener("click", function (e) { var b = e.target.closest("[data-del]"); if (b) { people.splice(+b.dataset.del, 1); render(); } });
+  $("addRow").addEventListener("click", function () {
+    var last = people[people.length - 1];
+    people.push({ name: "", company: last ? last.company : "", computer: "", work: "" });
+    render();
+    var inputs = $("rows").querySelectorAll('input[data-k="name"]'); if (inputs.length) inputs[inputs.length - 1].focus();
+  });
+  $("addPaste").addEventListener("click", function () {
+    var n = 0;
+    people = people.filter(function (p) { return p.name || p.company; });   // drop the empty starter row
+    $("paste").value.split(/\r?\n/).forEach(function (line) {
+      var c = line.split(/\t|,/).map(function (x) { return x.trim(); });
+      if (!c[0] || /^name$/i.test(c[0])) return;
+      people.push({ name: c[0], company: c[1] || "", computer: norm(c[2], "computer"), work: norm(c[3], "work") });
+      n++;
+    });
+    $("paste").value = ""; $("pasteMsg").textContent = n ? "Added " + n : "Nothing to add";
+    render();
+  });
+  ["start", "weeks", "hours", "contact", "email", "base"].forEach(function (id) { $(id).addEventListener("input", function () { renderOut(); save(); }); });
+  $("out").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-act]"); if (!b) return;
+    var p = people[+b.dataset.i], msg = document.querySelector('[data-msg="' + b.dataset.i + '"]');
+    if (b.dataset.act === "link") copy(linkFor(p), msg, "Link");
+    if (b.dataset.act === "notice") copy(noticeFor(p), msg, "Notice");
+    if (b.dataset.act === "email") { var m = emailFor(p); copy("Subject: " + m.subject + "\n\n" + m.body, msg, "Email"); }
+  });
+  $("copyAll").addEventListener("click", function () {
+    var ready = people.filter(function (p) { return p.name && p.company; });
+    copy(ready.map(function (p) { var m = emailFor(p); return "To: " + p.name + "\nSubject: " + m.subject + "\n\n" + m.body; }).join("\n\n----------------------------------------\n\n"), $("allMsg"), ready.length + " emails");
+  });
+  $("copySheet").addEventListener("click", function () {
+    var ready = people.filter(function (p) { return p.name && p.company; });
+    var rows = [["Name", "Company", "Setup", "Personal link", "Invite code"]].concat(ready.map(function (p) { return [p.name, p.company, recommend(p).label, linkFor(p), codeFor(p)]; }));
+    copy(rows.map(function (r) { return r.join("\t"); }).join("\n"), $("allMsg"), "Spreadsheet rows");
+  });
+
+  fetch("config.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }).then(function (cfg) {
+    load();
+    if (cfg) { if (!$("contact").value) $("contact").value = cfg.contactName || ""; if (!$("email").value) $("email").value = cfg.contactEmail || ""; }
+    if (!people.length) people = [{ name: "", company: "", computer: "", work: "" }];
+    render();
+  });
+})();
+</script>
+</body>
+</html>

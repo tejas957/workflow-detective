@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workflow Detective · Setup</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  .lists{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+  @media (max-width:720px){.lists{grid-template-columns:minmax(0,1fr)}}
+  .lists ul{margin:10px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+  .yes h2::before,.no h2::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:1px}
+  .yes h2::before{background:var(--good)} .no h2::before{background:var(--bad)}
+  .how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;counter-reset:s}
+  @media (max-width:720px){.how{grid-template-columns:minmax(0,1fr)}}
+  .how div{background:var(--sunk);border-radius:8px;padding:14px;font-size:14px}
+  .how b{display:block;margin-bottom:4px}
+  form{display:flex;flex-direction:column;gap:16px}
+  .f2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+  @media (max-width:620px){.f2{grid-template-columns:minmax(0,1fr)}}
+  fieldset{border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;margin:0}
+  legend{font-weight:600;font-size:14px;padding:0 6px}
+  .days{display:flex;gap:6px;flex-wrap:wrap}
+  .days label{display:flex;gap:5px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:4px 9px;font-size:13px}
+  .preview{font-size:13px;color:var(--muted)}
+  .preview b{color:var(--ink)}
+  .saved{background:var(--good-bg);color:var(--good);border-radius:8px;padding:12px 14px;font-weight:600}
+  .danger-zone{border-color:color-mix(in srgb,var(--bad) 35%,var(--line))}
+  #details{display:flex;flex-direction:column;gap:16px}
+  .invite{display:flex;flex-direction:column;gap:10px;padding-bottom:4px}
+  .invite-row{display:flex;gap:8px;flex-wrap:wrap}
+  .invite-row input{flex:1;min-width:220px;font-family:var(--mono);font-size:15px;padding:12px 12px}
+  .invite-msg:empty{display:none}
+  .invite-msg.bad{color:var(--bad)}
+  .invite-summary{font-size:16px;background:var(--good-bg);color:var(--ink);border-radius:8px;padding:12px 14px}
+  .consent{font-size:15px;background:var(--sunk);border-radius:8px;padding:12px 14px}
+  kbd{font-family:var(--mono);font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--surface)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><img src="icons/48.png" alt="">Workflow Detective <span class="chip">Pilot</span></div>
+
+  <div>
+    <p class="eyebrow">You’re part of a 2-week pilot</p>
+    <h1>Help us find the busywork in your week</h1>
+    <p class="muted" style="margin-top:10px;max-width:62ch" data-desktop="You don’t need to describe your job or know what AI can do. Work the way you always do. This app notices the steps you repeat, like copying the same details from an email into a spreadsheet, and turns them into a plain-English list of what could be automated.">You don’t need to describe your job or know what AI can do. Work the way you always do. This extension notices the steps you repeat, like copying the same details from one app into another, and turns them into a plain-English list of what could be automated.</p>
+  </div>
+
+  <div class="how">
+    <div><b>1. Work normally</b>It runs in the background on 3 days a week for 2 weeks, during work hours only.</div>
+    <div><b>2. It spots repeats</b>Repeated copy-and-paste, forms you fill in again and again, files you move by hand.</div>
+    <div><b>3. You review first</b>You see every finding and the whole log. Nothing is shared until you choose to send it.</div>
+  </div>
+
+  <div class="lists" data-for="browser">
+    <div class="card yes">
+      <h2>What it records</h2>
+      <ul>
+        <li>Which work app you’re in and for how long (for example “QuickBooks › Invoice”)</li>
+        <li>Page titles, with numbers and email addresses removed (you can turn this off)</li>
+        <li>That you copied or pasted, and what <i>kind</i> of thing it was (a number, a date). Never what it was.</li>
+        <li>Which fields you filled in (“Customer”, “Due date”). Never what you typed.</li>
+        <li>That you downloaded or uploaded a file, and its type (.csv, .pdf). Never the file.</li>
+        <li>The names of buttons you click (“Save and send”)</li>
+      </ul>
+    </div>
+    <div class="card no">
+      <h2>What it never records</h2>
+      <ul>
+        <li>What you type, or the text of emails, messages and documents</li>
+        <li>Passwords, card numbers, bank details, or other sensitive fields</li>
+        <li>Screenshots or recordings of your screen</li>
+        <li>Anything outside the browser, or in private/incognito windows</li>
+        <li>Anything on days or hours outside the schedule below</li>
+        <li>Social media, banking, health portals, and any site you add to the never-watch list</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="lists" data-for="desktop" hidden>
+    <div class="card yes">
+      <h2>What it records</h2>
+      <ul>
+        <li>Which app you’re in and for how long (Excel, Outlook, QuickBooks Desktop, your browser…)</li>
+        <li>Window titles, like a file name or email subject, with numbers and email addresses removed (you can turn this off)</li>
+        <li data-mac="That you copied something, and what type of thing it was (text, cells, a file). On a Mac it never reads what you copied.">That you copied something, and what <i>kind</i> of thing it was (a number, a date, some cells). Never what it was.</li>
+        <li data-mac="Which fields you filled in (“Customer”, “Due date”). Never what you typed.">Which fields you filled in (“Customer”, “Due date”), and in Excel which sheet and column headings you edited. Never what you typed.</li>
+        <li data-mac="That a new file appeared in your Downloads folder, and its type (.csv, .pdf). Never the file or its name.">That a file was saved to Downloads, Desktop or Documents, and its type (.csv, .pdf). Never the file or its name.</li>
+        <li data-mac-hide>The names of buttons you click (“Send”, “Save”)</li>
+      </ul>
+    </div>
+    <div class="card no">
+      <h2>What it never records</h2>
+      <ul>
+        <li>What you type, or the text of emails, messages, documents and spreadsheet cells</li>
+        <li>Your keystrokes. It never watches the keyboard.</li>
+        <li>Passwords, card numbers, bank details, or other sensitive fields</li>
+        <li>Screenshots or recordings of your screen</li>
+        <li>Anything on days or hours outside the schedule below</li>
+        <li>Password managers, banking and health apps or sites, and anything you add to the never-watch list</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card mac-perm" id="macPerm" hidden>
+    <div class="row" style="justify-content:space-between">
+      <h2>One step on a Mac: allow Accessibility</h2>
+      <span class="pill" id="permPill">Checking…</span>
+    </div>
+    <p class="muted small" style="margin:8px 0 12px;max-width:68ch">macOS asks you to allow this so Workflow Detective can see window titles and which field you’re typing in. It still never sees what you type. Click the button, switch on <b>Workflow Detective</b> in the list, then come back here.</p>
+    <button class="btn" type="button" id="permBtn">Open Accessibility settings</button>
+  </div>
+
+  <form class="card" id="form" novalidate>
+    <div class="invite" id="inviteBox" hidden>
+      <div id="inviteAsk">
+        <h2>Paste your invite code</h2>
+        <p class="muted small">It’s in the email from the pilot team and fills in everything for you. You can also press <kbd>Ctrl</kbd>+<kbd>V</kbd> (<kbd>⌘</kbd><kbd>V</kbd> on a Mac) anywhere on this page.</p>
+        <div class="invite-row"><input type="text" id="inviteCode" placeholder="WD1.…" autocomplete="off" spellcheck="false" aria-label="Invite code"><button class="btn" type="button" id="inviteUse">Use code</button></div>
+        <p class="small invite-msg" id="inviteMsg" role="status"></p>
+        <p class="small muted">No code? <button type="button" class="linkbtn" id="noCode">Fill in the details yourself</button></p>
+      </div>
+      <div id="inviteDone" hidden>
+        <h2 id="inviteHello">You’re all set up</h2>
+        <p class="invite-summary" id="inviteSummary"></p>
+        <label class="field" id="nameOnly" hidden>Your name<span>So the pilot team knows whose results these are</span><input type="text" id="participantQuick" maxlength="60" autocomplete="name"></label>
+        <button type="button" class="linkbtn small" id="showDetails">Change details</button>
+      </div>
+    </div>
+    <div id="details">
+    <h2>Your study</h2>
+    <div class="f2">
+      <label class="field">Company code<span>From the pilot team</span><input type="text" id="company" required maxlength="40" autocomplete="off"></label>
+      <label class="field">Your name or participant ID<span>Shown only to the pilot team</span><input type="text" id="participant" required maxlength="60" autocomplete="off"></label>
+    </div>
+    <div class="f2">
+      <label class="field">Start date<span>Starting on a Monday gives the full schedule</span><input type="date" id="startDate" required></label>
+      <label class="field">Length<span>How many weeks the study runs</span>
+        <select id="weeks"><option value="1">1 week</option><option value="2" selected>2 weeks</option><option value="3">3 weeks</option><option value="4">4 weeks</option></select></label>
+    </div>
+    <fieldset>
+      <legend>Which days</legend>
+      <label class="check"><input type="radio" name="mode" value="rotate" checked><span><b>Rotating (recommended).</b> Week 1: Mon, Wed, Fri. Week 2: Tue, Wed, Thu. Every weekday gets covered, so weekly tasks aren’t missed.</span></label>
+      <label class="check"><input type="radio" name="mode" value="fixed"><span><b>Same days every week:</b></span></label>
+      <div class="days" id="days"></div>
+    </fieldset>
+    <div class="f2">
+      <label class="field">Watch from<select id="hourStart"></select></label>
+      <label class="field">Until<select id="hourEnd"></select></label>
+    </div>
+    <p class="preview" id="preview"></p>
+    <fieldset>
+      <legend>Detail level</legend>
+      <label class="check"><input type="checkbox" id="captureTitles" checked><span data-desktop="Record window titles, like a file name or email subject (numbers and emails removed). Makes findings much clearer, like “AR Tracker.xlsx” instead of just “Excel”.">Record page titles (numbers and emails removed). Makes findings much clearer, like “Invoice” instead of just “QuickBooks”.</span></label>
+      <label class="check"><input type="checkbox" id="captureFieldLabels" checked><span>Record field names (“Customer”, “Amount”). Never what you type in them.</span></label>
+    </fieldset>
+    <label class="field"><b data-desktop="Never watch these apps or sites">Never watch these sites</b><span data-desktop="One per line: an app name (like Spotify) or a website (like reddit.com). Password managers, banking and health are already skipped.">One per line. Social media, banking and health sites are already skipped.</span><textarea id="blocked" spellcheck="false"></textarea></label>
+    </div>
+    <label class="check consent"><input type="checkbox" id="consent" required><span>I’ve read what this records. My company knows I’m taking part, and I can pause, delete my data, or stop at any time.</span></label>
+    <div class="row">
+      <button class="btn primary" type="submit" id="save">Start the study</button>
+      <span class="small muted" id="msg"></span>
+    </div>
+    <div class="saved" id="saved" hidden data-desktop-html="You’re set. You can close this tab. Look for the magnifying-glass icon near the clock (it shows a green dot during watch hours). Click it any time to pause." data-mac="You’re set. You can close this window. Look for the magnifying glass in the menu bar at the top of your screen (it fills in during watch hours). Click it any time to pause.">You’re set. You can close this tab. Look for the <b>ON</b> badge on the toolbar icon during watch hours.</div>
+  </form>
+
+  <div class="card danger-zone" id="stopCard" hidden>
+    <h2>Stop taking part</h2>
+    <p class="muted small" style="margin:6px 0 12px">Stops recording and permanently deletes everything logged on this computer. You can’t undo this.</p>
+    <div class="row">
+      <button class="btn danger" id="stop">Stop and delete everything</button>
+      <button class="btn danger" id="stopYes" hidden>Yes, delete it all</button>
+      <button class="btn" id="stopNo" hidden>Keep going</button>
+      <span class="small" id="stopMsg"></span>
+    </div>
+  </div>
+</div>
+<script src="lib/invite.js"></script>
+<script type="module" src="onboarding.js"></script>
+</body>
+</html>

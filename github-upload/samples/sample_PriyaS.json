@@ -1,0 +1,374 @@
+{
+ "schema": "workflow-detective/bundle@1",
+ "sample": true,
+ "exportedAt": "2026-10-23T16:00:00.000Z",
+ "extensionVersion": "0.1.0",
+ "detectorVersion": "0.1.0",
+ "participant": "Priya S.",
+ "company": "NORTHLINE (sample)",
+ "study": {
+  "startDate": "2026-10-12",
+  "weeks": 2,
+  "scheduleMode": "rotate",
+  "hours": [
+   8,
+   18
+  ],
+  "watchDaysTotal": 6,
+  "watchDaysDone": 6
+ },
+ "summary": {
+  "events": 1554,
+  "days": [
+   "2026-10-12",
+   "2026-10-14",
+   "2026-10-16",
+   "2026-10-20",
+   "2026-10-21",
+   "2026-10-22"
+  ],
+  "observedDays": 6,
+  "activeMinutes": 2366,
+  "activeMinutesPerDay": 394,
+  "timeByApp": [
+   {
+    "app": "Slack",
+    "minutes": 839
+   },
+   {
+    "app": "Google Calendar",
+    "minutes": 420
+   },
+   {
+    "app": "Google Docs",
+    "minutes": 415
+   },
+   {
+    "app": "Gmail",
+    "minutes": 366
+   },
+   {
+    "app": "news.example.com",
+    "minutes": 266
+   },
+   {
+    "app": "Greenhouse",
+    "minutes": 60
+   }
+  ],
+  "findings": 2,
+  "automatableWeeklyMinutes": 105
+ },
+ "findings": [
+  {
+   "type": "lookup",
+   "key": "lookup|Gmail|Google Calendar",
+   "apps": [
+    "Gmail",
+    "Google Calendar"
+   ],
+   "title": "Switching back and forth between Gmail and Google Calendar",
+   "detail": "About 9 switches each time, a few seconds per look. This usually means checking or matching information by eye.",
+   "occurrences": [
+    {
+     "t0": 1791822502579,
+     "t1": 1791822833218,
+     "note": "11 switches"
+    },
+    {
+     "t0": 1791828261647,
+     "t1": 1791828467881,
+     "note": "8 switches"
+    },
+    {
+     "t0": 1791829218636,
+     "t1": 1791829498513,
+     "note": "11 switches"
+    },
+    {
+     "t0": 1791991722694,
+     "t1": 1791991981736,
+     "note": "9 switches"
+    },
+    {
+     "t0": 1792003486755,
+     "t1": 1792003659750,
+     "note": "6 switches"
+    },
+    {
+     "t0": 1792164309554,
+     "t1": 1792164569144,
+     "note": "8 switches"
+    },
+    {
+     "t0": 1792176037803,
+     "t1": 1792176268848,
+     "note": "9 switches"
+    },
+    {
+     "t0": 1792178210147,
+     "t1": 1792178451711,
+     "note": "9 switches"
+    },
+    {
+     "t0": 1792511333700,
+     "t1": 1792511542322,
+     "note": "7 switches"
+    },
+    {
+     "t0": 1792518571473,
+     "t1": 1792518912727,
+     "note": "11 switches"
+    },
+    {
+     "t0": 1792519256786,
+     "t1": 1792519497126,
+     "note": "9 switches"
+    },
+    {
+     "t0": 1792521088783,
+     "t1": 1792521412934,
+     "note": "11 switches"
+    },
+    {
+     "t0": 1792604963797,
+     "t1": 1792605240057,
+     "note": "11 switches"
+    },
+    {
+     "t0": 1792609849040,
+     "t1": 1792610107238,
+     "note": "9 switches"
+    },
+    {
+     "t0": 1792686474480,
+     "t1": 1792686710614,
+     "note": "8 switches"
+    },
+    {
+     "t0": 1792692376980,
+     "t1": 1792692608784,
+     "note": "9 switches"
+    },
+    {
+     "t0": 1792696034146,
+     "t1": 1792696308284,
+     "note": "10 switches"
+    },
+    {
+     "t0": 1792699704555,
+     "t1": 1792700072068,
+     "note": "11 switches"
+    }
+   ],
+   "minutesEach": 4.3,
+   "automation": {
+    "method": "Match it automatically",
+    "how": "If you’re checking that Gmail and Google Calendar agree, an automation can compare them and only show you the rows that don’t match. If you’re looking things up, the data can be pulled into one place.",
+    "ai": false
+   },
+   "count": 18,
+   "days": 6,
+   "perDay": 3,
+   "weeklyMinutes": 65,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 61,
+   "rank": 39.43955,
+   "when": null
+  },
+  {
+   "type": "entry",
+   "key": "entry|Greenhouse|/people/new",
+   "apps": [
+    "Gmail",
+    "Greenhouse"
+   ],
+   "title": "Typing details from Gmail into Greenhouse (“Add a Candidate”)",
+   "detail": "About 6 fields each time: First name, Last name, Email, Phone, Job, and Source. You usually look at Gmail right before. It also includes downloading a .pdf file from Gmail and uploading it to Greenhouse.",
+   "context": {
+    "page": "/people/new",
+    "title": "Add a Candidate",
+    "source": "Gmail",
+    "fields": [
+     "First name",
+     "Last name",
+     "Email",
+     "Phone",
+     "Job",
+     "Source"
+    ]
+   },
+   "occurrences": [
+    {
+     "t0": 1791828135301,
+     "t1": 1791828241133,
+     "note": "6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"
+    },
+    {
+     "t0": 1791831368525,
+     "t1": 1791831488084,
+     "note": "6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"
+    },
+    {
+     "t0": 1791838310902,
+     "t1": 1791838435846,
+     "note": "6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"
+    },
+    {
+     "t0": 1791988837964,
+     "t1": 1791988937095,
+     "note": "6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"
+    },
+    {
+     "t0": 1791994587369,
+     "t1": 1791994663901,
+     "note": "6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"
+    },
+    {
+     "t0": 1791995479399,
+     "t1": 1791995588909,
+     "note": "6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"
+    },
+    {
+     "t0": 1792000114417,
+     "t1": 1792000231656,
+     "note": "6 fields · after Gmail · .pdf · “Application: Driver · resume.pdf”"
+    },
+    {
+     "t0": 1792003127674,
+     "t1": 1792003266652,
+     "note": "6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"
+    },
+    {
+     "t0": 1792164681031,
+     "t1": 1792164775323,
+     "note": "6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"
+    },
+    {
+     "t0": 1792169545330,
+     "t1": 1792169785461,
+     "note": "12 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"
+    },
+    {
+     "t0": 1792174409388,
+     "t1": 1792174489802,
+     "note": "6 fields · after Gmail · .pdf · “Application: Driver · resume.pdf”"
+    },
+    {
+     "t0": 1792179259170,
+     "t1": 1792179337039,
+     "note": "6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"
+    },
+    {
+     "t0": 1792510219703,
+     "t1": 1792510300322,
+     "note": "6 fields · after Gmail · .pdf · “Application: Driver · resume.pdf”"
+    },
+    {
+     "t0": 1792513279682,
+     "t1": 1792513362053,
+     "note": "6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"
+    },
+    {
+     "t0": 1792518936984,
+     "t1": 1792519060229,
+     "note": "6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"
+    },
+    {
+     "t0": 1792523996053,
+     "t1": 1792524117116,
+     "note": "6 fields · after Gmail · .pdf · “Application: Driver · resume.pdf”"
+    },
+    {
+     "t0": 1792526917969,
+     "t1": 1792527008394,
+     "note": "6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"
+    },
+    {
+     "t0": 1792527673809,
+     "t1": 1792527785991,
+     "note": "6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"
+    },
+    {
+     "t0": 1792592155986,
+     "t1": 1792592274610,
+     "note": "6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"
+    },
+    {
+     "t0": 1792605256457,
+     "t1": 1792605350656,
+     "note": "6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"
+    },
+    {
+     "t0": 1792609735241,
+     "t1": 1792609824583,
+     "note": "6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"
+    },
+    {
+     "t0": 1792687659227,
+     "t1": 1792687743252,
+     "note": "6 fields · after Gmail · .pdf · “Application: Driver · resume.pdf”"
+    },
+    {
+     "t0": 1792692656453,
+     "t1": 1792692742985,
+     "note": "6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"
+    },
+    {
+     "t0": 1792694555583,
+     "t1": 1792694650228,
+     "note": "6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"
+    },
+    {
+     "t0": 1792695541453,
+     "t1": 1792695624301,
+     "note": "6 fields · after Gmail · .pdf · “Application: Account Manager · resume.pdf”"
+    },
+    {
+     "t0": 1792698323734,
+     "t1": 1792698411155,
+     "note": "6 fields · after Gmail · .pdf · “Application: Warehouse Associate · resume.pdf”"
+    }
+   ],
+   "minutesEach": 1.8,
+   "automation": {
+    "method": "AI fills in the form for you",
+    "how": "AI reads what you were looking at in Gmail, fills in first name, last name, email, and phone in Greenhouse, and leaves it for you to check and save.",
+    "ai": true,
+    "why": "Turning a message or document into form fields is exactly what newer AI tools can do. You stay the one who clicks save."
+   },
+   "merged": [
+    "shuttle|Gmail|Greenhouse|pdf"
+   ],
+   "steps": [
+    "Open Gmail",
+    "Download .pdf from Gmail",
+    "Open Greenhouse",
+    "Fill in fields in Greenhouse",
+    "Upload .pdf to Greenhouse",
+    "Click “Add Candidate” in Greenhouse",
+    "Open Gmail"
+   ],
+   "count": 26,
+   "days": 6,
+   "perDay": 4.33,
+   "weeklyMinutes": 40,
+   "regular": null,
+   "confidence": "high",
+   "automatability": 85,
+   "rank": 33.60074791666666,
+   "when": null
+  }
+ ],
+ "feedback": {
+  "lookup|Gmail|Google Calendar": {
+   "rating": "new",
+   "at": 1792771200000
+  },
+  "entry|Greenhouse|/people/new": {
+   "rating": "accurate",
+   "at": 1792771200000
+  }
+ }
+}

@@ -1,0 +1,362 @@
+<title>Workflow Detective Pilot Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: operator console. Summary tiles → where the work is → people → every finding, filterable. Highlighter marks what needs a look. */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --sunk:#E9EDF2; --line:#D8DEE6;
+  --ink:#16202C; --muted:#586376;
+  --brand:#1C5A86; --brand-ink:#FFFFFF; --brand-soft:#E1ECF6;
+  --bar:#1E62B0; --grid:#E3E8EE;
+  --mark:#FFE27A; --mark-ink:#2E2400;
+  --good:#1D7A4E; --good-bg:#E1F3E9; --warn:#93570A; --warn-bg:#FBEED8; --bad:#B3261E; --bad-bg:#FBE4E2;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E131A; --surface:#161C25; --sunk:#1D2430; --line:#2A3341;
+  --ink:#E6EAF0; --muted:#98A2B4;
+  --brand:#6CB2E2; --brand-ink:#08131D; --brand-soft:#17293A;
+  --bar:#3D8FE0; --grid:#232B37;
+  --mark:#E5C247; --mark-ink:#1C1500;
+  --good:#5ED19A; --good-bg:#122C1E; --warn:#F1B45C; --warn-bg:#33240F; --bad:#FF8A80; --bad-bg:#3A1A18;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0E131A; --surface:#161C25; --sunk:#1D2430; --line:#2A3341;
+  --ink:#E6EAF0; --muted:#98A2B4;
+  --brand:#6CB2E2; --brand-ink:#08131D; --brand-soft:#17293A;
+  --bar:#3D8FE0; --grid:#232B37;
+  --mark:#E5C247; --mark-ink:#1C1500;
+  --good:#5ED19A; --good-bg:#122C1E; --warn:#F1B45C; --warn-bg:#33240F; --bad:#FF8A80; --bad-bg:#3A1A18;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14.5px;line-height:1.55}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:5px}
+h1,h2,h3{margin:0;font-family:var(--display);letter-spacing:-.015em;text-wrap:balance}
+p{margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:24px 64px;display:flex;flex-direction:column;gap:20px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:600;font-size:16px}
+.brand svg{width:24px;height:24px}
+h1{font-size:clamp(26px,3.4vw,36px);font-weight:800;line-height:1.1;margin-top:10px}
+.sub{color:var(--muted);margin-top:6px;max-width:70ch}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;font-size:14px}
+.btn:hover{background:var(--sunk)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink);font-weight:600}
+.btn.sm{padding:4px 10px;font-size:13px}
+.banner{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--mark);color:var(--mark-ink);border-radius:8px;padding:10px 14px;font-size:14px}
+.banner b{font-weight:600}
+.err{background:var(--bad-bg);color:var(--bad);border-radius:8px;padding:10px 14px;font-size:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;min-width:0}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.card-h h2{font-size:18px;font-weight:600}
+.muted{color:var(--muted)} .small{font-size:13px}
+.tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+@media (max-width:980px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:520px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tile .k{font-size:12.5px;color:var(--muted)}
+.tile .v{font-family:var(--body);font-weight:600;font-size:24px;line-height:1.2}
+.tile .n{font-size:12px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px;align-items:start}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+/* chart */
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:var(--body);font-size:12.5px;fill:var(--ink)}
+.chart .tick{fill:var(--muted);font-size:11.5px}
+.chart .hit{fill:transparent;cursor:default}
+.chart .bar{fill:var(--bar)}
+.chart .row:hover .bar,.chart .row:focus .bar{filter:brightness(1.12)}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);border-radius:6px;padding:7px 10px;font-size:12.5px;line-height:1.4;white-space:nowrap;transform:translate(-50%,-100%);margin-top:-8px;z-index:2}
+/* tables */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{text-align:left;font-weight:500;font-size:12px;color:var(--muted);padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.people{min-width:520px}
+.chip{display:inline-block;font-size:11.5px;font-weight:600;border-radius:999px;padding:1px 8px;background:var(--sunk);white-space:nowrap}
+.chip.ai{background:var(--mark);color:var(--mark-ink)}
+.chip.good{background:var(--good-bg);color:var(--good)} .chip.warn{background:var(--warn-bg);color:var(--warn)} .chip.bad{background:var(--bad-bg);color:var(--bad)}
+.chip.dot::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;margin-right:5px;vertical-align:1px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filters select{background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:6px 9px;font-size:13.5px}
+.filters label{display:flex;gap:6px;align-items:center;font-size:13.5px}
+.findings{min-width:760px}
+.findings tr.f{cursor:pointer}
+.findings tr.f:hover td{background:var(--sunk)}
+.findings tr.f td:first-child{min-width:280px}
+.ftitle{font-weight:600}
+.who{font-size:12.5px;color:var(--muted)}
+tr.detail td{background:var(--sunk);padding:14px 16px}
+.dgrid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px}
+@media (max-width:720px){.dgrid{grid-template-columns:minmax(0,1fr)}}
+.dgrid h3{font-family:var(--body);font-size:13px;font-weight:600;margin-bottom:4px}
+.dgrid ol{margin:4px 0 0;padding-left:18px}
+.note{border-left:3px solid var(--mark);padding-left:10px;font-size:13.5px}
+.mono{font-family:var(--mono);font-size:12px}
+.drop{position:fixed;inset:0;background:color-mix(in srgb,var(--brand) 18%,transparent);border:3px dashed var(--brand);display:grid;place-items:center;font-family:var(--display);font-size:24px;color:var(--ink);z-index:20}
+.foot{font-size:13px;color:var(--muted);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:720px){.foot{grid-template-columns:minmax(0,1fr)}}
+.foot b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--brand)"/><circle cx="13.5" cy="13.5" r="7" fill="none" stroke="var(--brand-ink)" stroke-width="2.6"/><path d="M18.8 18.8l6 6" stroke="var(--brand-ink)" stroke-width="3" stroke-linecap="round"/><path d="M10 13.5h7" stroke="var(--mark)" stroke-width="2.4" stroke-linecap="round"/></svg>Workflow Detective</div>
+      <h1>Pilot console</h1>
+      <p class="sub">Load the results files participants send you. Files are read in this browser and never uploaded anywhere.</p>
+    </div>
+    <div class="actions">
+      <input type="file" id="files" accept=".json,application/json" multiple hidden>
+      <button class="btn primary" id="pick">Load participant files</button>
+      <button class="btn" id="clear" hidden>Clear</button>
+    </div>
+  </div>
+
+  <div class="banner" id="sampleBanner"><b>Sample data.</b> Six made-up people at three made-up companies, from simulated weeks (one on the Windows app, one on the Mac app). Load real results files to replace them.</div>
+  <div class="err" id="err" hidden></div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="grid2">
+    <section class="card">
+      <div class="card-h"><h2>Where the repeated work is</h2><span class="small muted">hours a week, all participants</span></div>
+      <div class="chart" id="chart"></div>
+    </section>
+    <section class="card">
+      <div class="card-h"><h2>Participants</h2><span class="small muted" id="pcount"></span></div>
+      <div class="tbl"><table class="people"><thead><tr><th>Person</th><th>Company</th><th class="num">Watch days</th><th class="num">Found / wk</th><th class="num">Findings</th><th class="num">Accurate</th></tr></thead><tbody id="people"></tbody></table></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="card-h">
+      <h2>Every finding</h2>
+      <div class="filters">
+        <label for="fCompany" class="small muted">Company</label><select id="fCompany"></select>
+        <label for="fType" class="small muted">Type</label><select id="fType"></select>
+        <label><input type="checkbox" id="fHideWrong" checked> Hide ones rated wrong</label>
+      </div>
+    </div>
+    <div class="tbl"><table class="findings"><thead><tr><th>Process</th><th>Type</th><th class="num">Time / wk</th><th>Confidence</th><th>How to automate</th><th>Participant says</th></tr></thead><tbody id="findings"></tbody></table></div>
+  </section>
+
+  <div class="foot">
+    <p><b>Accurate</b> is the share of rated findings the participant marked “Yes, I do this” or “Yes, and I hadn’t thought of automating it.” <b>New to them</b> is the share of accurate findings they hadn’t thought of automating. That’s the discovery the product exists for.</p>
+    <p><b>Time / wk</b> is projected from the watch days to a 5-day week, using the time between the first and last step each time. It leaves out reading and thinking time, so it runs low. Results files that include the activity log are re-analyzed with this console’s detector (v<span id="dver"></span>).</p>
+  </div>
+</div>
+<div class="drop" id="drop" hidden>Drop results files to load them</div>
+
+<script>/*__DETECTOR__*/</script>
+<script>
+const SAMPLES = /*__SAMPLES__*/[];
+const D = window.WDDetector;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const TYPE = { transfer: "Copying between apps", entry: "Same form, again", drafting: "Writing similar messages", shuttle: "Moving files by hand", export: "Regular export", lookup: "Back-and-forth checking", routine: "Repeated routine" };
+const RATING = { accurate: ["Yes, does this", "good"], new: ["Yes, new to them", "good"], wrong: ["Not accurate", "bad"] };
+const fmt = D.fmtMin;
+let bundles = [], usingSamples = true, open = new Set();
+
+function prep(b) {
+  b = JSON.parse(JSON.stringify(b));
+  if (Array.isArray(b.events) && b.events.length) {
+    const r = D.analyze(b.events);
+    b.reanalyzed = b.detectorVersion !== D.VERSION; b.findings = r.findings; b.summary = r.summary;
+  }
+  b.source = b.source || "browser";
+  b.person = (b.company || "?") + "|" + (b.participant || "?");
+  b.id = b.person + "|" + b.source;
+  b.findings = (b.findings || []).map(f => Object.assign({}, f, { fb: (b.feedback || {})[f.key] || null }));
+  return b;
+}
+// One person may send a browser-extension file and a Windows-app file. When both include the activity log,
+// analyze them together (dropping the Windows app's view of browser windows, which the extension sees in detail),
+// so processes that cross from desktop apps into web apps are found.
+const BROWSER_PROCS = new Set(["chrome", "msedge", "firefox", "brave", "opera", "vivaldi", "arc"]);
+function combine(list) {
+  const groups = new Map();
+  list.forEach(b => { if (!groups.has(b.person)) groups.set(b.person, []); groups.get(b.person).push(b); });
+  const out = [];
+  for (const g of groups.values()) {
+    const web = g.find(b => b.source !== "desktop"), win = g.find(b => b.source === "desktop");
+    if (web && win && Array.isArray(web.events) && web.events.length && Array.isArray(win.events) && win.events.length) {
+      const ev = web.events.concat(win.events.filter(e => !BROWSER_PROCS.has(String(e.host || "").toLowerCase())));
+      const r = D.analyze(ev);
+      const feedback = Object.assign({}, win.feedback, web.feedback);
+      out.push(Object.assign({}, win, { source: "both", reanalyzed: true, summary: r.summary, feedback,
+        findings: r.findings.map(f => Object.assign({}, f, { fb: feedback[f.key] || null })),
+        exportedAt: [web.exportedAt || "", win.exportedAt || ""].sort().pop() }));
+    } else out.push(...g);
+  }
+  return out;
+}
+function sourceChip(b) {
+  const os = b.os === "mac" ? "Mac" : "Windows";
+  return b.source === "desktop" ? os + " app" : b.source === "both" ? "Browser + " + os : "";
+}
+function stats(fs) {
+  const rated = fs.filter(f => f.fb && f.fb.rating), ok = rated.filter(f => f.fb.rating !== "wrong"), nw = rated.filter(f => f.fb.rating === "new");
+  return { rated: rated.length, ok: ok.length, nw: nw.length, acc: rated.length ? ok.length / rated.length : null, newRate: ok.length ? nw.length / ok.length : null };
+}
+const pct = x => x == null ? "–" : Math.round(x * 100) + "%";
+const weekly = fs => fs.filter(f => f.automatability >= 60 && !(f.fb && f.fb.rating === "wrong")).reduce((s, f) => s + f.weeklyMinutes, 0);
+function median(a) { if (!a.length) return 0; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
+
+function render() {
+  $("sampleBanner").hidden = !usingSamples; $("clear").hidden = usingSamples; $("dver").textContent = D.VERSION;
+  const shown = combine(bundles);
+  const all = shown.flatMap(b => b.findings.map(f => Object.assign({ who: b.participant, company: b.company }, f)));
+  const st = stats(all);
+  const people = [...new Set(shown.map(b => b.person))];
+  const per = people.map(p => weekly(shown.filter(b => b.person === p).flatMap(b => b.findings)));
+  const companies = [...new Set(shown.map(b => b.company))];
+  $("tiles").innerHTML = [
+    ["People", people.length, companies.length + " " + (companies.length === 1 ? "company" : "companies")],
+    ["Repeated work found", fmt(per.reduce((s, x) => s + x, 0)), "a week, everyone combined"],
+    ["Per person", fmt(median(per)), "median a week"],
+    ["Findings", all.length, all.filter(f => f.automation && f.automation.ai).length + " where AI helps"],
+    ["Accurate", pct(st.acc), st.rated + " of " + all.length + " rated"],
+    ["New to them", pct(st.newRate), "of accurate findings"]
+  ].map(([k, v, n]) => `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="n">${n}</span></div>`).join("");
+
+  // chart: hours/week by type (excludes findings rated wrong)
+  const byType = new Map();
+  all.filter(f => !(f.fb && f.fb.rating === "wrong")).forEach(f => { const t = byType.get(f.type) || { m: 0, n: 0, who: new Set() }; t.m += f.weeklyMinutes; t.n++; t.who.add(f.who); byType.set(f.type, t); });
+  drawChart([...byType.entries()].map(([type, v]) => ({ label: TYPE[type] || type, m: v.m, n: v.n, people: v.who.size })).sort((a, b) => b.m - a.m));
+
+  $("pcount").textContent = people.length + (people.length === 1 ? " person" : " people");
+  $("people").innerHTML = shown.slice().sort((a, b) => weekly(b.findings) - weekly(a.findings)).map(b => {
+    const s = stats(b.findings), sd = b.study || {};
+    return `<tr><td><b>${esc(b.participant || "Unnamed")}</b>${sourceChip(b) ? ` <span class="chip">${sourceChip(b)}</span>` : ""}${b.reanalyzed ? ` <span class="chip" title="Re-analyzed from the activity log with detector v${D.VERSION}">re-analyzed</span>` : ""}<div class="who mono">${b.exportedAt ? "sent " + new Date(b.exportedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : ""}</div></td><td>${esc(b.company || "")}</td><td class="num">${sd.watchDaysDone ?? b.summary?.observedDays ?? "–"}${sd.watchDaysTotal ? " / " + sd.watchDaysTotal : ""}</td><td class="num">${fmt(weekly(b.findings))}</td><td class="num">${b.findings.length}</td><td class="num">${s.rated ? `<span class="chip ${s.acc >= .75 ? "good" : s.acc >= .5 ? "warn" : "bad"}">${pct(s.acc)}</span><div class="who">${s.rated} rated</div>` : `<span class="chip warn">not rated</span>`}</td></tr>`;
+  }).join("") || `<tr><td colspan="6" class="muted">No participants loaded.</td></tr>`;
+
+  const cSel = $("fCompany"), tSel = $("fType"), cv = cSel.value, tv = tSel.value;
+  cSel.innerHTML = `<option value="">All</option>` + companies.sort().map(c => `<option ${c === cv ? "selected" : ""}>${esc(c)}</option>`).join("");
+  const types = [...new Set(all.map(f => f.type))];
+  tSel.innerHTML = `<option value="">All</option>` + types.map(t => `<option value="${t}" ${t === tv ? "selected" : ""}>${TYPE[t] || t}</option>`).join("");
+  renderFindings(all);
+}
+
+function renderFindings(all) {
+  const c = $("fCompany").value, t = $("fType").value, hide = $("fHideWrong").checked;
+  const rows = all.filter(f => (!c || f.company === c) && (!t || f.type === t) && !(hide && f.fb && f.fb.rating === "wrong")).sort((a, b) => b.weeklyMinutes - a.weeklyMinutes);
+  $("findings").innerHTML = rows.map((f, i) => {
+    const id = f.company + "|" + f.who + "|" + f.key;
+    const r = f.fb && RATING[f.fb.rating];
+    const conf = { high: "good", medium: "", low: "warn" }[f.confidence];
+    let html = `<tr class="f" data-id="${esc(id)}" tabindex="0" aria-expanded="${open.has(id)}"><td><div class="ftitle">${esc(f.title)}</div><div class="who">${esc(f.who)} · ${esc(f.company)} · seen ${f.count}× over ${f.days} days</div></td><td><span class="chip">${TYPE[f.type] || f.type}</span></td><td class="num"><b>${fmt(f.weeklyMinutes)}</b></td><td><span class="chip dot ${conf}">${f.confidence}</span></td><td>${esc(f.automation.method)} ${f.automation.ai ? `<span class="chip ai">AI</span>` : ""}</td><td>${r ? `<span class="chip ${r[1]}">${r[0]}</span>` : `<span class="muted small">not rated</span>`}</td></tr>`;
+    if (open.has(id)) html += `<tr class="detail"><td colspan="6"><div class="dgrid">
+      <div><h3>What we saw</h3><p>${esc(f.detail)}${f.when ? " " + esc(f.when) : ""}</p>${f.steps ? `<h3 style="margin-top:10px">Steps</h3><ol>${f.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
+        ${f.fb && f.fb.note ? `<h3 style="margin-top:10px">Participant’s note</h3><p class="note">${esc(f.fb.note)}</p>` : ""}</div>
+      <div><h3>Suggested approach</h3><p>${esc(f.automation.how)}</p>${f.automation.ai ? `<p class="small muted" style="margin-top:6px">${esc(f.automation.why)}</p>` : ""}
+        <p class="small muted" style="margin-top:10px">About ${f.minutesEach} min each · ${f.perDay}× per watch day · automatability ${f.automatability}/100</p>
+        <div class="actions" style="margin-top:10px"><button class="btn sm" data-brief="${esc(id)}">Copy brief</button><span class="small muted" data-msg="${esc(id)}"></span></div></div>
+    </div></td></tr>`;
+    return html;
+  }).join("") || `<tr><td colspan="6" class="muted">No findings match these filters.</td></tr>`;
+  $("findings").__rows = rows;
+}
+
+function drawChart(data) {
+  const el = $("chart");
+  if (!data.length) { el.innerHTML = `<p class="muted small">No findings yet.</p>`; return; }
+  const W = 520, labelW = 170, valW = 64, rowH = 34, barH = 18, top = 8, axisH = 22;
+  const H = top + data.length * rowH + axisH;
+  const max = Math.max(...data.map(d => d.m));
+  const stepH = max > 600 ? 300 : max > 240 ? 120 : 60;
+  const niceMax = Math.ceil(max / stepH) * stepH;
+  const plotW = W - labelW - valW;
+  const x = m => labelW + (m / niceMax) * plotW;
+  let g = "";
+  for (let v = 0; v <= niceMax; v += stepH) {
+    g += `<line x1="${x(v)}" x2="${x(v)}" y1="${top - 4}" y2="${H - axisH + 2}" stroke="var(--grid)" stroke-width="1"/>`;
+    g += `<text class="tick" x="${x(v)}" y="${H - 6}" text-anchor="middle">${v / 60}h</text>`;
+  }
+  data.forEach((d, i) => {
+    const y = top + i * rowH + (rowH - barH) / 2, w = Math.max(2, x(d.m) - labelW), r = Math.min(4, w / 2);
+    const path = `M${labelW},${y} h${w - r} a${r},${r} 0 0 1 ${r},${r} v${barH - 2 * r} a${r},${r} 0 0 1 -${r},${r} h-${w - r} z`;
+    g += `<g class="row" tabindex="0" data-i="${i}" aria-label="${esc(d.label)}: ${fmt(d.m)} a week">
+      <rect class="hit" x="0" y="${top + i * rowH}" width="${W}" height="${rowH}"/>
+      <text x="${labelW - 10}" y="${y + barH / 2 + 4}" text-anchor="end">${esc(d.label)}</text>
+      <path class="bar" d="${path}"/>
+      <text x="${labelW + w + 8}" y="${y + barH / 2 + 4}" style="font-variant-numeric:tabular-nums">${fmt(d.m)}</text></g>`;
+  });
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Hours a week of repeated work by type">${g}</svg>`;
+  el.__data = data;
+}
+function showTip(e) {
+  const row = e.target.closest(".row"), el = $("chart");
+  let tip = el.querySelector(".tip");
+  if (!row) { if (tip) tip.remove(); return; }
+  const d = el.__data[+row.dataset.i];
+  if (!tip) { tip = document.createElement("div"); tip.className = "tip"; el.appendChild(tip); }
+  tip.innerHTML = `<b>${esc(d.label)}</b><br>${fmt(d.m)} a week · ${d.n} ${d.n === 1 ? "finding" : "findings"} · ${d.people} ${d.people === 1 ? "person" : "people"}`;
+  const box = el.getBoundingClientRect(), rb = row.querySelector(".bar").getBoundingClientRect();
+  tip.style.left = Math.min(box.width - 90, Math.max(90, rb.right - box.left)) + "px";
+  tip.style.top = (rb.top - box.top) + "px";
+}
+$("chart").addEventListener("mousemove", showTip);
+$("chart").addEventListener("mouseleave", () => { const t = $("chart").querySelector(".tip"); if (t) t.remove(); });
+$("chart").addEventListener("focusin", showTip);
+$("chart").addEventListener("focusout", () => { const t = $("chart").querySelector(".tip"); if (t) t.remove(); });
+
+function toggle(id) { open.has(id) ? open.delete(id) : open.add(id); render(); }
+$("findings").addEventListener("click", async e => {
+  const b = e.target.closest("[data-brief]");
+  if (b) {
+    const f = $("findings").__rows.find(f => f.company + "|" + f.who + "|" + f.key === b.dataset.brief);
+    const msg = document.querySelector(`[data-msg="${CSS.escape(b.dataset.brief)}"]`);
+    try { await navigator.clipboard.writeText(D.brief(f, f.who + ", " + f.company)); msg.textContent = "Copied"; } catch { msg.textContent = "Copy blocked. Select the text above instead."; }
+    return;
+  }
+  const tr = e.target.closest("tr.f"); if (tr) toggle(tr.dataset.id);
+});
+$("findings").addEventListener("keydown", e => { const tr = e.target.closest("tr.f"); if (tr && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggle(tr.dataset.id); } });
+["fCompany", "fType", "fHideWrong"].forEach(id => $(id).addEventListener("change", render));
+
+async function load(files) {
+  const errs = [], loaded = [];
+  for (const file of files) {
+    try {
+      const b = JSON.parse(await file.text());
+      if (!String(b.schema || "").startsWith("workflow-detective/bundle")) throw new Error("not a Workflow Detective results file");
+      loaded.push(prep(b));
+    } catch (e) { errs.push(file.name + ": " + e.message); }
+  }
+  if (loaded.length) {
+    if (usingSamples) { bundles = []; usingSamples = false; open.clear(); }
+    for (const b of loaded) { // newest file per person wins
+      const i = bundles.findIndex(x => x.id === b.id);
+      if (i < 0) bundles.push(b); else if ((b.exportedAt || "") >= (bundles[i].exportedAt || "")) bundles[i] = b;
+    }
+  }
+  $("err").hidden = !errs.length;
+  $("err").textContent = errs.length ? "Couldn’t read " + errs.length + " file(s). " + errs.join(" · ") : "";
+  render();
+}
+$("pick").addEventListener("click", () => $("files").click());
+$("files").addEventListener("change", e => { load([...e.target.files]); e.target.value = ""; });
+$("clear").addEventListener("click", () => { bundles = SAMPLES.map(prep); usingSamples = true; open.clear(); render(); });
+let dragDepth = 0;
+window.addEventListener("dragenter", e => { if ([...(e.dataTransfer?.types || [])].includes("Files")) { dragDepth++; $("drop").hidden = false; } });
+window.addEventListener("dragleave", () => { if (--dragDepth <= 0) { dragDepth = 0; $("drop").hidden = true; } });
+window.addEventListener("dragover", e => e.preventDefault());
+window.addEventListener("drop", e => { e.preventDefault(); dragDepth = 0; $("drop").hidden = true; load([...(e.dataTransfer?.files || [])].filter(f => /\.json$/i.test(f.name))); });
+
+bundles = SAMPLES.map(prep);
+render();
+</script>
