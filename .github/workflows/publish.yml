@@ -1,8 +1,7 @@
 # Publish the pilot: builds and tests all three versions, then puts the downloads online.
 #
 #   Runs by itself every time files are uploaded to the main branch (or press "Run workflow" on the Actions tab).
-#   The website itself is served straight from this repository by GitHub Pages
-#   (Settings → Pages → "Deploy from a branch" → main → / (root)), so there's nothing else to switch on:
+#   It also publishes the website (index.html, site/ and console/) to GitHub Pages:
 #     • Setup page   https://<your-github-name>.github.io/<repo>/site/          (participants' personal links point here)
 #     • Invite tool  https://<your-github-name>.github.io/<repo>/site/invite.html
 #   This workflow attaches the Windows app, Mac app and extension to a release called "pilot", then updates
@@ -46,18 +45,31 @@ jobs:
           node test/site.test.js
 
   site:
-    name: Refresh the website
+    name: Put the website online
     runs-on: ubuntu-latest
     permissions:
       pages: write
-    env:
-      GH_TOKEN: ${{ github.token }}
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}site/
     steps:
-      - name: Ask GitHub Pages to rebuild from the latest files
+      - uses: actions/checkout@v4
+      - name: Collect the website files
         run: |
-          # Commits pushed by apps and by this workflow don't always trigger a Pages rebuild by themselves.
-          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" \
-            || echo "::warning title=Website not refreshed::Check Settings → Pages: Source should be 'Deploy from a branch', branch main, folder / (root)."
+          mkdir -p _site/site _site/console
+          cp index.html .nojekyll _site/
+          cp site/*.html site/*.js site/*.json _site/site/
+          cp console/index.html _site/console/
+          ls -R _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+          name: site-early
+      - id: deploy
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: site-early
 
   windows:
     name: Windows app
@@ -165,7 +177,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write   # the release with the downloads, and site/downloads.json
-      pages: write      # rebuild the website once downloads.json changes
+      pages: write      # republish the website with the new downloads.json
+      id-token: write
+    environment:
+      name: github-pages
     env:
       GH_TOKEN: ${{ github.token }}
       GH_REPO: ${{ github.repository }}
@@ -174,6 +189,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: dist
+          pattern: "{windows,mac,extension}"
           merge-multiple: true
       - name: Upload the downloads (release "pilot")
         run: |
@@ -201,7 +217,19 @@ jobs:
             git commit -m "Update available downloads"
             git pull --rebase origin "$GITHUB_REF_NAME" && git push origin "HEAD:$GITHUB_REF_NAME"
           fi
-          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" || echo "::warning title=Website not refreshed::Pages rebuild request failed"
+      - name: Collect the website files
+        run: |
+          mkdir -p _site/site _site/console
+          cp index.html .nojekyll _site/
+          cp site/*.html site/*.js site/*.json _site/site/
+          cp console/index.html _site/console/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+          name: site-final
+      - uses: actions/deploy-pages@v4
+        with:
+          artifact_name: site-final
       - name: Summary
         run: |
           owner=$(echo "${GITHUB_REPOSITORY%%/*}" | tr '[:upper:]' '[:lower:]'); repo="${GITHUB_REPOSITORY#*/}"
