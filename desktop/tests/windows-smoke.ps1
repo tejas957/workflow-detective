@@ -70,7 +70,7 @@ $lines = @(); Get-ChildItem "$data\events\*.jsonl" -ErrorAction SilentlyContinue
 $ev = $lines | ForEach-Object { $_ | ConvertFrom-Json }
 $all = $lines -join "`n"
 Check "something was recorded" ($ev.Count -gt 0) "$($ev.Count) events"
-Check "switching to Notepad recorded as a view" (@($ev | Where-Object { $_.type -eq "view" -and $_.app -eq "Notepad" }).Count -ge 1) (($ev | Select-Object -ExpandProperty app -Unique) -join ", ")
+Check "switching to Notepad recorded as a view" (@($ev | Where-Object { $_.type -eq "view" -and $_.app -eq "Notepad" }).Count -ge 1) ((@($ev | Where-Object { $_.app } | ForEach-Object { $_.type + ":" + $_.app }) | Sort-Object -Unique) -join ", ")
 Check "copy recorded with its kind (number)" (@($ev | Where-Object { $_.type -eq "copy" -and $_.d.kind -eq "number" }).Count -ge 1)
 Check "typing in Notepad recorded as a field edit (label only)" (@($ev | Where-Object { $_.type -eq "entry" -and $_.app -eq "Notepad" }).Count -ge 1) (($ev | Where-Object { $_.type -eq "entry" } | ForEach-Object { $_.d.labels -join "/" }) -join "; ")
 Check "new file in Downloads recorded by type" (@($ev | Where-Object { $_.type -eq "download" -and $_.d.ext -eq "csv" }).Count -ge 1)

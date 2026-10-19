@@ -71,6 +71,15 @@ jobs:
         uses: actions/deploy-pages@v4
         with:
           artifact_name: site-early
+      - name: Check the live website
+        run: |
+          base="${{ steps.deploy.outputs.page_url }}"; bad=""
+          for f in "" site/ site/invite.js site/config.json site/downloads.json site/invite.html site/guide.html site/privacy.html console/; do
+            ok=""; for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$base$f" && ok=1 && break; sleep 10; done
+            if [ -n "$ok" ]; then echo "OK  $base$f"; else echo "::error title=Live website::$base$f isn't reachable"; bad=1; fi
+          done
+          curl -fsS "${base}site/invite.js" | grep -q "WDInvite" || { echo "::error title=Live website::site/invite.js is wrong"; bad=1; }
+          [ -z "$bad" ]
 
   windows:
     name: Windows app
