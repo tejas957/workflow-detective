@@ -45,6 +45,20 @@ jobs:
           npx playwright install --with-deps chromium
           node test/site.test.js
 
+  site:
+    name: Refresh the website
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Ask GitHub Pages to rebuild from the latest files
+        run: |
+          # Commits pushed by apps and by this workflow don't always trigger a Pages rebuild by themselves.
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" \
+            || echo "::warning title=Website not refreshed::Check Settings → Pages: Source should be 'Deploy from a branch', branch main, folder / (root)."
+
   windows:
     name: Windows app
     needs: checks
@@ -151,6 +165,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write   # the release with the downloads, and site/downloads.json
+      pages: write      # rebuild the website once downloads.json changes
     env:
       GH_TOKEN: ${{ github.token }}
       GH_REPO: ${{ github.repository }}
@@ -186,6 +201,7 @@ jobs:
             git commit -m "Update available downloads"
             git pull --rebase origin "$GITHUB_REF_NAME" && git push origin "HEAD:$GITHUB_REF_NAME"
           fi
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" || echo "::warning title=Website not refreshed::Pages rebuild request failed"
       - name: Summary
         run: |
           owner=$(echo "${GITHUB_REPOSITORY%%/*}" | tr '[:upper:]' '[:lower:]'); repo="${GITHUB_REPOSITORY#*/}"
