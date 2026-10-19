@@ -46,6 +46,7 @@ jobs:
 
   site:
     name: Put the website online
+    needs: checks
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -95,6 +96,7 @@ jobs:
         timeout-minutes: 6    # depends on the runner's desktop session; the self-checks above are the gate
         shell: powershell
         run: |
+          $ErrorActionPreference = "Continue"   # GitHub's default "Stop" turns any stderr line into a crash before we can report it
           $log = powershell -ExecutionPolicy Bypass -File desktop\tests\windows-smoke.ps1 2>&1 | Out-String
           $code = $LASTEXITCODE
           Write-Host $log
