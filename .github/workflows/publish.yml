@@ -58,14 +58,21 @@ jobs:
         shell: powershell
         run: |
           $out = Join-Path $env:RUNNER_TEMP "selftest.txt"
-          $p = Start-Process -FilePath desktop\build\WorkflowDetective.exe -ArgumentList "--selftest --data `"$env:RUNNER_TEMP\st`"" -Wait -PassThru -RedirectStandardOutput $out -NoNewWindow
-          Get-Content $out
-          if ($p.ExitCode -ne 0) { throw "self-checks failed" }
+          $p = Start-Process -FilePath desktop\build\WorkflowDetective.exe -ArgumentList "--selftest --data `"$env:RUNNER_TEMP\st`"" -Wait -PassThru -RedirectStandardOutput $out -RedirectStandardError "$out.err" -NoNewWindow
+          $lines = @(Get-Content $out -Encoding UTF8) + @(Get-Content "$out.err" -Encoding UTF8 -ErrorAction SilentlyContinue)
+          $lines | ForEach-Object { Write-Host $_ }
+          # surface failures as annotations (readable on the run page without opening the log)
+          $lines | Where-Object { $_ -and -not $_.StartsWith([string][char]0x2713) } | Select-Object -First 10 | ForEach-Object { Write-Host "::error title=Windows self-check::$_" }
+          if ($p.ExitCode -ne 0) { throw "self-checks failed (exit code $($p.ExitCode))" }
       - name: Smoke test (real Windows hooks, clipboard, file watching)
         continue-on-error: true
         timeout-minutes: 6    # depends on the runner's desktop session; the self-checks above are the gate
         shell: powershell
-        run: powershell -ExecutionPolicy Bypass -File desktop\tests\windows-smoke.ps1
+        run: |
+          $log = powershell -ExecutionPolicy Bypass -File desktop\tests\windows-smoke.ps1 2>&1 | Out-String
+          Write-Host $log
+          $log -split "`n" | Where-Object { $_ -match "FAIL" } | Select-Object -First 10 | ForEach-Object { Write-Host "::warning title=Windows smoke test::$($_.Trim())" }
+          if ($log -match "FAIL") { exit 1 }
       - uses: actions/upload-artifact@v4
         with:
           name: windows
@@ -96,7 +103,9 @@ jobs:
       - name: Build (Apple Silicon + Intel)
         env:
           SIGN_ID: ${{ secrets.MAC_SIGN_ID }}
-        run: bash mac/build-mac.sh
+        run: |
+          set -o pipefail
+          bash mac/build-mac.sh 2>&1 | tee build.log || { grep -E "error:" build.log | head -10 | sed 's/^/::error title=Mac build::/'; exit 1; }
       - name: Built-in self-checks
         run: '"mac/build/Workflow Detective.app/Contents/MacOS/WorkflowDetective" --selftest'
       - name: Smoke test (real macOS app switching, clipboard, files)

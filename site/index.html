@@ -336,7 +336,7 @@ footer{font-size:14px;color:var(--muted)}
   });
 
   function boot() {
-    $("contact").innerHTML = "Questions? Contact " + esc(cfg.contactName) + (cfg.contactEmail ? ' at <a href="mailto:' + esc(cfg.contactEmail) + '">' + esc(cfg.contactEmail) + "</a>" : "") + '. · <a href="privacy.html">Privacy</a>';
+    $("contact").innerHTML = "Questions? Contact " + esc(cfg.contactName) + (cfg.contactEmail ? ' at <a href="mailto:' + esc(cfg.contactEmail) + '">' + esc(cfg.contactEmail) + "</a>" : "") + '. · <a href="guide.html">How the pilot works</a> · <a href="privacy.html">Privacy</a>';
     var c = I.find(location.hash);
     var inv = c && I.decode(c);
     if (inv && inv.participant) { useInvite(c); return; }

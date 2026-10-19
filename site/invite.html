@@ -81,6 +81,11 @@ td input,td select{padding:6px 8px}
     <p class="sub">Add each person once. You get their personal setup link and a ready-to-send email. If you know their computer and how they work, the right setup is chosen now; if not, their setup page asks them one question.</p>
   </div>
 
+  <section class="card row" style="justify-content:space-between">
+    <div style="min-width:0"><h2>Client guide</h2><p class="small muted" style="margin-top:2px">Send this to each company’s manager before inviting people: what you ask of them, what participants do, privacy, and notes for IT.</p><p class="link" id="guideLink"></p></div>
+    <div class="row"><button class="btn" id="copyGuide">Copy link</button><a class="btn" id="openGuide" target="_blank" rel="noopener" style="text-decoration:none">Open</a><span class="ok" id="guideMsg"></span></div>
+  </section>
+
   <p class="banner" id="baseWarn" hidden>This copy isn’t running from your published site, so links use the address below. Change it to your GitHub Pages address once it’s live.</p>
 
   <section class="card">
@@ -218,7 +223,9 @@ td input,td select{padding:6px 8px}
         '<span class="ok" data-msg="' + people.indexOf(p) + '"></span></div></article>';
     }).join("") || '<div class="card empty">Each person shows up here with their link and email once they have a name and company.</div>';
   }
-  function render() { renderRows(); renderOut(); save(); }
+  function guideUrl() { var b = $("base").value.trim(); if (b && !/\/$/.test(b)) b = b.replace(/[^/]*$/, ""); return b + "guide.html"; }
+  function renderGuide() { $("guideLink").textContent = guideUrl(); $("openGuide").href = guideUrl(); }
+  function render() { renderRows(); renderOut(); renderGuide(); save(); }
 
   function copy(text, msgEl, what) {
     function done(ok) { if (msgEl) { msgEl.textContent = ok ? what + " copied" : "Copy blocked: select and copy manually"; setTimeout(function () { msgEl.textContent = ""; }, 2500); } }
@@ -250,7 +257,8 @@ td input,td select{padding:6px 8px}
     $("paste").value = ""; $("pasteMsg").textContent = n ? "Added " + n : "Nothing to add";
     render();
   });
-  ["start", "weeks", "hours", "contact", "email", "base"].forEach(function (id) { $(id).addEventListener("input", function () { renderOut(); save(); }); });
+  ["start", "weeks", "hours", "contact", "email", "base"].forEach(function (id) { $(id).addEventListener("input", function () { renderOut(); renderGuide(); save(); }); });
+  $("copyGuide").addEventListener("click", function () { copy(guideUrl(), $("guideMsg"), "Link"); });
   $("out").addEventListener("click", function (e) {
     var b = e.target.closest("[data-act]"); if (!b) return;
     var p = people[+b.dataset.i], msg = document.querySelector('[data-msg="' + b.dataset.i + '"]');

@@ -27,7 +27,7 @@ const server = http.createServer((req, res) => {
   if (file === "invite.js") { body = fs.readFileSync(path.join(ROOT, "extension/lib/invite.js")); type = "text/javascript"; }
   else if (file === "config.json") { body = setup.config ? JSON.stringify(setup.config) : fs.readFileSync(path.join(ROOT, "site/config.json")); type = "application/json"; }
   else if (file === "downloads.json") { if (setup.downloads) { body = JSON.stringify(setup.downloads); type = "application/json"; } }
-  else if (/^(index|invite)\.html$/.test(file)) body = fs.readFileSync(path.join(ROOT, "site", file));
+  else if (/^(index|invite|guide|privacy)\.html$/.test(file)) body = fs.readFileSync(path.join(ROOT, "site", file));
   if (body == null) { res.writeHead(404); return res.end(); }
   res.writeHead(200, { "content-type": type }); res.end(body);
 });
@@ -181,6 +181,7 @@ const invite = extra => I.encode(Object.assign({ company: "NORTHLINE", participa
     ok("removing a person", (await p.$$("#out .person")).length === 2);
     await p.click("#addRow"); await p.keyboard.type("Ana Pereira");
     ok("Add a person copies the company from the row above", (await p.$$("#out .person")).length === 3 && /COPPER & PINE/.test(await text(p, "#out .person:last-child h3")));
+    ok("client guide link follows the setup page address", (await text(p, "#guideLink")) === `${BASE}/live/guide.html`);
     await p.screenshot({ path: path.join(ROOT, "samples/site-invite.png"), fullPage: true });
     ok("invite tool fits a phone screen", await (async () => { await p.setViewportSize({ width: 375, height: 800 }); await p.waitForTimeout(100); return p.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1); })());
     await p.context().close();
@@ -188,6 +189,14 @@ const invite = extra => I.encode(Object.assign({ company: "NORTHLINE", participa
     // 10. the link the tool made opens straight to Dana's steps on her Windows PC
     p = await open(UA.winChrome, link);
     ok("the tool’s link → Dana’s page goes straight to the Windows app", (await text(p, "#hello")) === "Hi Dana, let’s get you set up" && JSON.stringify(await stepIds(p)) === '["st-windows"]');
+    await p.context().close();
+
+    // 11. client guide
+    p = await open(UA.winChrome, `${BASE}/live/guide.html`);
+    ok("client guide loads with the contact from config.json", /Tejas Senthil at tns976@eid\.utexas\.edu/.test(await text(p, "#contact")) && (await p.$$("section")).length >= 5);
+    ok("client guide fits a phone screen", await (async () => { await p.setViewportSize({ width: 375, height: 800 }); await p.waitForTimeout(100); return p.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1); })());
+    await p.setViewportSize({ width: 1000, height: 900 });
+    await p.screenshot({ path: path.join(ROOT, "samples/site-guide.png"), fullPage: true });
     await p.context().close();
 
     ok("no script errors", errs.length === 0, errs.join("; "));

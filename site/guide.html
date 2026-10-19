@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Workflow Detective Pilot Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: a guide for the client company. Short intro + three-week timeline strip, then sections a manager, a
+   participant and IT each jump to. Same palette and faces as the participant setup page. */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --sunk:#E9EDF2; --line:#D8DEE6;
+  --ink:#16202C; --muted:#586376;
+  --brand:#1C5A86; --brand-ink:#FFFFFF; --brand-soft:#E1ECF6;
+  --mark:#FFE27A; --mark-ink:#2E2400;
+  --good:#1D7A4E; --bad:#B3261E;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E131A; --surface:#161C25; --sunk:#1D2430; --line:#2A3341; --ink:#E6EAF0; --muted:#98A2B4;
+  --brand:#6CB2E2; --brand-ink:#08131D; --brand-soft:#17293A; --mark:#E5C247; --mark-ink:#1C1500;
+  --good:#5ED19A; --bad:#FF8A80; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0E131A; --surface:#161C25; --sunk:#1D2430; --line:#2A3341; --ink:#E6EAF0; --muted:#98A2B4;
+  --brand:#6CB2E2; --brand-ink:#08131D; --brand-soft:#17293A; --mark:#E5C247; --mark-ink:#1C1500;
+  --good:#5ED19A; --bad:#FF8A80; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.6}
+a{color:var(--brand);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--brand);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.015em;text-wrap:balance;margin:0}
+p{margin:0}
+.wrap{max-width:820px;margin:0 auto;padding-inline:16px;padding-block:28px 80px;display:flex;flex-direction:column;gap:28px}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:600;font-size:15px;color:var(--muted)}
+.brand svg{width:26px;height:26px}
+h1{font-size:clamp(30px,5vw,44px);font-weight:800;line-height:1.08}
+.lead{font-size:19px;color:var(--muted);max-width:62ch;margin-top:12px}
+.lead b{color:var(--ink);font-weight:600}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.jump a{font-size:14px;font-weight:600;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px;color:var(--ink)}
+.jump a:hover{border-color:var(--brand)}
+.timeline{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:640px){.timeline{grid-template-columns:minmax(0,1fr)}}
+.timeline li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.when{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--brand);font-weight:500}
+.timeline h3{font-size:18px;font-weight:600}
+.timeline p{font-size:15px;color:var(--muted)}
+.timeline .time{font-size:13px;color:var(--ink);font-weight:600;margin-top:auto;padding-top:6px}
+section{display:flex;flex-direction:column;gap:12px;scroll-margin-top:16px}
+section > h2{font-size:26px;font-weight:600}
+section > p, section > ul, section > ol{max-width:66ch}
+ul,ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:640px){.two{grid-template-columns:minmax(0,1fr)}}
+.two h3{font-size:17px;font-weight:600;display:flex;align-items:center;gap:8px}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.two ul{margin-top:8px;font-size:15px}
+.steps{counter-reset:s;list-style:none;padding:0;gap:10px}
+.steps li{counter-increment:s;position:relative;padding-left:44px;min-height:30px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:-1px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--brand);color:var(--brand-ink);font-family:var(--display);font-weight:800;font-size:15px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:560px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+code{font-family:var(--mono);font-size:13px;background:var(--sunk);border-radius:5px;padding:1px 5px;word-break:break-word}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+details + details{margin-top:-4px}
+summary{cursor:pointer;font-weight:600}
+details p{margin-top:8px;color:var(--ink);max-width:66ch}
+.note{background:var(--brand-soft);border-radius:10px;padding:12px 14px;font-size:15px;max-width:66ch}
+footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:18px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--brand)"/><circle cx="13.5" cy="13.5" r="7" fill="none" stroke="var(--brand-ink)" stroke-width="2.6"/><path d="M18.8 18.8l6 6" stroke="var(--brand-ink)" stroke-width="3" stroke-linecap="round"/><path d="M10 13.5h7" stroke="var(--mark)" stroke-width="2.4" stroke-linecap="round"/></svg>Workflow Detective · pilot guide for companies</div>
+
+  <header>
+    <h1>Find the busywork your team could stop doing</h1>
+    <p class="lead">Workflow Detective quietly notices the steps your people repeat at their computers, like copying the same details from emails into a spreadsheet, and turns them into a plain-English list of what could be automated. <b>Nobody has to describe their job or know anything about AI.</b> This guide covers what we ask of your company, what your participants do, and what the tool can and can’t see.</p>
+    <nav class="jump" aria-label="Sections">
+      <a href="#ask">What we ask of you</a><a href="#people">For participants</a><a href="#privacy">Privacy</a><a href="#it">For IT</a><a href="#faq">Questions</a>
+    </nav>
+  </header>
+
+  <ol class="timeline" aria-label="Pilot timeline">
+    <li><span class="when">Week 0</span><h3>Invite</h3><p>You pick who takes part. Each person gets an email with a personal setup link.</p><span class="time">About 5 minutes each</span></li>
+    <li><span class="when">Weeks 1–2</span><h3>Work as usual</h3><p>It watches 3 days a week, during work hours only. Nothing to do.</p><span class="time">No time needed</span></li>
+    <li><span class="when">Week 3</span><h3>Results</h3><p>A short call with each person, then a readout of what could be automated and what it would save.</p><span class="time">30 minutes each</span></li>
+  </ol>
+
+  <section id="ask">
+    <h2>What we ask of your company</h2>
+    <ol class="steps">
+      <li><b>Choose 1 to 3 people</b> who spend a lot of their day on admin: operations, bookkeeping, accounts payable or receivable, scheduling, customer support, order processing. People who say “I’m always copying things between systems” are ideal.</li>
+      <li><b>Give the OK in writing.</b> A reply to our email is enough. Each participant also agrees for themselves on their setup page, and taking part is always voluntary.</li>
+      <li><b>Send us their names</b>, and if you know them, whether each person uses a Windows PC or a Mac. We send each person their own setup email.</li>
+      <li><b>Let them use their normal work computer.</b> Not a personal device.</li>
+      <li><b>Join the readout</b> in week 3 if you’d like. You see the findings each participant chose to share, never their activity.</li>
+    </ol>
+  </section>
+
+  <section id="people">
+    <h2>What participants do</h2>
+    <p>Each person gets an email with their personal link. The link already knows their name, company and schedule, and the page works out what kind of computer they have, so they only see the steps that apply to them.</p>
+    <ol class="steps">
+      <li><b>Open the link</b> on their work computer.</li>
+      <li><b>Click the big button.</b> Either <i>Add to Chrome/Edge</i> (for work done in websites) or <i>Download for Windows/Mac</i> (for programs like Outlook and Excel), sometimes both. The page explains any warning their computer shows along the way.</li>
+      <li><b>Read what it records</b>, tick <b>I agree</b>, and click <b>Start the study</b>. Their details are already filled in.</li>
+      <li><b>Work as usual</b> for two weeks. A small magnifying-glass icon shows it’s running, and they can pause it any time.</li>
+      <li><b>On the last day</b>, they open <i>My findings</i> with us, confirm which findings are right, and choose whether to send us the results file.</li>
+    </ol>
+    <p class="note">If someone gets stuck, they can open their link again. It shows which steps are done. Or they can reply to the email and we’ll help.</p>
+  </section>
+
+  <section id="privacy">
+    <h2>What it can and can’t see</h2>
+    <div class="two">
+      <div class="card"><h3><span class="dot" style="background:var(--good)"></span>What it notices</h3><ul>
+        <li>Which program or website is in use, and for how long</li>
+        <li>Window and page titles, with numbers and email addresses removed</li>
+        <li>That something was copied or pasted, and what kind of thing it was (a number, a date). Never what it was.</li>
+        <li>The names of fields filled in, like “Customer”. Never what was typed.</li>
+        <li>That a file was downloaded or saved, and its type (like .csv). Never the file.</li>
+      </ul></div>
+      <div class="card"><h3><span class="dot" style="background:var(--bad)"></span>What it never sees</h3><ul>
+        <li>What anyone types, or the contents of emails, chats, documents and spreadsheet cells</li>
+        <li>Screenshots or recordings of the screen</li>
+        <li>Passwords, card numbers, bank details</li>
+        <li>Private browser windows, password managers, banking and health sites, or any app the person blocks</li>
+        <li>Anything outside watch days and work hours</li>
+      </ul></div>
+    </div>
+    <ul>
+      <li><b>Everything stays on the participant’s computer.</b> There are no servers. Nobody, including you and us, can see the data while it’s there.</li>
+      <li><b>The participant reviews everything first</b>, can delete any part of it, and decides whether to send us their results file at the end.</li>
+      <li><b>It isn’t a performance tool.</b> Findings describe processes (“copying invoice details from email into the accounting system”), not how fast or how much someone works.</li>
+      <li><b>Automatic deletion:</b> data on the computer is deleted 14 days after the study ends. We delete results files 30 days after the pilot unless you ask us to keep them for an automation project.</li>
+    </ul>
+    <p>Full details: <a href="privacy.html">privacy policy</a>.</p>
+  </section>
+
+  <section id="it">
+    <h2>For your IT team</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Version</th><th>What gets installed</th><th>Admin rights</th><th>Network</th></tr></thead>
+      <tbody>
+        <tr><td><b>Browser extension</b><br><span style="color:var(--muted);font-size:14px">Chrome or Edge</span></td><td>An unlisted extension from the Chrome Web Store. Can be force-installed by policy (<code>ExtensionInstallForcelist</code>).</td><td>No</td><td>None. It never sends data anywhere.</td></tr>
+        <tr><td><b>Windows app</b><br><span style="color:var(--muted);font-size:14px">Windows 10/11</span></td><td>One program in the user’s own folder (<code>%LOCALAPPDATA%\Programs\WorkflowDetective</code>), a Start menu shortcut, and a sign-in startup entry for the current user. Uses the .NET Framework already on Windows.</td><td>No</td><td>None outside the computer. It shows its pages through a local address (127.0.0.1) only that user can open.</td></tr>
+        <tr><td><b>Mac app</b><br><span style="color:var(--muted);font-size:14px">macOS 12 or newer</span></td><td>An app in Applications, set to open at login. Asks for the Accessibility permission (to read window titles and field names).</td><td>No</td><td>None.</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><b>During the pilot, the apps aren’t code-signed yet</b>, so Windows SmartScreen or macOS Gatekeeper shows a one-time warning. If your security tools block unsigned software, tell us and we’ll work out the best route with you.</li>
+      <li><b>It never records keystrokes or the screen.</b> On Windows it reads app and window names, clipboard <i>type</i> (not contents), field labels through accessibility, and, in Excel and Outlook, sheet and column headings and the subject of the email being read (numbers removed).</li>
+      <li><b>Removing it:</b> the participant clicks <i>Stop and delete everything</i> in its settings. That deletes all its data and stops it starting at sign-in.</li>
+    </ul>
+  </section>
+
+  <section id="faq">
+    <h2>Questions</h2>
+    <details><summary>Does anyone have to change how they work?</summary><p>No. The point is to see normal work. Participants should do exactly what they’d do anyway.</p></details>
+    <details><summary>Will it slow down their computer?</summary><p>No. It only writes down a small note when something changes (a different app comes to the front, a copy happens), and keeps them in a small file.</p></details>
+    <details><summary>Can a participant pause or stop?</summary><p>Yes, any time. Pause for an hour from the icon, block any website or app, or stop completely, which deletes everything it recorded.</p></details>
+    <details><summary>What do we get at the end?</summary><p>A short list of the repetitive processes it found for each participant who chose to share, how often they happen, roughly how much time they take each week, and a suggested way to automate each one, from a simple template to an integration between systems.</p></details>
+    <details><summary>What if someone works mostly in websites, or mostly in desktop programs?</summary><p>Both work. Their setup page asks one question and picks the right version: a browser extension for websites, a Windows or Mac app for programs, or both.</p></details>
+    <details><summary>Does it use AI on our data?</summary><p>No. Findings come from simple rules that run on the participant’s own computer, so their activity is never sent to an AI service or anywhere else.</p></details>
+  </section>
+
+  <footer id="contact">Questions? Contact Tejas Senthil at <a href="mailto:tns976@eid.utexas.edu">tns976@eid.utexas.edu</a>.</footer>
+</div>
+<script>
+fetch("config.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (c) {
+  if (!c || !c.contactEmail) return;
+  var f = document.getElementById("contact"); f.textContent = "Questions? Contact " + (c.contactName || "the pilot team") + " at ";
+  var a = document.createElement("a"); a.href = "mailto:" + c.contactEmail; a.textContent = c.contactEmail; f.appendChild(a); f.appendChild(document.createTextNode("."));
+}).catch(function () {});
+</script>
+</body>
+</html>

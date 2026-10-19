@@ -70,7 +70,7 @@ namespace WorkflowDetective
     {
         public static int Run(string data, string start)
         {
-            Console.OutputEncoding = new System.Text.UTF8Encoding(false);
+            try { Console.SetOut(new StreamWriter(Console.OpenStandardOutput(), new System.Text.UTF8Encoding(false)) { AutoFlush = true }); } catch { }
             var kv = new KvStore(data); var store = new EventStore(data);
             store.Clear();
             kv.Merge(new Dictionary<string, object> { { "settings", new Dictionary<string, object> {

@@ -18,7 +18,14 @@ namespace WorkflowDetective
 
         public static int Run(string parityFile)
         {
-            Console.OutputEncoding = Encoding.UTF8;
+            // Write UTF-8 straight to stdout. (Setting Console.OutputEncoding throws in a windowed .exe with no console.)
+            try { Console.SetOut(new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(false)) { AutoFlush = true }); } catch { }
+            try { return RunChecks(parityFile); }
+            catch (Exception ex) { Console.WriteLine("✗ self-checks crashed: " + ex.GetType().Name + ": " + ex.Message + " " + (ex.StackTrace ?? "").Replace("\r", "").Replace("\n", " | ")); return 1; }
+        }
+
+        static int RunChecks(string parityFile)
+        {
             // privacy
             Check("titles lose numbers and emails", Privacy.RedactTitle("Payment received from Acme - Invoice 1042 - pat@acme.com - Outlook") == "Payment received from Acme - Invoice # - Outlook", Privacy.RedactTitle("Payment received from Acme - Invoice 1042 - pat@acme.com - Outlook"));
             Check("phone numbers removed", !Privacy.RedactTitle("Call (512) 555-0199 back").Contains("555"), null);
