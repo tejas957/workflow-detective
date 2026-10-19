@@ -1,0 +1,200 @@
+# Publish the pilot: builds and tests all three versions, then puts the downloads online.
+#
+#   Runs by itself every time files are uploaded to the main branch (or press "Run workflow" on the Actions tab).
+#   The website itself is served straight from this repository by GitHub Pages
+#   (Settings → Pages → "Deploy from a branch" → main → / (root)), so there's nothing else to switch on:
+#     • Setup page   https://<your-github-name>.github.io/<repo>/site/          (participants' personal links point here)
+#     • Invite tool  https://<your-github-name>.github.io/<repo>/site/invite.html
+#   This workflow attaches the Windows app, Mac app and extension to a release called "pilot", then updates
+#   site/downloads.json so the setup page only offers downloads that exist.
+#
+# If one version fails to build, the others are still published, and the setup page simply stops offering the one
+# that failed. Nothing is published if the core checks fail.
+#
+# Optional Mac signing + notarization (removes the "can't be opened" step for Mac users). Add repository secrets:
+#   MAC_CERT_P12 (base64 of a "Developer ID Application" .p12), MAC_CERT_PASSWORD, MAC_SIGN_ID ("Developer ID Application: Name (TEAMID)"),
+#   APPLE_ID, APPLE_TEAM_ID, APPLE_APP_PASSWORD (an app-specific password)
+name: Publish pilot
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: publish
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Core checks (findings engine, invite codes, setup pages)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Findings engine
+        run: node test/detector.test.js && node test/robustness.test.js
+      - name: Invite codes
+        run: |
+          node test/invite.test.js
+          cmp extension/lib/invite.js site/invite.js || { echo "site/invite.js must be an exact copy of extension/lib/invite.js"; exit 1; }
+      - name: Setup page and invite tool in a real browser
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.0
+          npx playwright install --with-deps chromium
+          node test/site.test.js
+
+  windows:
+    name: Windows app
+    needs: checks
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build with the C# compiler built into Windows
+        shell: cmd
+        run: desktop\build.bat
+      - name: Built-in self-checks
+        shell: powershell
+        run: |
+          $out = Join-Path $env:RUNNER_TEMP "selftest.txt"
+          $p = Start-Process -FilePath desktop\build\WorkflowDetective.exe -ArgumentList "--selftest --data `"$env:RUNNER_TEMP\st`"" -Wait -PassThru -RedirectStandardOutput $out -NoNewWindow
+          Get-Content $out
+          if ($p.ExitCode -ne 0) { throw "self-checks failed" }
+      - name: Smoke test (real Windows hooks, clipboard, file watching)
+        continue-on-error: true
+        timeout-minutes: 6    # depends on the runner's desktop session; the self-checks above are the gate
+        shell: powershell
+        run: powershell -ExecutionPolicy Bypass -File desktop\tests\windows-smoke.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: desktop/build/WorkflowDetective.exe
+
+  mac:
+    name: Mac app
+    needs: checks
+    runs-on: macos-latest
+    env:   # secrets can't be read in `if:` directly, so expose whether they exist
+      HAS_CERT: ${{ secrets.MAC_CERT_P12 != '' }}
+      HAS_NOTARY: ${{ secrets.APPLE_ID != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Import signing certificate (if provided)
+        if: env.HAS_CERT == 'true'
+        env:
+          MAC_CERT_P12: ${{ secrets.MAC_CERT_P12 }}
+          MAC_CERT_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
+        run: |
+          echo "$MAC_CERT_P12" | base64 --decode > cert.p12
+          security create-keychain -p ci build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p ci build.keychain
+          security import cert.p12 -k build.keychain -P "$MAC_CERT_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k ci build.keychain
+          rm cert.p12
+      - name: Build (Apple Silicon + Intel)
+        env:
+          SIGN_ID: ${{ secrets.MAC_SIGN_ID }}
+        run: bash mac/build-mac.sh
+      - name: Built-in self-checks
+        run: '"mac/build/Workflow Detective.app/Contents/MacOS/WorkflowDetective" --selftest'
+      - name: Smoke test (real macOS app switching, clipboard, files)
+        continue-on-error: true
+        timeout-minutes: 6
+        run: bash mac/tests/mac-smoke.sh
+      - name: Notarize (if Apple credentials provided)
+        if: env.HAS_NOTARY == 'true'
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+        run: |
+          cd mac/build
+          xcrun notarytool submit WorkflowDetective-mac-*.zip --apple-id "$APPLE_ID" --team-id "$APPLE_TEAM_ID" --password "$APPLE_APP_PASSWORD" --wait
+          xcrun stapler staple "Workflow Detective.app"
+      - name: Package for download
+        run: |
+          cd mac/build && rm -f WorkflowDetective-mac*.zip
+          ditto -c -k --keepParent "Workflow Detective.app" WorkflowDetective-mac.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mac
+          path: mac/build/WorkflowDetective-mac.zip
+
+  extension:
+    name: Browser extension package
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Zip for the Chrome Web Store
+        run: cd extension && zip -r -X ../workflow-detective-extension.zip . -x '.*'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension
+          path: workflow-detective-extension.zip
+
+  publish:
+    name: Put the downloads online
+    needs: [checks, windows, mac, extension]
+    if: ${{ !cancelled() && needs.checks.result == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # the release with the downloads, and site/downloads.json
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Upload the downloads (release "pilot")
+        run: |
+          ls -la dist || true
+          files=$(ls dist/WorkflowDetective.exe dist/WorkflowDetective-mac.zip dist/workflow-detective-extension.zip 2>/dev/null || true)
+          if ! gh release view pilot >/dev/null 2>&1; then
+            gh release create pilot $files --title "Workflow Detective pilot" --latest \
+              --notes "Downloads for the Workflow Detective pilot. Participants don't need this page: they get the right download from their personal setup link."
+          elif [ -n "$files" ]; then
+            gh release upload pilot $files --clobber
+            gh release edit pilot --latest
+          fi
+      - name: Tell the setup page which downloads exist
+        run: |
+          assets=$(gh release view pilot --json assets -q '.assets[].name' || true)
+          has() { echo "$assets" | grep -qx "$1" && echo true || echo false; }
+          store=$(jq -r '.chromeStoreUrl // ""' site/config.json)
+          printf '{"windows":%s,"mac":%s,"extension":%s}\n' "$(has WorkflowDetective.exe)" "$(has WorkflowDetective-mac.zip)" \
+            "$([ -n "$store" ] && echo true || echo false)" > site/downloads.json
+          cat site/downloads.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add site/downloads.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update available downloads"
+            git pull --rebase origin "$GITHUB_REF_NAME" && git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
+      - name: Summary
+        run: |
+          owner=$(echo "${GITHUB_REPOSITORY%%/*}" | tr '[:upper:]' '[:lower:]'); repo="${GITHUB_REPOSITORY#*/}"
+          url="https://${owner}.github.io/${repo}/site/"
+          d=$(cat site/downloads.json)
+          st() { echo "$d" | grep -q "\"$1\":true" && echo "✅ ready" || echo "⚠️ not available yet"; }
+          {
+            echo "## Workflow Detective"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| **Invite tool** (make personal links + emails) | ${url}invite.html |"
+            echo "| **Client guide** (send to companies) | ${url}guide.html |"
+            echo "| Setup page (participants land here) | ${url} |"
+            echo "| Privacy policy (for the Chrome Web Store form) | ${url}privacy.html |"
+            echo "| Windows app | $(st windows) |"
+            echo "| Mac app | $(st mac) |"
+            echo "| Chrome/Edge extension | $(st extension) |"
+            echo ""
+            echo "The website updates about a minute after this run finishes."
+          } >> "$GITHUB_STEP_SUMMARY"
