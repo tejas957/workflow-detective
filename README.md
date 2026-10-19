@@ -1,6 +1,8 @@
 # Workflow Detective: Pilot Build (v0.2)
 
-> **To launch: [docs/LAUNCH_CHECKLIST.md](docs/LAUNCH_CHECKLIST.md).** About 30 minutes once, then about 5 minutes per company. Participants just open a personal link.
+> **Live:** [Invite tool](https://tejas957.github.io/workflow-detective/site/invite.html) · [Client guide](https://tejas957.github.io/workflow-detective/site/guide.html) · [Results console](https://tejas957.github.io/workflow-detective/console/) · [Downloads](https://github.com/tejas957/workflow-detective/releases/tag/pilot)
+>
+> **Next steps: [docs/LAUNCH_CHECKLIST.md](docs/LAUNCH_CHECKLIST.md).** About 5 minutes per company. Participants just open a personal link. Every change to `main` rebuilds, tests and republishes everything (Actions → Publish pilot).
 
 Finds the repetitive work in someone's week **without them having to describe it**. A browser extension watches how a person works on a rotating 3-days-a-week schedule for 2 weeks. It logs only the *shape* of their actions and turns repeated patterns into a plain-English list of processes worth automating, each with evidence and a suggested approach.
 
