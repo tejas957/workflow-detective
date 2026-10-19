@@ -88,7 +88,7 @@ jobs:
           $lines = @(Get-Content $out -Encoding UTF8) + @(Get-Content "$out.err" -Encoding UTF8 -ErrorAction SilentlyContinue)
           $lines | ForEach-Object { Write-Host $_ }
           # surface failures as annotations (readable on the run page without opening the log)
-          $lines | Where-Object { $_ -and -not $_.StartsWith([string][char]0x2713) } | Select-Object -First 10 | ForEach-Object { Write-Host "::error title=Windows self-check::$_" }
+          $lines | Where-Object { $_ -and -not $_.StartsWith([string][char]0x2713) -and -not $_.StartsWith("All ") } | Select-Object -First 10 | ForEach-Object { Write-Host "::error title=Windows self-check::$_" }
           if ($p.ExitCode -ne 0) { throw "self-checks failed (exit code $($p.ExitCode))" }
       - name: Smoke test (real Windows hooks, clipboard, file watching)
         continue-on-error: true
@@ -96,9 +96,13 @@ jobs:
         shell: powershell
         run: |
           $log = powershell -ExecutionPolicy Bypass -File desktop\tests\windows-smoke.ps1 2>&1 | Out-String
+          $code = $LASTEXITCODE
           Write-Host $log
-          $log -split "`n" | Where-Object { $_ -match "FAIL" } | Select-Object -First 10 | ForEach-Object { Write-Host "::warning title=Windows smoke test::$($_.Trim())" }
-          if ($log -match "FAIL") { exit 1 }
+          $lines = $log -split "`r?`n" | Where-Object { $_.Trim() }
+          $fails = @($lines | Where-Object { $_ -match "^FAIL" })
+          if ($fails.Count -gt 0) { $fails | Select-Object -First 10 | ForEach-Object { Write-Host "::warning title=Windows smoke test::$($_.Trim())" } }
+          elseif ($code -ne 0) { $lines | Select-Object -Last 8 | ForEach-Object { Write-Host "::warning title=Windows smoke test (exit $code)::$($_.Trim())" } }
+          if ($fails.Count -gt 0 -or $code -ne 0) { exit 1 } else { exit 0 }
       - uses: actions/upload-artifact@v4
         with:
           name: windows

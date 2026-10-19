@@ -8,9 +8,9 @@ Edge users install from the same Chrome Web Store link. You don't need a separat
 
 - A Google account to own the listing (a new one like `workflowdetective.pilot@gmail.com` keeps it separate from your personal account).
 - The one-time Chrome Web Store developer registration fee.
-- **The package:** `workflow-detective-extension.zip`. It's in the handoff zip next to START-HERE, and every GitHub run also attaches a fresh copy to the **pilot** release (repository page → **Releases**).
-- **The images:** the `store/` folder (in `github-upload`) has the 128×128 icon and three 1280×800 screenshots.
-- **The privacy policy link:** `https://<your-github-name>.github.io/workflow-detective/privacy.html` (it goes live when you publish, see `LAUNCH_CHECKLIST.md`).
+- **The package:** `workflow-detective-extension.zip`. Download it from the **pilot** release: https://github.com/tejas957/workflow-detective/releases/tag/pilot
+- **The images:** the repository's `store/` folder has the 128×128 icon and three 1280×800 screenshots.
+- **The privacy policy link:** https://tejas957.github.io/workflow-detective/site/privacy.html.
 
 ## Steps
 
@@ -73,7 +73,7 @@ Then tick all three certifications:
 - I do not use or transfer user data for purposes that are unrelated to my item's single purpose.
 - I do not use or transfer user data to determine creditworthiness or for lending purposes.
 
-**Privacy policy URL:** `https://<your-github-name>.github.io/workflow-detective/privacy.html`
+**Privacy policy URL:** https://tejas957.github.io/workflow-detective/site/privacy.html
 
 ## If review asks questions
 

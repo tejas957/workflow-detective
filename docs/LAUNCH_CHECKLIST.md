@@ -1,30 +1,25 @@
 # Launch Checklist
 
-What you do once to put Workflow Detective online, and how to invite people after that. About 30 minutes, plus a few days waiting on Google to review the extension. You won't need a terminal or any code.
+Workflow Detective is online. This page covers the steps left before inviting people, and how to invite each company. You won't need a terminal or any code.
 
-Once it's set up, a participant's whole experience is: **open their personal link → click one or two big buttons → tick "I agree" → Start.** Their details fill in by themselves. The page works out their computer and browser, so they only see the steps that apply to them.
+A participant's whole experience is: **open their personal link → click one or two big buttons → tick "I agree" → Start.** Their details fill in by themselves. The page works out their computer and browser, so they only see the steps that apply to them.
 
 ---
 
-## Part 1: Put it online (once, about 15 minutes)
+## Part 1: Your links (done)
 
-Free GitHub hosting gives you three things: the participants' setup page, your invite tool, and the downloads for Windows and Mac. Every time you upload a change, GitHub rebuilds, re-tests and republishes everything by itself.
+| What | Link |
+|---|---|
+| **Invite tool** (bookmark this) | https://tejas957.github.io/workflow-detective/site/invite.html |
+| **Client guide** (send to each company's manager) | https://tejas957.github.io/workflow-detective/site/guide.html |
+| Setup page (participants reach it through their personal links) | https://tejas957.github.io/workflow-detective/site/ |
+| Privacy policy | https://tejas957.github.io/workflow-detective/site/privacy.html |
+| Results console | https://tejas957.github.io/workflow-detective/console/ |
+| Downloads (built automatically) | https://github.com/tejas957/workflow-detective/releases/tag/pilot |
 
-1. **Make a GitHub account** at github.com, if you don't have one.
-2. **Create a repository.** Click **+** (top right) → **New repository**.
-   - Name: `workflow-detective`
-   - Visibility: **Public**. Free hosting needs this. The code holds no participant data; that only ever lives on participants' computers.
-   - Click **Create repository**.
-3. **Upload the files.** On the new repository's page, click **uploading an existing file**. On your computer, unzip `workflow-detective-pilot.zip` and open its **github-upload** folder. Select **everything inside it** and drag it all onto the GitHub page. That includes the hidden `.github` folder: on a Mac, press **⌘⇧.** in Finder to show it; on Windows, turn on **View → Show → Hidden items**. Click **Commit changes**.
-   - If the `.github` folder didn't come along (some browsers skip hidden folders): click **Add file → Create new file**, type `.github/workflows/publish.yml` as the name, paste in that file's contents, and click **Commit changes**.
-4. **Turn on the website.** Go to **Settings → Pages**, and under **Build and deployment → Source** choose **GitHub Actions**. That's the only setting.
-5. **Run it.** Go to the **Actions** tab, click **Publish pilot** on the left, then **Run workflow → Run workflow**. It takes about 10 minutes: it builds the Windows app and the Mac app, tests everything, and publishes.
-6. **Open your links.** Click the finished run. Its summary lists:
-   - **Invite tool:** `https://<your-github-name>.github.io/workflow-detective/invite.html` (bookmark this)
-   - **Setup page:** `https://<your-github-name>.github.io/workflow-detective/` (participants land here through their personal links)
-   - Whether the Windows app, Mac app and extension are ready
+**How updates work:** every time a file changes on the `main` branch (an upload, or an edit with the pencil icon on GitHub), the **Publish pilot** workflow on the **Actions** tab runs by itself. It tests everything, builds the Windows app, Mac app and extension on real machines, attaches them to the **pilot** release, and republishes the website. It takes about 10 minutes, and the run's summary page lists the links above and whether each download is ready. If one version fails to build, the others still publish, and the setup page stops offering the one that failed.
 
-**If the Mac app shows "not available yet":** it has never been built on a real Mac before, so the first build may hit a compile error. Everything else still publishes, and Mac users are offered the browser extension (once it's approved) or told to contact you. Open the failed **Mac app** step, copy the red error text, and paste it to Claude (or whoever maintains the code) to fix.
+**If a run fails:** open it on the Actions tab. The red step shows short error notes at the top of the run page. Copy them and paste them to Claude (or whoever maintains the code).
 
 ## Part 2: Chrome Web Store (once; do this the same day, since review takes days)
 
