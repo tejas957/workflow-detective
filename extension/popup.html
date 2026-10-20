@@ -11,6 +11,7 @@
   .stack{display:flex;flex-direction:column;gap:8px}
   .stack .btn{width:100%;text-align:left}
   .site{font-family:var(--mono);font-size:12px}
+.access{display:flex;flex-direction:column;gap:8px;background:var(--bad-bg);color:var(--ink);border-radius:8px;padding:10px 12px;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -24,6 +25,10 @@
   </div>
   <div class="stat"><span class="muted">Actions logged today</span><b id="today" class="tnum">0</b></div>
   <div class="stat"><span class="muted">Watch days finished</span><b id="days" class="tnum">0 of 0</b></div>
+  <div class="access" id="access" hidden>
+    <p class="small"><b>Website access is off.</b> Workflow Detective can’t notice your work in websites until you allow it.</p>
+    <button class="btn primary" id="allow">Allow website access</button>
+  </div>
   <div class="stack" id="actions">
     <button class="btn primary" id="report">Open my findings</button>
     <button class="btn" id="pause">Pause for 1 hour</button>

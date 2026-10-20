@@ -5,7 +5,13 @@
 const { chromium } = require("playwright");
 const http = require("http"), fs = require("fs"), path = require("path"), os = require("os");
 
-const EXT = path.resolve(__dirname, "../extension");
+const EXT_SRC = path.resolve(__dirname, "../extension");
+// Chrome's "Allow access to all sites" prompt can't be clicked in automation, so the test runs a copy of the extension
+// whose manifest already has that access (as if the participant clicked Allow). The shipped manifest is checked below.
+const EXT = fs.mkdtempSync(path.join(os.tmpdir(), "wd-ext-"));
+fs.cpSync(EXT_SRC, EXT, { recursive: true });
+{ const m = JSON.parse(fs.readFileSync(path.join(EXT, "manifest.json"), "utf8")); m.host_permissions = m.host_permissions.concat(m.optional_host_permissions); fs.writeFileSync(path.join(EXT, "manifest.json"), JSON.stringify(m)); }
+const SHIPPED = JSON.parse(fs.readFileSync(path.join(EXT_SRC, "manifest.json"), "utf8"));
 const SITE = path.resolve(__dirname, "site");
 const SECRET = "TYPED-SECRET-9431";
 const results = []; const ok = (name, cond, extra) => { results.push([cond ? "✓" : "✗", name, extra || ""]); };
@@ -35,6 +41,11 @@ const server = http.createServer((req, res) => {
     if (!sw) sw = await ctx.waitForEvent("serviceworker", { timeout: 15000 });
     const id = new URL(sw.url()).host;
     ok("extension loads and its background worker starts", !!id, id);
+    const broad = x => /^(\*|<all_urls>|https?:\/\/\*\/)/.test(x) || x.startsWith("*://*/");
+    ok("shipped manifest: no access to every site at install, only the pilot's setup page", !SHIPPED.host_permissions.some(broad) && !SHIPPED.content_scripts.some(c => c.matches.some(broad)) && SHIPPED.optional_host_permissions.some(broad), JSON.stringify(SHIPPED.host_permissions));
+    await new Promise(r => setTimeout(r, 800));
+    const reg = await sw.evaluate(async () => (await chrome.scripting.getRegisteredContentScripts()).map(c => c.id));
+    ok("once website access is allowed, the page script is registered for all sites", reg.includes("wd-sites"), JSON.stringify(reg));
 
     // 1. onboarding opens on install; complete it through the real form
     let ob = ctx.pages().find(p => p.url().includes("onboarding.html"));
@@ -55,6 +66,7 @@ const server = http.createServer((req, res) => {
     await ob.bringToFront();
     const prev = await ob.textContent("#preview");
     ok("schedule preview lists the watch days", /watch days/.test(prev), prev.slice(0, 80));
+    ok("setup explains Chrome's website-access prompt before Start", await ob.isVisible("#accessNote") && /Allow/.test(await ob.textContent("#accessNote")));
     await ob.check("#consent");
     await ob.click("#save");
     await ob.waitForSelector("#saved:not([hidden])", { timeout: 5000 });
@@ -156,6 +168,25 @@ const server = http.createServer((req, res) => {
     await rep.bringToFront(); await rep.reload(); await rep.waitForSelector("#tiles .tile");
     await rep.setViewportSize({ width: 1100, height: 900 });
     await ob.bringToFront(); await ob.setViewportSize({ width: 1100, height: 900 }); await ob.screenshot({ path: path.resolve(__dirname, "../samples/onboarding.png"), fullPage: true });
+    await ctx.close();
+
+    // 2. the shipped extension as installed from the store, before the participant clicks Allow
+    const ctx2 = await chromium.launchPersistentContext(fs.mkdtempSync(path.join(os.tmpdir(), "wd-e2e2-")), {
+      headless: false, args: [`--disable-extensions-except=${EXT_SRC}`, `--load-extension=${EXT_SRC}`]
+    });
+    try {
+      let [sw2] = ctx2.serviceWorkers();
+      if (!sw2) sw2 = await ctx2.waitForEvent("serviceworker", { timeout: 15000 });
+      const id2 = new URL(sw2.url()).host;
+      await new Promise(r => setTimeout(r, 800));
+      const before = await sw2.evaluate(async () => ({ all: await chrome.permissions.contains({ origins: ["https://example.com/*"] }), setup: await chrome.permissions.contains({ origins: ["https://tejas957.github.io/*"] }), reg: (await chrome.scripting.getRegisteredContentScripts()).length }));
+      ok("shipped extension installs with access to the setup page only", !before.all && before.setup && before.reg === 0, JSON.stringify(before));
+      await sw2.evaluate(async () => { const { settings } = await chrome.storage.local.get("settings"); await chrome.storage.local.set({ settings: Object.assign({}, settings, { consented: true, startDate: "2026-10-12" }) }); });
+      await new Promise(r => setTimeout(r, 800));
+      ok("set up without website access → red ! on the toolbar icon", (await sw2.evaluate(() => chrome.action.getBadgeText({}))) === "!");
+      const pop2 = await ctx2.newPage(); await pop2.goto(`chrome-extension://${id2}/popup.html`); await pop2.waitForTimeout(500);
+      ok("…and the popup offers ‘Allow website access’", await pop2.isVisible("#access") && await pop2.isVisible("#allow"));
+    } finally { await ctx2.close(); }
   } catch (e) {
     ok("test ran without crashing", false, e.stack);
   } finally {

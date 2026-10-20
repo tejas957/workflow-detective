@@ -110,6 +110,30 @@ async function takeInvite(code) {
   if (open.length) await chrome.tabs.update(open[0].id, { active: true });
   else await chrome.tabs.create({ url });
 }
+/* ---------- website access ----------
+   The extension installs with access to the pilot's setup page only. Access to the sites people work in is asked for
+   when they click "Start the study" (Chrome shows its own Allow prompt). Once allowed, the page script is registered
+   for every site, and removed again if access is taken away. */
+const ALL_SITES = { origins: ["http://*/*", "https://*/*"] };
+const SETUP_PAGE = "https://tejas957.github.io/*";
+async function hasSiteAccess() { try { return await chrome.permissions.contains(ALL_SITES); } catch { return false; } }
+async function syncSiteAccess() {
+  try {
+    const has = await hasSiteAccess();
+    const reg = await chrome.scripting.getRegisteredContentScripts({ ids: ["wd-sites"] });
+    if (has && !reg.length) {
+      await chrome.scripting.registerContentScripts([{ id: "wd-sites", matches: ALL_SITES.origins, excludeMatches: [SETUP_PAGE],
+        js: ["content.js"], allFrames: true, runAt: "document_idle", persistAcrossSessions: true }]);
+      injectIntoOpenTabs();
+    } else if (!has && reg.length) {
+      await chrome.scripting.unregisterContentScripts({ ids: ["wd-sites"] });
+    }
+  } catch {}
+  updateBadge();
+}
+chrome.permissions.onAdded.addListener(syncSiteAccess);
+chrome.permissions.onRemoved.addListener(syncSiteAccess);
+
 // Content scripts don't run in tabs that were already open at install, so add them (the setup page tab included).
 async function injectIntoOpenTabs() {
   try {
@@ -120,7 +144,13 @@ async function injectIntoOpenTabs() {
 
 /* ---------- badge, retention, install ---------- */
 async function updateBadge() {
-  const st = status(await settings());
+  const s = await settings(), st = status(s);
+  if (s.consented && !s.withdrawn && !(await hasSiteAccess())) {   // set up, but website access was declined or removed
+    await chrome.action.setBadgeText({ text: "!" });
+    await chrome.action.setBadgeBackgroundColor({ color: "#B3261E" });
+    await chrome.action.setTitle({ title: "Workflow Detective needs website access. Click to fix." });
+    return;
+  }
   const on = st.state === "active";
   await chrome.action.setBadgeText({ text: on ? "ON" : st.state === "paused" ? "II" : "" });
   await chrome.action.setBadgeBackgroundColor({ color: on ? "#1D7A4E" : "#93570A" });
@@ -136,7 +166,7 @@ async function retention() {
 chrome.alarms.onAlarm.addListener(a => { if (a.name === "tick") { updateBadge(); retention(); } });
 chrome.runtime.onInstalled.addListener(({ reason }) => {
   chrome.alarms.create("tick", { periodInMinutes: 5 });
-  updateBadge();
+  syncSiteAccess();
   if (reason === "install") { chrome.tabs.create({ url: chrome.runtime.getURL("onboarding.html") }); injectIntoOpenTabs(); }
 });
-chrome.runtime.onStartup.addListener(() => { chrome.alarms.create("tick", { periodInMinutes: 5 }); updateBadge(); });
+chrome.runtime.onStartup.addListener(() => { chrome.alarms.create("tick", { periodInMinutes: 5 }); syncSiteAccess(); });

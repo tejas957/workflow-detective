@@ -1,13 +1,13 @@
 {
  "schema": "workflow-detective/bundle@1",
- "exportedAt": "2026-10-11T18:19:38.014Z",
+ "exportedAt": "2026-10-20T13:30:43.572Z",
  "source": "browser",
- "extensionVersion": "0.2.0",
+ "extensionVersion": "0.3.0",
  "detectorVersion": "0.1.0",
  "participant": "Test Person",
  "company": "NORTHLINE",
  "study": {
-  "startDate": "2026-10-11",
+  "startDate": "2026-10-20",
   "weeks": 1,
   "scheduleMode": "fixed",
   "days": [
@@ -31,8 +31,8 @@
  "summary": {
   "events": 42,
   "days": [
-   "2026-10-09",
-   "2026-10-10"
+   "2026-10-18",
+   "2026-10-19"
   ],
   "observedDays": 2,
   "activeMinutes": 0,
@@ -71,28 +71,28 @@
    },
    "occurrences": [
     {
-     "t0": 1791569950160,
-     "t1": 1791569951181,
+     "t0": 1792330215345,
+     "t1": 1792330216346,
      "note": "3 fields · after 127.0.0.1 · 1 paste · from “Payment received from Acme Co · Invoice # · Mailbox”"
     },
     {
-     "t0": 1791570854813,
-     "t1": 1791570855684,
+     "t0": 1792331119973,
+     "t1": 1792331120859,
      "note": "2 fields · after 127.0.0.1 · 1 paste · from “Payment received from Acme Co · Invoice # · Mailbox”"
     },
     {
-     "t0": 1791571759307,
-     "t1": 1791571760165,
+     "t0": 1792332024495,
+     "t1": 1792332025392,
      "note": "2 fields · after 127.0.0.1 · 1 paste · from “Payment received from Acme Co · Invoice # · Mailbox”"
     },
     {
-     "t0": 1791659063784,
-     "t1": 1791659064650,
+     "t0": 1792419329022,
+     "t1": 1792419329927,
      "note": "2 fields · after 127.0.0.1 · 1 paste · from “Payment received from Acme Co · Invoice # · Mailbox”"
     },
     {
-     "t0": 1791659968274,
-     "t1": 1791659976619,
+     "t0": 1792420233559,
+     "t1": 1792420242038,
      "note": "3 fields · after 127.0.0.1 · 1 paste · from “Payment received from Acme Co · Invoice # · Mailbox”"
     }
    ],
@@ -128,12 +128,12 @@
  "feedback": {
   "entry|localhost|/tracker.html": {
    "rating": "accurate",
-   "at": 1791742777896
+   "at": 1792503043439
   }
  },
  "events": [
   {
-   "t": 1791569949553,
+   "t": 1792330214726,
    "type": "view",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -142,7 +142,7 @@
    "d": {}
   },
   {
-   "t": 1791569949706,
+   "t": 1792330214903,
    "type": "view",
    "app": "localhost",
    "host": "localhost",
@@ -151,7 +151,7 @@
    "d": {}
   },
   {
-   "t": 1791569949739,
+   "t": 1792330214925,
    "type": "view",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -160,7 +160,7 @@
    "d": {}
   },
   {
-   "t": 1791569950160,
+   "t": 1792330215345,
    "type": "copy",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -172,7 +172,7 @@
    }
   },
   {
-   "t": 1791569950491,
+   "t": 1792330215670,
    "type": "view",
    "app": "localhost",
    "host": "localhost",
@@ -181,7 +181,7 @@
    "d": {}
   },
   {
-   "t": 1791569951038,
+   "t": 1792330216184,
    "type": "paste",
    "app": "localhost",
    "host": "localhost",
@@ -194,7 +194,7 @@
    }
   },
   {
-   "t": 1791569951181,
+   "t": 1792330216346,
    "type": "entry",
    "app": "localhost",
    "host": "localhost",
@@ -210,7 +210,7 @@
    }
   },
   {
-   "t": 1791569951187,
+   "t": 1792330216350,
    "type": "click",
    "app": "localhost",
    "host": "localhost",
@@ -221,7 +221,7 @@
    }
   },
   {
-   "t": 1791569951193,
+   "t": 1792330216353,
    "type": "submit",
    "app": "localhost",
    "host": "localhost",
@@ -232,7 +232,7 @@
    }
   },
   {
-   "t": 1791569954406,
+   "t": 1792330219567,
    "type": "view",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -241,7 +241,7 @@
    "d": {}
   },
   {
-   "t": 1791570854813,
+   "t": 1792331119973,
    "type": "copy",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -253,7 +253,7 @@
    }
   },
   {
-   "t": 1791570855127,
+   "t": 1792331120288,
    "type": "view",
    "app": "localhost",
    "host": "localhost",
@@ -262,7 +262,7 @@
    "d": {}
   },
   {
-   "t": 1791570855564,
+   "t": 1792331120746,
    "type": "paste",
    "app": "localhost",
    "host": "localhost",
@@ -275,7 +275,7 @@
    }
   },
   {
-   "t": 1791570855684,
+   "t": 1792331120859,
    "type": "entry",
    "app": "localhost",
    "host": "localhost",
@@ -291,7 +291,7 @@
    }
   },
   {
-   "t": 1791570855686,
+   "t": 1792331120864,
    "type": "click",
    "app": "localhost",
    "host": "localhost",
@@ -302,7 +302,7 @@
    }
   },
   {
-   "t": 1791570855687,
+   "t": 1792331120868,
    "type": "submit",
    "app": "localhost",
    "host": "localhost",
@@ -313,7 +313,7 @@
    }
   },
   {
-   "t": 1791570858901,
+   "t": 1792331124083,
    "type": "view",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -322,7 +322,7 @@
    "d": {}
   },
   {
-   "t": 1791571759307,
+   "t": 1792332024495,
    "type": "copy",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -334,7 +334,7 @@
    }
   },
   {
-   "t": 1791571759621,
+   "t": 1792332024815,
    "type": "view",
    "app": "localhost",
    "host": "localhost",
@@ -343,7 +343,7 @@
    "d": {}
   },
   {
-   "t": 1791571760066,
+   "t": 1792332025277,
    "type": "paste",
    "app": "localhost",
    "host": "localhost",
@@ -356,7 +356,7 @@
    }
   },
   {
-   "t": 1791571760165,
+   "t": 1792332025392,
    "type": "entry",
    "app": "localhost",
    "host": "localhost",
@@ -372,7 +372,7 @@
    }
   },
   {
-   "t": 1791571760168,
+   "t": 1792332025393,
    "type": "click",
    "app": "localhost",
    "host": "localhost",
@@ -383,7 +383,7 @@
    }
   },
   {
-   "t": 1791571760169,
+   "t": 1792332025394,
    "type": "submit",
    "app": "localhost",
    "host": "localhost",
@@ -394,7 +394,7 @@
    }
   },
   {
-   "t": 1791571763380,
+   "t": 1792332028621,
    "type": "view",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -403,7 +403,7 @@
    "d": {}
   },
   {
-   "t": 1791659063784,
+   "t": 1792419329022,
    "type": "copy",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -415,7 +415,7 @@
    }
   },
   {
-   "t": 1791659064107,
+   "t": 1792419329345,
    "type": "view",
    "app": "localhost",
    "host": "localhost",
@@ -424,7 +424,7 @@
    "d": {}
   },
   {
-   "t": 1791659064557,
+   "t": 1792419329797,
    "type": "paste",
    "app": "localhost",
    "host": "localhost",
@@ -437,7 +437,7 @@
    }
   },
   {
-   "t": 1791659064650,
+   "t": 1792419329927,
    "type": "entry",
    "app": "localhost",
    "host": "localhost",
@@ -453,7 +453,7 @@
    }
   },
   {
-   "t": 1791659064651,
+   "t": 1792419329933,
    "type": "click",
    "app": "localhost",
    "host": "localhost",
@@ -464,7 +464,7 @@
    }
   },
   {
-   "t": 1791659064653,
+   "t": 1792419329935,
    "type": "submit",
    "app": "localhost",
    "host": "localhost",
@@ -475,7 +475,7 @@
    }
   },
   {
-   "t": 1791659067871,
+   "t": 1792419333150,
    "type": "view",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -484,7 +484,7 @@
    "d": {}
   },
   {
-   "t": 1791659968274,
+   "t": 1792420233559,
    "type": "copy",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -496,7 +496,7 @@
    }
   },
   {
-   "t": 1791659968591,
+   "t": 1792420233874,
    "type": "view",
    "app": "localhost",
    "host": "localhost",
@@ -505,7 +505,7 @@
    "d": {}
   },
   {
-   "t": 1791659969030,
+   "t": 1792420234335,
    "type": "paste",
    "app": "localhost",
    "host": "localhost",
@@ -518,7 +518,7 @@
    }
   },
   {
-   "t": 1791659969113,
+   "t": 1792420234438,
    "type": "entry",
    "app": "localhost",
    "host": "localhost",
@@ -534,7 +534,7 @@
    }
   },
   {
-   "t": 1791659969115,
+   "t": 1792420234442,
    "type": "click",
    "app": "localhost",
    "host": "localhost",
@@ -545,7 +545,7 @@
    }
   },
   {
-   "t": 1791659969116,
+   "t": 1792420234443,
    "type": "submit",
    "app": "localhost",
    "host": "localhost",
@@ -556,7 +556,7 @@
    }
   },
   {
-   "t": 1791659972331,
+   "t": 1792420237658,
    "type": "view",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -565,7 +565,7 @@
    "d": {}
   },
   {
-   "t": 1791659972419,
+   "t": 1792420237770,
    "type": "download",
    "app": "127.0.0.1",
    "host": "127.0.0.1",
@@ -576,7 +576,7 @@
    }
   },
   {
-   "t": 1791659972479,
+   "t": 1792420237824,
    "type": "view",
    "app": "localhost",
    "host": "localhost",
@@ -585,7 +585,7 @@
    "d": {}
   },
   {
-   "t": 1791659972530,
+   "t": 1792420237896,
    "type": "upload",
    "app": "localhost",
    "host": "localhost",
@@ -597,7 +597,7 @@
    }
   },
   {
-   "t": 1791659976619,
+   "t": 1792420242038,
    "type": "entry",
    "app": "localhost",
    "host": "localhost",

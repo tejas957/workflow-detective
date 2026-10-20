@@ -2,6 +2,7 @@ import { getSettings, saveSettings, status } from "./lib/settings.js";
 import { countSince } from "./lib/db.js";
 
 const $ = id => document.getElementById(id);
+const ALL_SITES = { origins: ["http://*/*", "https://*/*"] };
 let host = null;
 
 async function render() {
@@ -20,6 +21,8 @@ async function render() {
   $("pause").disabled = !["active", "paused", "later", "off"].includes(st.state);
   $("report").textContent = st.state === "setup" ? "Set up" : "Open my findings";
   $("block").hidden = !host || st.state === "setup";
+  const access = await chrome.permissions.contains(ALL_SITES).catch(() => true);
+  $("access").hidden = access || !s.consented || s.withdrawn;
   $("host").textContent = host || "";
 }
 
@@ -27,6 +30,7 @@ $("report").addEventListener("click", async () => {
   const s = await getSettings();
   chrome.tabs.create({ url: chrome.runtime.getURL(s.consented ? "report.html" : "onboarding.html") });
 });
+$("allow").addEventListener("click", () => { chrome.permissions.request(ALL_SITES).then(render, render); });
 $("settings").addEventListener("click", () => chrome.tabs.create({ url: chrome.runtime.getURL("onboarding.html") }));
 $("pause").addEventListener("click", async () => {
   const s = await getSettings();

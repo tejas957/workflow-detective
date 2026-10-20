@@ -211,7 +211,8 @@ footer{font-size:14px;color:var(--muted)}
       '<p class="why">This watches the websites you use. It sets itself up with your details.</p>' +
       '<a class="big" id="addExt" href="' + esc(u.store || "#") + '" target="_blank" rel="noopener">Add to ' + bname + '</a>' +
       '<ol class="then"><li>In the store tab, click <b>Add to ' + bname + '</b>' + (browser === "edge" ? " (if asked, click <b>Allow extensions from other stores</b> first)" : "") + ', then <b>Add extension</b>.</li>' +
-      '<li>A setup page opens with your details already filled in. Tick <b>I agree</b> and click <b>Start the study</b>.</li></ol>' +
+      '<li>A setup page opens with your details already filled in. Tick <b>I agree</b> and click <b>Start the study</b>.</li>' +
+      '<li>When ' + bname + ' asks to let it <b>read and change site data</b>, click <b>Allow</b>. It only notes actions like “copied a number”, never what you type.</li></ol>' +
       '<p class="status" id="extStatus">Waiting for the add-on…</p></li>';
     var mac = kind === "mac";
     var paste = mac ? "<kbd>⌘</kbd><kbd>V</kbd>" : "<kbd>Ctrl</kbd>+<kbd>V</kbd>";

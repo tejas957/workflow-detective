@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Workflow Detective (Pilot)",
   "short_name": "Workflow Detective",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Finds the repetitive work in your week so it can be automated. Records actions, never what you type.",
   "minimum_chrome_version": "116",
   "permissions": [
@@ -15,6 +15,9 @@
     "scripting"
   ],
   "host_permissions": [
+    "https://tejas957.github.io/*"
+  ],
+  "optional_host_permissions": [
     "http://*/*",
     "https://*/*"
   ],
@@ -25,14 +28,13 @@
   "content_scripts": [
     {
       "matches": [
-        "http://*/*",
-        "https://*/*"
+        "https://tejas957.github.io/*"
       ],
       "js": [
         "content.js"
       ],
       "run_at": "document_idle",
-      "all_frames": true
+      "all_frames": false
     }
   ],
   "action": {

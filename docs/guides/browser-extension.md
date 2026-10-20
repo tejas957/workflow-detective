@@ -9,8 +9,9 @@
 2. Click **Add to Chrome** (or **Add to Edge**). In the store tab, click **Add to Chrome** (or **Get**), then **Add extension**.
    *In Edge:* if asked, click **Allow extensions from other stores** first.
 3. A setup page opens with **your details already filled in**. Read **What it records** and **What it never records**.
-4. Tick **I agree** and click **Start the study**. Your personal link page now shows **Added and set up ✓**.
-5. Optional: pin the icon so you can see it. Click the puzzle-piece icon in the toolbar, then the pin next to **Workflow Detective**.
+4. Tick **I agree** and click **Start the study**.
+5. Chrome (or Edge) asks to let Workflow Detective **read and change site data**. Click **Allow**. It needs this to notice actions like "copied a number" in the websites you use. It never records what you type or what's on the page. Your personal link page now shows **Added and set up ✓**.
+6. Optional: pin the icon so you can see it. Click the puzzle-piece icon in the toolbar, then the pin next to **Workflow Detective**.
 
 **Details didn't fill in?** Copy the code from your email (it starts with `WD1.`) and paste it into the box on the setup page. If you don't have a code, click **Fill in the details yourself** and enter the company code, your name, and the start date from the pilot team.
 

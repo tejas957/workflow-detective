@@ -2,6 +2,9 @@ import { getSettings, saveSettings, DEFAULT_BLOCKED, nextMonday, isoDate, allWat
 import { clearAll } from "./lib/db.js";
 
 const $ = id => document.getElementById(id);
+// Browser extension only: access to the websites people work in is asked for when they click Start.
+const ALL_SITES = { origins: ["http://*/*", "https://*/*"] };
+const needsSiteAccess = () => window.WD_PLATFORM !== "desktop" && !!(window.chrome && chrome.permissions && chrome.permissions.request);
 // Same page serves the browser extension and the Windows app; swap the few lines that differ.
 if (window.WD_PLATFORM === "desktop") {
   document.querySelectorAll("[data-for]").forEach(el => { el.hidden = el.dataset.for !== "desktop"; });
@@ -72,6 +75,8 @@ function preview() {
     $("consent").checked = true;
     $("save").textContent = "Save changes";
     $("stopCard").hidden = false;
+    if (needsSiteAccess() && !(await chrome.permissions.contains(ALL_SITES).catch(() => true)))
+      $("msg").textContent = "Website access is off, so nothing in websites is being noticed. Click Save changes and choose Allow.";
   } else {
     // New participant: lead with the invite code; the full form stays folded away.
     $("inviteBox").hidden = false;
@@ -144,6 +149,11 @@ $("form").addEventListener("submit", async e => {
   if (!f.participant) { if (invited) { $("nameOnly").hidden = false; $("participantQuick").focus(); } else { $("details").hidden = false; $("participant").focus(); } $("msg").textContent = "Please add your name."; return; }
   if (f.hourEnd <= f.hourStart) { $("msg").textContent = "The end time has to be after the start time."; return; }
   if (!$("consent").checked) { $("msg").textContent = "Please read and tick the consent box first."; return; }
+  if (needsSiteAccess()) {
+    // must be the first await, while Chrome still counts this as the participant's click
+    const ok = await chrome.permissions.request(ALL_SITES).catch(() => false);
+    if (!ok) { $("msg").textContent = "Chrome needs your OK to see which websites you work in. Click the button again and choose Allow."; return; }
+  }
   const cur = await getSettings();
   await saveSettings(Object.assign(f, { consented: true, withdrawn: false, consentedAt: cur.consentedAt || Date.now() }));
   $("msg").textContent = "";

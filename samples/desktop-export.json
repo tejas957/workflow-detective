@@ -1,6 +1,6 @@
 {
  "schema": "workflow-detective/bundle@1",
- "exportedAt": "2026-10-11T18:19:51.632Z",
+ "exportedAt": "2026-10-20T13:31:55.793Z",
  "source": "desktop",
  "os": "windows",
  "extensionVersion": "0.1.0",
@@ -21,7 +21,7 @@
    18
   ],
   "watchDaysTotal": 6,
-  "watchDaysDone": 0,
+  "watchDaysDone": 3,
   "captureTitles": true,
   "captureFieldLabels": true
  },
@@ -589,7 +589,7 @@
  "feedback": {
   "entry|QuickBooks Desktop|Create Invoices - Northline Supply": {
    "rating": "new",
-   "at": 1791742789847
+   "at": 1792503113859
   }
  },
  "events": [

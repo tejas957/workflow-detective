@@ -60,7 +60,8 @@ Edge users install from the same Chrome Web Store link. You don't need a separat
 | `downloads` | Notices that a file was downloaded and its type (like .csv), to find "export from one app, upload to another" patterns. The file name and contents are never read. |
 | `alarms` | Checks the study schedule every few minutes, so the extension only watches on study days and during work hours, and deletes data automatically after the study. |
 | `scripting` | Adds the extension's page script to tabs that were already open when it was installed, so the user doesn't have to reload them. |
-| Host permissions (all `http`/`https` sites) | Repetitive work spans whatever web apps a business uses (email, accounting, CRM, spreadsheets), which differ by company, so the extension can't list them in advance. On each page it notices only the shape of actions (a copy happened, a field called "Customer" was filled in), never typed text or page content. Users can block any site. |
+| Host permission `https://tejas957.github.io/*` | The pilot's own setup page. The extension reads the participant's invite code there so its setup fills itself in, and tells the page that it's installed. |
+| Optional host permissions (`http`/`https` sites), asked at consent | Not granted at install. When the participant ticks consent and clicks "Start the study", the extension asks for access with Chrome's own prompt. It needs it because repetitive work spans whatever web apps a business uses (email, accounting, CRM, spreadsheets), which differ by company, so the sites can't be listed in advance. On each page it notices only the shape of actions (a copy happened, a field called "Customer" was filled in), never typed text or page content. Users can block any site, and removing the access stops all page observation. |
 
 **Remote code:** No, I am not using remote code.
 
@@ -74,6 +75,10 @@ Then tick all three certifications:
 - I do not use or transfer user data to determine creditworthiness or for lending purposes.
 
 **Privacy policy URL:** https://tejas957.github.io/workflow-detective/site/privacy.html
+
+## If the dashboard warns about "Broad Host Permissions"
+
+Version 0.3.0 and later shouldn't trigger this warning: the extension installs with access to the setup page only, and asks for access to other sites when the participant clicks **Start the study**. If you still see it, submit anyway. It means a longer, in-depth review, not a rejection, and the justifications above answer it.
 
 ## If review asks questions
 

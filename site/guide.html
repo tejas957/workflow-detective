@@ -117,7 +117,7 @@ footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);paddin
     <ol class="steps">
       <li><b>Open the link</b> on their work computer.</li>
       <li><b>Click the big button.</b> Either <i>Add to Chrome/Edge</i> (for work done in websites) or <i>Download for Windows/Mac</i> (for programs like Outlook and Excel), sometimes both. The page explains any warning their computer shows along the way.</li>
-      <li><b>Read what it records</b>, tick <b>I agree</b>, and click <b>Start the study</b>. Their details are already filled in.</li>
+      <li><b>Read what it records</b>, tick <b>I agree</b>, and click <b>Start the study</b>. Their details are already filled in. With the browser extension, Chrome or Edge then asks them to allow access to websites, and they click <b>Allow</b>.</li>
       <li><b>Work as usual</b> for two weeks. A small magnifying-glass icon shows it’s running, and they can pause it any time.</li>
       <li><b>On the last day</b>, they open <i>My findings</i> with us, confirm which findings are right, and choose whether to send us the results file.</li>
     </ol>
@@ -156,7 +156,7 @@ footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);paddin
     <div class="tbl"><table>
       <thead><tr><th>Version</th><th>What gets installed</th><th>Admin rights</th><th>Network</th></tr></thead>
       <tbody>
-        <tr><td><b>Browser extension</b><br><span style="color:var(--muted);font-size:14px">Chrome or Edge</span></td><td>An unlisted extension from the Chrome Web Store. Can be force-installed by policy (<code>ExtensionInstallForcelist</code>).</td><td>No</td><td>None. It never sends data anywhere.</td></tr>
+        <tr><td><b>Browser extension</b><br><span style="color:var(--muted);font-size:14px">Chrome or Edge</span></td><td>An unlisted extension from the Chrome Web Store. It can only see the pilot’s setup page until the participant clicks <b>Start the study</b> and allows website access. Can be force-installed by policy (<code>ExtensionInstallForcelist</code>).</td><td>No</td><td>None. It never sends data anywhere.</td></tr>
         <tr><td><b>Windows app</b><br><span style="color:var(--muted);font-size:14px">Windows 10/11</span></td><td>One program in the user’s own folder (<code>%LOCALAPPDATA%\Programs\WorkflowDetective</code>), a Start menu shortcut, and a sign-in startup entry for the current user. Uses the .NET Framework already on Windows.</td><td>No</td><td>None outside the computer. It shows its pages through a local address (127.0.0.1) only that user can open.</td></tr>
         <tr><td><b>Mac app</b><br><span style="color:var(--muted);font-size:14px">macOS 12 or newer</span></td><td>An app in Applications, set to open at login. Asks for the Accessibility permission (to read window titles and field names).</td><td>No</td><td>None.</td></tr>
       </tbody>
